@@ -1,0 +1,191 @@
+package org.game.mockData;
+
+import org.game.gui.Coordinates;
+import org.game.gui.MapCell;
+import org.game.gui.MapCellType;
+
+import java.util.ArrayList;
+
+public class StandardMap {
+    public static final ArrayList<MapCell> MAP = generateMap();
+
+    private static ArrayList<MapCell> generateMap() {
+        ArrayList<Coordinates> land = new ArrayList<>() {
+            {
+                add(new Coordinates(0, 0));
+                add(new Coordinates(1, 0));
+                add(new Coordinates(2, 0));
+                add(new Coordinates(3, 0));
+                add(new Coordinates(4, 0));
+                add(new Coordinates(5, 0));
+                add(new Coordinates(9, 0));
+                add(new Coordinates(10, 0));
+                add(new Coordinates(11, 0));
+                add(new Coordinates(17, 0));
+                add(new Coordinates(18, 0));
+                add(new Coordinates(19, 0));
+                add(new Coordinates(20, 0));
+                add(new Coordinates(21, 0));
+                add(new Coordinates(22, 0));
+                add(new Coordinates(23, 0));
+                add(new Coordinates(24, 0));
+                add(new Coordinates(25, 0));
+                add(new Coordinates(26, 0));
+                add(new Coordinates(27, 0));
+                add(new Coordinates(0, 1));
+                add(new Coordinates(1, 1));
+                add(new Coordinates(2, 1));
+                add(new Coordinates(5, 1));
+                add(new Coordinates(9, 1));
+                add(new Coordinates(10, 1));
+                add(new Coordinates(11, 1));
+                add(new Coordinates(12, 1));
+                add(new Coordinates(21, 1));
+                add(new Coordinates(25, 1));
+                add(new Coordinates(29, 1));
+                add(new Coordinates(0, 2));
+                add(new Coordinates(8, 2));
+                add(new Coordinates(9, 2));
+                add(new Coordinates(10, 2));
+                add(new Coordinates(29, 2));
+                add(new Coordinates(27, 3));
+                add(new Coordinates(28, 3));
+                add(new Coordinates(29, 3));
+                add(new Coordinates(0, 4));
+                add(new Coordinates(28, 4));
+                add(new Coordinates(29, 4));
+                add(new Coordinates(0, 5));
+                add(new Coordinates(22, 5));
+                add(new Coordinates(22, 6));
+                add(new Coordinates(23, 6));
+                add(new Coordinates(9, 7));
+                add(new Coordinates(10, 7));
+                add(new Coordinates(11, 7));
+                add(new Coordinates(12, 7));
+                add(new Coordinates(20, 7));
+                add(new Coordinates(21, 7));
+                add(new Coordinates(22, 7));
+                add(new Coordinates(23, 7));
+                add(new Coordinates(24, 7));
+                add(new Coordinates(6, 8));
+                add(new Coordinates(7, 8));
+                add(new Coordinates(8, 8));
+                add(new Coordinates(9, 8));
+                add(new Coordinates(10, 8));
+                add(new Coordinates(11, 8));
+                add(new Coordinates(20, 8));
+                add(new Coordinates(21, 8));
+                add(new Coordinates(22, 8));
+                add(new Coordinates(23, 8));
+                add(new Coordinates(24, 8));
+                add(new Coordinates(28, 8));
+                add(new Coordinates(29, 8));
+                add(new Coordinates(6, 9));
+                add(new Coordinates(7, 9));
+                add(new Coordinates(8, 9));
+                add(new Coordinates(9, 9));
+                add(new Coordinates(10, 9));
+                add(new Coordinates(21, 9));
+                add(new Coordinates(22, 9));
+                add(new Coordinates(23, 9));
+                add(new Coordinates(24, 9));
+                add(new Coordinates(27, 9));
+                add(new Coordinates(28, 9));
+                add(new Coordinates(29, 9));
+                add(new Coordinates(6, 10));
+                add(new Coordinates(7, 10));
+                add(new Coordinates(8, 10));
+                add(new Coordinates(9, 10));
+                add(new Coordinates(10, 10));
+                add(new Coordinates(22, 10));
+                add(new Coordinates(28, 10));
+                add(new Coordinates(5, 11));
+                add(new Coordinates(6, 11));
+                add(new Coordinates(7, 11));
+                add(new Coordinates(8, 11));
+                add(new Coordinates(10, 11));
+                add(new Coordinates(3, 12));
+                add(new Coordinates(4, 12));
+                add(new Coordinates(5, 12));
+                add(new Coordinates(6, 12));
+                add(new Coordinates(7, 12));
+                add(new Coordinates(8, 12));
+                add(new Coordinates(7, 13));
+                add(new Coordinates(7, 14));
+                add(new Coordinates(28, 14));
+                add(new Coordinates(29, 14));
+                add(new Coordinates(30, 14));
+                add(new Coordinates(7, 15));
+                add(new Coordinates(8, 15));
+                add(new Coordinates(21, 15));
+                add(new Coordinates(22, 15));
+                add(new Coordinates(30, 15));
+                add(new Coordinates(31, 15));
+                add(new Coordinates(18, 16));
+                add(new Coordinates(19, 16));
+                add(new Coordinates(20, 16));
+                add(new Coordinates(21, 16));
+                add(new Coordinates(22, 16));
+                add(new Coordinates(23, 16));
+                add(new Coordinates(30, 16));
+                add(new Coordinates(31, 16));
+                add(new Coordinates(19, 17));
+                add(new Coordinates(20, 17));
+                add(new Coordinates(21, 17));
+                add(new Coordinates(22, 17));
+                add(new Coordinates(31, 17));
+                add(new Coordinates(11, 18));
+                add(new Coordinates(19, 18));
+                add(new Coordinates(20, 18));
+                add(new Coordinates(21, 18));
+                add(new Coordinates(22, 18));
+                add(new Coordinates(1, 19));
+                add(new Coordinates(2, 19));
+                add(new Coordinates(10, 19));
+                add(new Coordinates(11, 19));
+                add(new Coordinates(12, 19));
+                add(new Coordinates(19, 19));
+                add(new Coordinates(0, 20));
+                add(new Coordinates(1, 20));
+                add(new Coordinates(2, 20));
+                add(new Coordinates(7, 20));
+                add(new Coordinates(8, 20));
+                add(new Coordinates(9, 20));
+                add(new Coordinates(10, 20));
+                add(new Coordinates(11, 20));
+                add(new Coordinates(31, 20));
+                add(new Coordinates(0, 21));
+                add(new Coordinates(1, 21));
+                add(new Coordinates(2, 21));
+                add(new Coordinates(26, 21));
+                add(new Coordinates(30, 21));
+                add(new Coordinates(31, 21));
+                add(new Coordinates(0, 22));
+                add(new Coordinates(1, 22));
+                add(new Coordinates(2, 22));
+                add(new Coordinates(3, 22));
+                add(new Coordinates(24, 22));
+                add(new Coordinates(25, 22));
+                add(new Coordinates(26, 22));
+                add(new Coordinates(27, 22));
+                add(new Coordinates(28, 22));
+                add(new Coordinates(29, 22));
+                add(new Coordinates(30, 22));
+                add(new Coordinates(31, 22));
+            }
+        };
+        ArrayList<MapCell> cells = new ArrayList<>();
+        for (int x = 31; x >= 0; x--) {
+            for (int y = 22; y >= 0; y--) {
+                int finalX = x;
+                int finalY = y;
+                if (land.stream().anyMatch(coordinates -> coordinates.equals(new Coordinates(finalX, finalY)))) {
+                    cells.add(new MapCell(new Coordinates(x, y), MapCellType.LAND));
+                } else {
+                    cells.add(new MapCell(new Coordinates(x, y), MapCellType.WATER));
+                }
+            }
+        }
+        return cells;
+    }
+}

@@ -1,6 +1,6 @@
 package org.game.gui.panels;
 
-import org.game.gui.MapCell;
+import org.game.gui.*;
 import org.game.mockData.StandardMap;
 
 import javax.imageio.ImageIO;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements MouseListener {
     ArrayList<MapCell> map;
+    ArrayList<GameUnit> fleet_st;
     BufferedImage image;
     BufferedImage imageTwo;
 
@@ -32,6 +33,7 @@ public class GamePanel extends JPanel implements MouseListener {
         setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
         map = StandardMap.MAP;
+        fleet_st=StandardMap.FLEET_ST;
     }
     private void drawMap(Graphics g){
         map.forEach(mapCell -> {
@@ -40,8 +42,9 @@ public class GamePanel extends JPanel implements MouseListener {
         });
     }
     private void drawVessels(Graphics g){
-        g.drawImage(image,11*30,10*30,this);
-        g.drawImage(imageTwo,12*30,10*30,this);
+        fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getX(),e.getY(),null));
+        //g.drawImage(new GameUnit(Images.TWO_DECKER_SHIP_OF_LINE_ST,new Coordinates(11,10), StateType.PASSIVE).getCurrentIcon(),11*30,10*30,this);
+        //g.drawImage(imageTwo,12*30,10*30,this);
     }
     
     private void move(){
@@ -60,8 +63,13 @@ public class GamePanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        move();
+        //move();
+
         if(map.stream().anyMatch(mapCell -> mapCell.contains(e.getPoint()))){
+            /*GameUnit gu = */fleet_st.stream().filter(
+                    gameUnit -> gameUnit.getCoordinates().equals(new Coordinates(e.getX()/30,e.getY()/30)))
+                    .findFirst().ifPresent(gameUnit -> gameUnit.setActivity(StateType.SELECTED));
+            repaint();
             System.out.println("x:"+e.getX()/30);
             System.out.println("y:"+e.getY()/30);
         }

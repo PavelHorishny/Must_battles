@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel implements MouseListener {
+public class GamePanel1 extends JPanel implements MouseListener {
     ArrayList<MapCell> map;
     ArrayList<GameUnit> fleet_st;
     BufferedImage image;
@@ -29,11 +29,11 @@ public class GamePanel extends JPanel implements MouseListener {
         }
     }
 
-    public GamePanel(){
+    public GamePanel1(){
         setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
         map = StandardMap.MAP;
-        fleet_st=StandardMap.FLEET_ST;
+        //fleet_st=StandardMap.FLEET_ST;
     }
     private void drawMap(Graphics g){
         map.forEach(mapCell -> {

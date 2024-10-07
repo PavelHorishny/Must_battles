@@ -1,9 +1,11 @@
 package org.game.gui;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.awt.image.BufferedImage;
 @Getter
+@Setter
 public class GameUnit {
     UnitIcons icons;
     BufferedImage currentIcon;

@@ -31,7 +31,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     int x;
     int y;
 
-    {
+/*    {
         try {
             image = ImageIO.read(new File("src/main/resources/selected.png"));
             imageTwo = ImageIO.read(new File("src/main/resources/underattack.png"));
@@ -39,37 +39,37 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public MapArea(Settings settings){
         super(settings);
         //setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
-        timer = new Timer(100,e-> {
+/*        timer = new Timer(100,e-> {
             selected.setX(selected.getX() + 1);
             repaint();
             if(end-selected.getX()==0) timer.stop();
-        });
-        map = StandardMap.MAP; //13.14.15; 16
-        map[14][16].color=Constants.ROUTE;
-        map[15][16].color=Constants.ROUTE;
-        map[16][16].color=Constants.ROUTE;
-        fleet_st=StandardMap.FLEET_ST;
+        });*/
+        //map = StandardMap.MAP; //13.14.15; 16
+        //map[14][16].color=Constants.ROUTE;
+        //map[15][16].color=Constants.ROUTE;
+        //map[16][16].color=Constants.ROUTE;
+        //fleet_st=StandardMap.FLEET_ST;
     }
 
     public MapArea(){
         setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
-        timer = new Timer(100,e-> {
+/*        timer = new Timer(100,e-> {
                 selected.setX(selected.getX() + 1);
                 repaint();
             if(end-selected.getX()==0) timer.stop();
-        });
-        map = StandardMap.MAP; //13.14.15; 16
-        map[14][16].color=Constants.ROUTE;
-        map[15][16].color=Constants.ROUTE;
-        map[16][16].color=Constants.ROUTE;
-        fleet_st=StandardMap.FLEET_ST;
+        });*/
+        //map = StandardMap.MAP; //13.14.15; 16
+        //map[14][16].color=Constants.ROUTE;
+        //map[15][16].color=Constants.ROUTE;
+        //map[16][16].color=Constants.ROUTE;
+        //fleet_st=StandardMap.FLEET_ST;
     }
 
     @Override
@@ -107,10 +107,10 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawMap(g);
+/*        drawMap(g);
         drawVessels(g);
-        grid(g);
-        if(point) drawAnchor(g);
+        //grid(g);
+        if(point) drawAnchor(g);*/
     }
 
     private void drawAnchor(Graphics g) {
@@ -120,7 +120,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(e.getButton()==MouseEvent.BUTTON2){
+ /*       if(e.getButton()==MouseEvent.BUTTON2){
             //start = selected.getX();
             end = selected.getX()+90;
             move();
@@ -128,9 +128,9 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         if(e.getButton()==MouseEvent.BUTTON1){
             if(map[e.getX()/30][e.getY()/30].getUnits().isEmpty()){
                 System.out.println("empty");
-               /* selected = null;
+               *//* selected = null;
                 point = false;
-                repaint();*/
+                repaint();*//*
                 if(map[e.getX()/30][e.getY()/30].getColor().equals(Constants.ROUTE)&&selected!=null){
                     point=true;
                     x=e.getX()/30;
@@ -142,7 +142,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 }
             }else {
                select(map[e.getX()/30][e.getY()/30].getUnits().getFirst());
-            }
+            }*/
             //if(Arrays.stream(map).forEach(a->Arrays.stream(a).anyMatch(mapCell -> mapCell.contains(e.getPoint())))){}
             /*GameUnit u = map[e.getX()/30][e.getY()/30].getUnits().getFirst();
             if(u!=null){
@@ -151,7 +151,27 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 System.out.println("empty");
             }*/
         }
-        //move();
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+
+    }
+    //move();
 
     /*    if(map.stream().anyMatch(mapCell -> mapCell.contains(e.getPoint()))){
             *//*GameUnit gu = *//*fleet_st.stream().filter(
@@ -160,47 +180,27 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             repaint();
             System.out.println("x:"+e.getX()/30);
             System.out.println("y:"+e.getY()/30);
-        }*/
+        }
 
-    }
+    }*/
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    private void select(){
+/*    private void select(){
         if(selected!=null){
             selected.setActivity(StateType.PASSIVE);
         }
         selected = null;
         repaint();
-    }
-    private void select(GameUnit unit){
-       /* if(selected!=null){
+    }*/
+/*    private void select(GameUnit unit){
+       *//* if(selected!=null){
             selected.setActivity(StateType.PASSIVE);
-        }*/
+        }*//*
         select();
         unit.setActivity(StateType.SELECTED);
         selected=unit;
         repaint();
-    }
-    private void grid(Graphics g){
+    }*/
+/*    private void grid(Graphics g){
         for(int i = 0; i<=960;i=i+30){
             g.setColor(Color.BLACK);
             g.drawLine(i,0,i,690);
@@ -209,5 +209,5 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             g.setColor(Color.BLACK);
             g.drawLine(0,i,960,i);
         }
-    }
+    }*/
 }

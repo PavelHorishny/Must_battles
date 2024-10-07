@@ -13,7 +13,7 @@ public class MainPanel extends JPanel {
         this.setBackground(Color.ORANGE);
         this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         //Toolkit.getDefaultToolkit().getScreenSize()
-        this.setPreferredSize(new Dimension(1050,600));
+        this.setPreferredSize(new Dimension(1280,960));
 
         this.add(new Box.Filler(new Dimension(300,150),new Dimension(300,150),new Dimension(300,150)));
         start = new JButton("Start");

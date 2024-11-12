@@ -2,6 +2,7 @@ package org.game.gui.panels.main;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.game.Context;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +23,8 @@ public class MainPanel extends JPanel {
         start.addActionListener(e-> {
                     logger.info("Start Button pressed");
                     ((CardLayout) this.getParent().getLayout()).show(this.getParent(),"Game");
-
+            System.out.println(Context.getMediator().toString());
+            Context.getMediator().gameStarted();
                 }
         );
 

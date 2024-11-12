@@ -1,4 +1,5 @@
 package org.game.gui.panels;
 
-public class Message {
+public enum Message {
+    START
 }

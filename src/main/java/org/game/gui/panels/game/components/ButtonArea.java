@@ -2,6 +2,7 @@ package org.game.gui.panels.game.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.game.GameComponentState;
 import org.game.gui.panels.Settings;
 
 import javax.swing.*;
@@ -43,5 +44,11 @@ public class ButtonArea extends GamePanelComponent {
         });
 
         add(menu);
+        System.out.println("Button panel exists");
+    }
+
+    @Override
+    public void updateState(GameComponentState state) {
+
     }
 }

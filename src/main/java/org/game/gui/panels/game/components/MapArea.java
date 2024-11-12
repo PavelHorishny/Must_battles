@@ -1,5 +1,7 @@
 package org.game.gui.panels.game.components;
 
+import org.game.GameComponentState;
+import org.game.MapAreaState;
 import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
@@ -17,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
-    MapCell [] [] map;
+    //ArrayList<MapCell> map = StandardMap.MAP;
+    MapAreaState state = new MapAreaState();
     ArrayList<GameUnit> fleet_st;
     ArrayList<MapCell> route;
     BufferedImage image;
@@ -58,7 +61,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     }
 
     public MapArea(){
-        setPreferredSize(new Dimension(960,690));
+        //setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
 /*        timer = new Timer(100,e-> {
                 selected.setX(selected.getX() + 1);
@@ -77,18 +80,25 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         super.setMediator(mediator);
     }
 
+    @Override
+    public void updateState(GameComponentState state) {
+        this.state=(MapAreaState) state;
+        repaint();
+    }
+
+
     private void drawMap(Graphics g){
-        Arrays.stream(map).forEach(mc->Arrays.stream(mc).forEach(e->{
+        /*Arrays.stream(map).forEach(mc->Arrays.stream(mc).forEach(e->{
             g.setColor(e.getColor());
-            g.fillRect(e.x,e.y,e.width,e.height);
-          /*  if(!e.getUnits().isEmpty()){
+            g.fillRect(e.x,e.y,e.width,e.height);*//*
+          *//*  if(!e.getUnits().isEmpty()){
                 g.drawImage(e.getUnits().getFirst().getCurrentIcon(),e.x,e.y,null);
-            }*/
-        }));
-   /*     map.forEach(mapCell -> {
+            }*//*
+        }));*/
+       state.getMap().forEach(mapCell -> {
             g.setColor(mapCell.getColor());
             g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
-        });*/
+        });
     }
     private void drawVessels(Graphics g){
         fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getX(),e.getY(),null));
@@ -107,8 +117,13 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-/*        drawMap(g);
-        drawVessels(g);
+        if(state!=null) {
+            drawMap(g);
+        }else {
+            g.setColor(Color.RED);
+            g.drawString("Wait", 100, 100);
+        }
+       /* drawVessels(g);
         //grid(g);
         if(point) drawAnchor(g);*/
     }

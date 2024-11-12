@@ -2,6 +2,7 @@ package org.game.gui.panels.game.components;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.game.GameComponentState;
 import org.game.gui.panels.PanelsConstrains;
 import org.game.gui.panels.Settings;
 
@@ -63,5 +64,10 @@ public class WindRoseArea extends GamePanelComponent {
                 this.force.setText(force);
             }
         });
+    }
+
+    @Override
+    public void updateState(GameComponentState state) {
+
     }
 }

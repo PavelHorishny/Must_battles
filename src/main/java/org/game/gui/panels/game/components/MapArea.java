@@ -5,27 +5,22 @@ import org.game.MapAreaState;
 import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
-import org.game.mockData.StandardMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
     //ArrayList<MapCell> map = StandardMap.MAP;
     MapAreaState state = new MapAreaState();
-    ArrayList<GameUnit> fleet_st;
+    ArrayList<GUIUnit> fleet_st;
     ArrayList<MapCell> route;
     BufferedImage image;
     BufferedImage imageTwo;
-    GameUnit selected;
+    GUIUnit selected;
     BufferedImage anchor;
     int start;
     int end;
@@ -101,7 +96,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         });
     }
     private void drawVessels(Graphics g){
-        fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getX(),e.getY(),null));
+        fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX(),e.getCoordinates().axisX(),null));
         //g.drawImage(new GameUnit(Images.TWO_DECKER_SHIP_OF_LINE_ST,new Coordinates(11,10), StateType.PASSIVE).getCurrentIcon(),11*30,10*30,this);
         //g.drawImage(imageTwo,12*30,10*30,this);
     }

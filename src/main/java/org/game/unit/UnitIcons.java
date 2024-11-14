@@ -1,4 +1,4 @@
-package org.game.gui;
+package org.game.unit;
 
 import java.awt.image.BufferedImage;
 

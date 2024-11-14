@@ -1,4 +1,4 @@
-package org.game;
+package org.game.unit;
 
 import lombok.Getter;
 import lombok.Setter;

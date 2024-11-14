@@ -1,8 +1,9 @@
-package org.game.gui;
+package org.game.unit;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.game.Unit;
+import org.game.gui.Coordinates;
+import org.game.gui.StateType;
 
 import java.awt.image.BufferedImage;
 @Getter

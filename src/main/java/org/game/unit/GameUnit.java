@@ -7,7 +7,7 @@ import org.game.gui.Coordinates;
 @Setter
 @Getter
 public class GameUnit extends Unit {
-    //private UnitType unitType;
+    private UnitType unitType;
     private boolean isFirstPlayer;
     private String description;
     private int fire_range;

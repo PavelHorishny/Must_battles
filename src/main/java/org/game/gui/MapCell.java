@@ -1,6 +1,7 @@
 package org.game.gui;
 
 import lombok.Getter;
+import org.game.map.SurfaceType;
 
 import java.awt.*;
 
@@ -8,7 +9,7 @@ import java.awt.*;
 public class MapCell extends Rectangle {
     Coordinates coordinates;
     Color color;
-    public MapCell(Coordinates coordinates, MapCellType type){
+    public MapCell(Coordinates coordinates, SurfaceType type){
         color = setColor(type);
         this.coordinates = coordinates;
         width = Constants.CELL_SIZE;
@@ -21,10 +22,11 @@ public class MapCell extends Rectangle {
         y = coordinates.axisY() * Constants.CELL_SIZE;
     }
 
-    private Color setColor(MapCellType type){
+    private Color setColor(SurfaceType type){
         return switch (type){
             case LAND -> Constants.LAND;
             case WATER -> Constants.WATER;
+            case PORT -> Constants.PORT;
         };
     }
 }

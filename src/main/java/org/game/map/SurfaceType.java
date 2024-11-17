@@ -1,5 +1,5 @@
 package org.game.map;
 
 public enum SurfaceType {
-    LAND,WATER;
+    LAND,WATER,PORT
 }

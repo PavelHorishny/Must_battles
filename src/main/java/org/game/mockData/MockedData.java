@@ -3,8 +3,35 @@ package org.game.mockData;
 import org.game.gui.Coordinates;
 import org.game.map.Surface;
 import org.game.map.SurfaceType;
+import org.game.unit.Fortification;
+import org.game.unit.FortificationType;
 
-public class LandList {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MockedData {
+    /**
+     * Fortifications for standard map*/
+
+    public static final ArrayList<Fortification> STANDARD_FORT_POSITION = new ArrayList<>(){{
+        add(new Fortification(new Coordinates(11,5), FortificationType.FIRST_LINE_FORT,true));
+        add(new Fortification(new Coordinates(8,15),FortificationType.FIRST_LINE_FORT,true));
+        add(new Fortification(new Coordinates(10,28),FortificationType.FIRST_LINE_FORT,true));
+        add(new Fortification(new Coordinates(4,7),FortificationType.SECOND_LINE_FORT,true));
+        add(new Fortification(new Coordinates(5,21),FortificationType.SECOND_LINE_FORT,true));
+        add(new Fortification(new Coordinates(7,23),FortificationType.SECOND_LINE_FORT,true));
+        add(new Fortification(new Coordinates(0,26),FortificationType.ROYAL_PORT,true));
+        add(new Fortification(new Coordinates(22,3), FortificationType.FIRST_LINE_FORT,false));
+        add(new Fortification(new Coordinates(23,25),FortificationType.FIRST_LINE_FORT,false));
+        add(new Fortification(new Coordinates(24,16),FortificationType.FIRST_LINE_FORT,false));
+        add(new Fortification(new Coordinates(27,6),FortificationType.SECOND_LINE_FORT,false));
+        add(new Fortification(new Coordinates(30,19),FortificationType.SECOND_LINE_FORT,false));
+        add(new Fortification(new Coordinates(32,12),FortificationType.SECOND_LINE_FORT,false));
+        add(new Fortification(new Coordinates(33,7),FortificationType.ROYAL_PORT,false));
+    }};
+
+    /**
+     * Surface objects list for standard map*/
 
     public static final Surface[] LAND = new Surface[]{
             new Surface(new Coordinates(0, 22), SurfaceType.LAND),
@@ -26,7 +53,7 @@ public class LandList {
             new Surface(new Coordinates(2, 8), SurfaceType.LAND),
             new Surface(new Coordinates(2, 31), SurfaceType.LAND),
             new Surface(new Coordinates(3, 0), SurfaceType.LAND),
-            new Surface(new Coordinates(3, 6), SurfaceType.LAND),
+            //new Surface(new Coordinates(3, 6), SurfaceType.LAND),
             new Surface(new Coordinates(3, 7), SurfaceType.LAND),
             new Surface(new Coordinates(3, 8), SurfaceType.LAND),
             new Surface(new Coordinates(3, 9), SurfaceType.LAND),
@@ -226,4 +253,174 @@ public class LandList {
             new Surface(new Coordinates(33, 22), SurfaceType.LAND),
             new Surface(new Coordinates(33, 23), SurfaceType.LAND),
     };
+
+    /**
+     * List of names for fortifications
+     * */
+
+    public static final List<String> FORTIFICATIONS_NAMES = new ArrayList<String>(){{
+        add("Fort Alexander");
+        add("Fort Constantin");
+        add("Fort Denison");
+        add("Fort Drum");
+        add("Fort Jefferson");
+        add("Fort Louvois");
+        add("Fort Sumter");
+        add("Fort de Bertheaume");
+        add("St. Helen's Fort");
+        add("Fort Mahon");
+        add("Fort National");
+        add("Stack Rock Fort");
+    }};
+
+    /**
+     * List of royal port names*/
+
+    public static final List<String> ROYAL_PORTS_NAME = new ArrayList<>(){{
+        add("Horse Sand Fort");
+        add("Fort Gaines");
+        add("Fort McHenry");
+        add("Fort Delaware");
+    }};
+
+    /**
+     * List of three decker ship of the lines names*/
+
+    public static final List<String> THREE_DECKER_SHIP_OF_LINE_NAMES = new ArrayList<>(){{
+        add("HMS Britannia");
+        add("HMS Prince");
+        add("HMS Royal Sovereign");
+        add("HMS Queen");
+        add("HMS Victory");
+    }};
+
+    /**
+     * List of two decker ship of the lines names*/
+
+    public static final List<String> TWO_DECKER_SHIPS_OF_THE_LINE_NAMES = new ArrayList<>(){{
+        add("Nottingham");
+        add("Mary");
+        add("York");
+        add("Medway");
+        add("Pembroke");
+        add("Exeter");
+        add("Windsor");
+        add("Kingstone");
+        add("Sunderland");
+    }};
+
+    /**
+     * List of frigate names*/
+
+    public static final List<String> FRIGATE_NAMES = new ArrayList<>(){{
+        add("Jules");
+        add("Sirene");
+        add("Flamand");
+        add("Cheval Marin");
+        add("Le Havre");
+        add("Provencal");
+        add("Dunkerquios");
+    }};
+
+    /**
+     * List of tender names*/
+
+    public static final List<String> TENDER_NAMES = new ArrayList<>(){{
+        add("Andrey");
+        add("Dionisy");
+        add("Cherepaha");
+        add("Speshny");
+    }};
+
+    /**
+     * List of brig names*/
+
+    public static final List<String> BRIG_NAMES = new ArrayList<>(){{
+        add("Meteor");
+        add("Mastiff");
+        add("Manly");
+        add("Rattler");
+        add("Staunch");
+        add("Hecate");
+        add("Gallant");
+        add("Griper");
+        add("Furnace");
+        add("Defender");
+    }};
+
+    /**
+     * List of galleon names*/
+
+    public static final List<String> GALLEON_NAMES = new ArrayList<>(){{
+        add("Trinidad");
+        add("San Salvador");
+        add("Manuela");
+        add("La Lavia");
+        add("Santa Ana");
+        add("Santa Luzia");
+    }};
+
+    /**
+     * List of steam frigate names*/
+
+    public static final List <String> STEAM_FRIGATE_NAMES = new ArrayList<>(){{
+        add("Roanoke");
+        add("Niagara");
+    }};
+
+    /**
+     * List of naval battery names*/
+
+    public static final List <String> NAVAL_BATTERY_NAMES = new ArrayList<>(){{
+        add("Kremlin");
+        add("Pervenets");
+    }};
+
+    /**
+     * List of galleys names*/
+
+    public static final List <String> GALLEY_NAMES = new ArrayList<>(){{
+        add("Alarm");
+        add("Arbuthnot");
+        add("Comet");
+        add("Pigot");
+        add("Viper");
+        add("La Reale");
+        add("Corona Ottomana");
+        add("Lupa");
+    }};
+
+    /**
+     * List of steam corvette names*/
+
+    public static final List <String> STEAM_CORVETTE_NAMES = new ArrayList<>(){{
+        add("La Dragon");
+        add("Duplex");
+    }};
+
+    /**
+     * List of monitor names*/
+
+    public static final List <String> MONITOR_NAMES = new ArrayList<>(){{
+        add("Latnik");
+        add("Canonicus");
+    }};
+
+    /**
+     * List of steamship names*/
+
+    public static final List <String> STEAMSHIP_NAMES = new ArrayList<>(){{
+        add("Rhynland");
+        add("Malabar");
+        add("Faith");
+        add("Queen Mary");
+        add("Explorer");
+        add("Escambia");
+        add("Lady Wicklow");
+        add("Kyarra");
+        add("Peleus");
+        add("Jeddah");
+        add("Delhi");
+        add("Hibernia");
+    }};
 }

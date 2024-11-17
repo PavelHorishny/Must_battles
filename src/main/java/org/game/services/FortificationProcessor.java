@@ -14,7 +14,7 @@ public class FortificationProcessor implements FortificationService{
     public FortificationProcessor() {
         namesRandomizer = new NamesRandomizer();
     }
-    @Override
+
     public void setNames(Map<String, GameUnit> fleet, List<Fortification> fortifications){
         fortifications.forEach(e->{
             if(e.getFortificationType()== FortificationType.ROYAL_PORT){
@@ -26,4 +26,10 @@ public class FortificationProcessor implements FortificationService{
             }
         });
     }
+
+    @Override
+    public void generateFortification(Map<String, GameUnit> fleet) {
+        setNames(fleet, MockedData.STANDARD_FORT_POSITION);
+    }
+
 }

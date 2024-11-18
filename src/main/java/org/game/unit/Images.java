@@ -34,8 +34,10 @@ public class Images {
     public static final UnitIcons FIRST_LINE_FORT_ND;
     public static final UnitIcons SECOND_LINE_FORT_ST;
     public static final UnitIcons SECOND_LINE_FORT_ND;
-    public static final BufferedImage FIRST_LINE_FORT_DESTROYED;
-    public static final BufferedImage SECOND_LINE_FORT_DESTROYED;
+    public static final UnitIcons FIRST_LINE_FORT_DESTROYED;
+    public static final UnitIcons SECOND_LINE_FORT_DESTROYED;
+    public static final UnitIcons ROYAL_PORT_ST;
+    public static final UnitIcons ROYAL_PORT_ND;
     static {
         try{
             THREE_DECKER_SHIP_OF_LINE_ST=new UnitIcons(
@@ -150,10 +152,25 @@ public class Images {
                     ImageIO.read(new File("src/main/resources/img/SLFort/2_SLFort.png")),
                     ImageIO.read(new File("src/main/resources/img/SLFort/2_SLFort_selected.png")),
                     ImageIO.read(new File("src/main/resources/img/SLFort/2_SLFort_under.png")));
-            FIRST_LINE_FORT_DESTROYED = ImageIO.read(new File("src/main/resources/img/FLFort/0_FLFort.png"));
-            SECOND_LINE_FORT_DESTROYED = ImageIO.read(new File("src/main/resources/img/SLFort/0_SLFort.png"));
+            FIRST_LINE_FORT_DESTROYED = new UnitIcons(
+                    ImageIO.read(new File("src/main/resources/img/FLFort/0_FLFort.png")),
+                    ImageIO.read(new File("src/main/resources/img/FLFort/0_FLFort.png")),
+                    ImageIO.read(new File("src/main/resources/img/FLFort/0_FLFort.png")));
+            SECOND_LINE_FORT_DESTROYED = new UnitIcons(
+                    ImageIO.read(new File("src/main/resources/img/SLFort/0_SLFort.png")),
+                    ImageIO.read(new File("src/main/resources/img/SLFort/0_SLFort.png")),
+                    ImageIO.read(new File("src/main/resources/img/SLFort/0_SLFort.png")));
+            ROYAL_PORT_ST = new UnitIcons(
+                    ImageIO.read(new File("src/main/resources/img/Royal/1_Royal_Port.png")),
+                    ImageIO.read(new File("src/main/resources/img/Royal/1_Royal_Port.png")),
+                    ImageIO.read(new File("src/main/resources/img/Royal/1_Royal_Port.png")));
+            ROYAL_PORT_ND = new UnitIcons(
+                    ImageIO.read(new File("src/main/resources/img/Royal/2_Royal_Port.png")),
+                    ImageIO.read(new File("src/main/resources/img/Royal/2_Royal_Port.png")),
+                    ImageIO.read(new File("src/main/resources/img/Royal/2_Royal_Port.png")));
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+    //TODO must solve the issue with destroyed and royal port icons
 }

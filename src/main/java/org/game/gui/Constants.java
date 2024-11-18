@@ -8,4 +8,5 @@ public class Constants {
     public static final Color LAND = Color.GREEN.darker().darker();
     public static final Color ROUTE = WATER.darker();
 
+    public static final Color PORT = WATER.brighter();
 }

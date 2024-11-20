@@ -12,4 +12,13 @@ public class Vessel extends GameUnit {
     public Vessel(boolean isFirstPlayer, Coordinates coordinates) {
         super(isFirstPlayer, coordinates);
     }
+    public Vessel(boolean isFirstPlayer, VesselType vesselType){
+        this.setFirstPlayer(isFirstPlayer);
+        this.vesselType = vesselType;
+    }
+    public Vessel(boolean isFirstPlayer, VesselType vesselType,String id){
+        this.setFirstPlayer(isFirstPlayer);
+        this.vesselType = vesselType;
+        this.setId(id);
+    }
 }

@@ -35,4 +35,7 @@ public enum VesselType {
         this.fire_range = fire_range;
         this.hit_points = hit_points;
     }
+    public static final VesselType [] vesselTypes = new VesselType[]{
+          THREE_DECKER_SHIP_OF_LINE,TWO_DECKER_SHIP_OF_LINE,FRIGATE,TENDER,BRIG,GALLEON,STEAM_FRIGATE,BATTERY,GALLEY,CORVETTE,MONITOR,STEAMSHIP
+    };
 }

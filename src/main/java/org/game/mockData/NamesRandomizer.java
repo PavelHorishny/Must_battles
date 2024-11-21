@@ -7,7 +7,7 @@ import java.util.Stack;
 
 @Getter
 public class NamesRandomizer {
-
+    //TODO remake class as a separate service(??)
     private final int ROYAL_PORT_QNT = 2;
     private final int FORTIFICATIONS_QNT = 12;
     private final int BIG_BATTLESHIP_QNT = 4;
@@ -24,21 +24,21 @@ public class NamesRandomizer {
     private final int STEAMSHIP_QNT = 2;
 
     public NamesRandomizer() {
-        UnitNames names = new UnitNames();
-        randomNames(names.royalPortsName, ROYAL_PORT_QNT, royalPortNames);
-        randomNames(names.fortificationsNames,FORTIFICATIONS_QNT, fortificationsNames);
-        randomNames(names.threeDeckerShipOfLineNames,BIG_BATTLESHIP_QNT, bigBattleshipsNames);
-        randomNames(names.twoDeckerShipsOfTheLineNames,SMALL_BATTLESHIP_QNT, smallBattleshipsNames);
-        randomNames(names.frigateNames,FRIGATES_QNT,frigatesNames);
-        randomNames(names.tenderNames,TENDERS_QNT,tendersNames);
-        randomNames(names.brigNames,BRIGS_QNT,brigNames);
-        randomNames(names.galleonNames,GALLEONS_QNT,galleonsNames);
-        randomNames(names.steamFrigateNames,STEAM_FRIGATE_QNT,steamFrigateNames);
-        randomNames(names.navalBatteryNames,NAVAL_BATTERY_QNT,navalBatteryNames);
-        randomNames(names.galleyNames,GALLEYS_QNT,galleysName);
-        randomNames(names.steamCorvetteNames,STEAM_CORVETTE_QNT,steamCorvetteNames);
-        randomNames(names.monitorNames,MONITOR_QNT,monitorNames);
-        randomNames(names.steamshipNames,STEAMSHIP_QNT,steamshipNames);
+
+        randomNames(MockedData.ROYAL_PORTS_NAME, ROYAL_PORT_QNT, royalPortNames);
+        randomNames(MockedData.FORTIFICATIONS_NAMES,FORTIFICATIONS_QNT, fortificationsNames);
+        randomNames(MockedData.THREE_DECKER_SHIP_OF_LINE_NAMES,BIG_BATTLESHIP_QNT, bigBattleshipsNames);
+        randomNames(MockedData.TWO_DECKER_SHIPS_OF_THE_LINE_NAMES,SMALL_BATTLESHIP_QNT, smallBattleshipsNames);
+        randomNames(MockedData.FRIGATE_NAMES,FRIGATES_QNT,frigatesNames);
+        randomNames(MockedData.TENDER_NAMES,TENDERS_QNT,tendersNames);
+        randomNames(MockedData.BRIG_NAMES,BRIGS_QNT,brigNames);
+        randomNames(MockedData.GALLEON_NAMES,GALLEONS_QNT,galleonsNames);
+        randomNames(MockedData.STEAM_FRIGATE_NAMES,STEAM_FRIGATE_QNT,steamFrigateNames);
+        randomNames(MockedData.NAVAL_BATTERY_NAMES,NAVAL_BATTERY_QNT,navalBatteryNames);
+        randomNames(MockedData.GALLEY_NAMES,GALLEYS_QNT,galleysName);
+        randomNames(MockedData.STEAM_CORVETTE_NAMES,STEAM_CORVETTE_QNT,steamCorvetteNames);
+        randomNames(MockedData.MONITOR_NAMES,MONITOR_QNT,monitorNames);
+        randomNames(MockedData.STEAMSHIP_NAMES,STEAMSHIP_QNT,steamshipNames);
     }
 
     public Stack <String> royalPortNames = new Stack<>();

@@ -1,19 +1,24 @@
 package org.game.mockData;
 
+import org.game.gui.Constants;
 import org.game.gui.Coordinates;
 import org.game.gui.MapCell;
-import org.game.gui.MapCellType;
+import org.game.gui.panels.PanelsConstrains;
+import org.game.map.Surface;
+import org.game.map.SurfaceType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class StandardMap {
     public static final ArrayList<MapCell> MAP = generateMap();
+    public static final Surface [][] BACK_MAP = map();
 
     private static ArrayList<MapCell> generateMap() {
         ArrayList<Coordinates> land = new ArrayList<>() {
             {
-                add(new Coordinates(0,21));
                 add(new Coordinates(0,22));
+                add(new Coordinates(0,21));
                 add(new Coordinates(0,23));
                 add(new Coordinates(0,24));
                 add(new Coordinates(0,25));
@@ -398,12 +403,23 @@ public class StandardMap {
                 int finalX = x;
                 int finalY = y;
                 if (land.stream().anyMatch(coordinates -> coordinates.equals(new Coordinates(finalX, finalY)))) {
-                    cells.add(new MapCell(new Coordinates(x, y), MapCellType.LAND));
+                    cells.add(new MapCell(new Coordinates(x, y), SurfaceType.LAND));
                 } else {
-                    cells.add(new MapCell(new Coordinates(x, y), MapCellType.WATER));
+                    cells.add(new MapCell(new Coordinates(x, y), SurfaceType.WATER));
                 }
             }
         }
         return cells;
+    }
+    private static Surface [] [] map(){
+        Surface [] [] tmp = new Surface[PanelsConstrains.GAME_AREA_SETTINGS.getPreferredSize().width/ Constants.CELL_SIZE][PanelsConstrains.GAME_AREA_SETTINGS.getPreferredSize().height/Constants.CELL_SIZE];
+        for (int i = 0; i < tmp.length; i++){
+            for (int y = 0; y < tmp[0].length; y++){
+                tmp[i][y] = new Surface(new Coordinates(i,y),SurfaceType.WATER);
+            }
+        }
+        Arrays.stream(MockedData.LAND).forEach(land->
+            tmp[land.getCoordinates().axisX()][land.getCoordinates().axisY()] = land);
+        return tmp;
     }
 }

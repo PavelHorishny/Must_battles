@@ -423,4 +423,21 @@ public class MockedData {
         add("Delhi");
         add("Hibernia");
     }};
+    /**
+     * Standard total quantity of unit types*/
+
+    public static final int ROYAL_PORT_QNT = 2;
+    public static final int FORTIFICATIONS_QNT = 12;
+    public static final int THREE_DECKER_SHIP_THE_LINE_QNT = 4;
+    public static final int TWO_DECKER_SHIP_THE_LINE_QNT = 8;
+    public static final int FRIGATES_QNT = 6;
+    public static final int TENDERS_QNT = 4;
+    public static final int BRIGS_QNT = 10;
+    public static final int GALLEONS_QNT = 6;
+    public static final int STEAM_FRIGATE_QNT = 2;
+    public static final int NAVAL_BATTERY_QNT = 2;
+    public static final int GALLEYS_QNT = 8;
+    public static final int STEAM_CORVETTE_QNT = 2;
+    public static final int MONITOR_QNT = 2;
+    public static final int STEAMSHIP_QNT = 2;
 }

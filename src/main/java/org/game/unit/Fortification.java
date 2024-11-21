@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Fortification extends GameUnit {
-    private final FortificationType fortificationType;
+    private FortificationType fortificationType;
     private List<Surface> port = new ArrayList<>();
 
     public Fortification(Coordinates coordinates,FortificationType fortificationType,boolean player){

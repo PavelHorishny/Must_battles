@@ -5,6 +5,7 @@ import org.game.MapAreaState;
 import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
+import org.game.unit.GUIUnit;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     BufferedImage imageTwo;
     GUIUnit selected;
     BufferedImage anchor;
+
     int start;
     int end;
     boolean point = false;
@@ -34,6 +36,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             image = ImageIO.read(new File("src/main/resources/selected.png"));
             imageTwo = ImageIO.read(new File("src/main/resources/underattack.png"));
             anchor = ImageIO.read(new File("src/main/resources/anchor.png"));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -125,6 +128,9 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     private void drawAnchor(Graphics g) {
         g.drawImage(anchor,x*Constants.CELL_SIZE,y*Constants.CELL_SIZE,null);
+
+    }
+    private void drawFleet(Graphics g){
 
     }
 

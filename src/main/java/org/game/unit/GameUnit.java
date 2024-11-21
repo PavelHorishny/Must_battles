@@ -22,4 +22,6 @@ public class GameUnit extends Unit {
         this.isFirstPlayer = isFirstPlayer;
         setCoordinates(coordinates);
     }
+    public GameUnit(){}
+
 }

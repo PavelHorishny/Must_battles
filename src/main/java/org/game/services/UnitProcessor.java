@@ -8,17 +8,21 @@ import org.game.mockData.NamesRandomizer;
 import org.game.unit.FortificationType;
 import org.game.unit.GameUnit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @Getter
 public class UnitProcessor implements UnitService{
+    private Surface[][] map;
+    private ArrayList <Surface> route; // maybe redundant
+    private Map <String, GameUnit> fleet = new HashMap<>();
 
     private final MapService mapProcessor = new MapProcessor();
     private final FortificationService fortificationProcessor = new FortificationProcessor();
-    private Surface[][] map;
-    private Map <String, GameUnit> fleet = new HashMap<>();
+
+
 
     //NamesRandomizer namesRandomizer = new NamesRandomizer();
     public UnitProcessor() {
@@ -39,7 +43,8 @@ public class UnitProcessor implements UnitService{
     @Override
     public State initialGameState() {
         map = mapProcessor.generateStandardMap();
-        fortificationProcessor.generateFortification(fleet);
+        //fortificationProcessor.setPortLocations(map);
+        fortificationProcessor.getStandardFortifications(map,fleet);
         return State.builder().map(map).fleet(fleet).build();
     }
 }

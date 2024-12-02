@@ -1,11 +1,13 @@
 package org.game;
 
+import org.game.gui.Coordinates;
 import org.game.gui.MapCell;
 import org.game.map.Surface;
 import org.game.unit.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class BackToGUIConverter {
@@ -14,11 +16,11 @@ public class BackToGUIConverter {
         Arrays.stream(map).forEach(subArr -> Arrays.stream(subArr).forEach(surface -> tmp.add(new MapCell(surface.getCoordinates(),surface.getType()))));
         return tmp;
     }
-    public static ArrayList<GUIUnit> convertFleet(Map<String, GameUnit> fleet){
-        ArrayList<GUIUnit> tmp = new ArrayList<>();
+    public static Map<Coordinates,GUIUnit> convertFleet(Map<String, GameUnit> fleet){
+        Map<Coordinates,GUIUnit> tmp = new HashMap<>();
 
         fleet.values().forEach(gameUnit -> {
-            GUIUnit u = new GUIUnit();
+            tmp.put(gameUnit.getCoordinates(),makeGUIUnit(gameUnit)/*new GUIUnit(gameUnit.getId(),gameUnit.getCoordinates(),setIcons(gameUnit),gameUnit.getStateType())*/);
 
         });
         return tmp;
@@ -59,11 +61,12 @@ public class BackToGUIConverter {
         return unit.isFirstPlayer();
     }
 
-    private GUIUnit makeGUIUnit(GameUnit unit){
+    private static GUIUnit makeGUIUnit(GameUnit unit){
         GUIUnit tmp = new GUIUnit();
         tmp.setCoordinates(unit.getCoordinates());
         tmp.setId(unit.getId());
         tmp.setIcons(setIcons(unit));
+        tmp.setType(unit.getUnitType());
 /*        if(unit.getUnitType()==UnitType.FORTIFICATION){
             Fortification f = (Fortification) unit;
             if(f.getFortificationType()==FortificationType.ROYAL_PORT){

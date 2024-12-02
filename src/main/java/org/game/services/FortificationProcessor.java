@@ -1,6 +1,7 @@
 package org.game.services;
 
 import org.game.CardinalPoint;
+import org.game.Context;
 import org.game.gui.Coordinates;
 import org.game.map.Surface;
 import org.game.map.SurfaceType;
@@ -20,12 +21,13 @@ public class FortificationProcessor implements FortificationService{
     private final NamesRandomizer namesRandomizer;
 
     public FortificationProcessor() {
-        namesRandomizer = new NamesRandomizer();
+        namesRandomizer = Context.getNameRandomizer();
     }
 
     @Override
     public void generateFortification(Map<String, GameUnit> fleet) {
         setFortificationNames(fleet, MockedData.STANDARD_FORT_POSITION);
+        //TODO check if this method redundant
     }
     /**
      * Accepts Surface multidimensional array and Map <String, GameUnit>
@@ -42,8 +44,8 @@ public class FortificationProcessor implements FortificationService{
      * Returns boolean
      * Check if Coordinate object might be in bounds of multidimensional array*/
     private boolean checkIfPositionValid(Surface[][] map, Coordinates coordinates){
-        if(checkValidPositionOnAxis(map,coordinates.axisX())){
-            if(checkValidPositionOnAxis(map,coordinates.axisY())){
+        if(checkValidPositionOnAxisX(map,coordinates.axisX())){
+            if(checkValidPositionOnAxisY(map,coordinates.axisY())){
                 return checkIfSurfaceIsWater(map[coordinates.axisX()][coordinates.axisY()]);
             }else {
                 return false;
@@ -57,9 +59,13 @@ public class FortificationProcessor implements FortificationService{
      * Method accepts Surface multidimensional array and int
      * returns boolean
      * checks if int in bounds of sub array*/
-    private boolean checkValidPositionOnAxis(Surface [][] map, int index){
+    private boolean checkValidPositionOnAxisY(Surface [][] map, int index){
         return index >= 0 && index < map[0].length;
     }
+    private boolean checkValidPositionOnAxisX(Surface [][] map, int index){
+        return index >= 0 && index < map.length;
+    }
+
     /**
      * Method accepts Surface object
      * returns boolean
@@ -87,12 +93,14 @@ public class FortificationProcessor implements FortificationService{
      * switches SurfaceType to PORT
      * adds Surface to port Object's field */
     private void setPortLocations(Surface[][] map, Fortification fortification) {
+
         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-            if (checkIfPositionValid(map,new Coordinates(fortification.getCoordinates().axisX()+cardinalPoint.getValue().axisX(),fortification.getCoordinates().axisY()+cardinalPoint.getValue().axisY()))){
+
+            if (checkIfPositionValid(map,new Coordinates(fortification.getCoordinates().axisX()+cardinalPoint.getValue().axisX(),fortification.getCoordinates().axisY()+cardinalPoint.getValue().axisY())))
+            {
                 map[fortification.getCoordinates().axisX()+cardinalPoint.getValue().axisX()][fortification.getCoordinates().axisY()+cardinalPoint.getValue().axisY()].setType(SurfaceType.PORT);
                 fortification.getPort().add(map[fortification.getCoordinates().axisX()+cardinalPoint.getValue().axisX()][fortification.getCoordinates().axisY()+cardinalPoint.getValue().axisY()]);
             }
         });
-
     }
 }

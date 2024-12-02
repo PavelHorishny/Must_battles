@@ -16,10 +16,10 @@ public class State {
     Map <String, GameUnit> fleet;
     MapAreaState mapAreaState;
     LogAreaState logAreaState;
-    public State update(){
-        mapAreaState = new MapAreaState();
+/*    public State update(){
+        mapAreaState =
         mapAreaState.setMap(BackToGUIConverter.convertMap(map));
         //mapAreaState.setFleet();
         return this;
-    }
+    }*/
 }

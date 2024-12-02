@@ -1,6 +1,5 @@
 package org.game.unit;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.game.gui.Coordinates;
@@ -9,13 +8,14 @@ import org.game.gui.StateType;
 import java.awt.image.BufferedImage;
 @Getter
 @Setter
-@Builder
+
 public class GUIUnit extends Unit {
 
 
     private UnitIcons icons;
     private BufferedImage currentIcon;
     private StateType currentState;
+    private UnitType type;
 
     public GUIUnit() {
     }
@@ -29,6 +29,13 @@ public class GUIUnit extends Unit {
         this.setCoordinates(coordinates);
         //setPosition(this.getCoordinates());
         setActivity(state);
+    }
+
+    public GUIUnit(String id, Coordinates coordinates, UnitIcons unitIcons, StateType stateType) {
+        this.setId(id);
+        this.setCoordinates(coordinates);
+        icons = unitIcons;
+        setActivity(stateType);
     }
 
     public void setActivity(StateType type){

@@ -1,11 +1,10 @@
 package org.game.services;
 
 import lombok.Getter;
+import org.game.BackToGUIConverter;
+import org.game.MapAreaState;
 import org.game.State;
 import org.game.map.Surface;
-import org.game.mockData.MockedData;
-import org.game.mockData.NamesRandomizer;
-import org.game.unit.FortificationType;
 import org.game.unit.GameUnit;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class UnitProcessor implements UnitService{
 
     private final MapService mapProcessor = new MapProcessor();
     private final FortificationService fortificationProcessor = new FortificationProcessor();
+    private final VesselProcessor vesselProcessor = new VesselProcessor();
 
 
 
@@ -28,23 +28,16 @@ public class UnitProcessor implements UnitService{
     public UnitProcessor() {
         //giveFortNames();
     }
-    void giveFortNames(){
-/*        MockedData.STANDARD_FORT_POSITION.forEach(e->{
-            if(e.getFortificationType()==FortificationType.ROYAL_PORT){
-                e.setId(namesRandomizer.royalPortNames.pop());
-                fleet.put(e.getId(), e);
-            }else {
-                e.setId(namesRandomizer.fortificationsNames.pop());
-                fleet.put(e.getId(),e);
-            }
-        });*/
-    }
+
 
     @Override
     public State initialGameState() {
         map = mapProcessor.generateStandardMap();
         //fortificationProcessor.setPortLocations(map);
         fortificationProcessor.getStandardFortifications(map,fleet);
-        return State.builder().map(map).fleet(fleet).build();
+        vesselProcessor.getVessels(fleet,map);
+        //fleet.values().stream().map(Fortification.class::cast).toList().forEach(u-> System.out.println(u.getPort().size()+" "+u.getCoordinates().toString()));
+        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build()).build();
+        //TODO make to gui converter
     }
 }

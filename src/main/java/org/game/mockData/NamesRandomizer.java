@@ -57,11 +57,11 @@ public class NamesRandomizer {
     public Stack <String> steamshipNames = new Stack<>();
 
 
-    private void randomNames(List<String> names, int qnt, Stack<String> target){
-        while (target.size()<qnt){
-            int x = (int) (Math.random()*(names.size()));
-            target.push(names.get(x));
-            names.remove(x);
+    private void randomNames(List<String> source, int qnt, Stack<String> target){
+        while (target.size()<qnt&& !source.isEmpty()){
+            int x = (int) (Math.random()*(source.size()));
+            target.push(source.get(x));
+            source.remove(x);
         }
     }
 

@@ -1,7 +1,6 @@
 package org.game.unit;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -53,9 +52,9 @@ public class Images {
                     ImageIO.read(new File("src/main/resources/img/TwoDSoL/1_TwoDSoL_selected.png")),
                     ImageIO.read(new File("src/main/resources/img/TwoDSoL/1_TwoDSoL_under.png")));
             TWO_DECKER_SHIP_OF_LINE_ND=new UnitIcons(
-                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/1_TwoDSoL.png")),
-                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/1_TwoDSoL_selected.png")),
-                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/1_TwoDSoL_under.png")));
+                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/2_TwoDSoL.png")),
+                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/2_TwoDSoL_selected.png")),
+                    ImageIO.read(new File("src/main/resources/img/TwoDSoL/2_TwoDSoL_under.png")));
             TENDER_ST = new UnitIcons(
                     ImageIO.read(new File("src/main/resources/img/Tender/1_Tender.png")),
                     ImageIO.read(new File("src/main/resources/img/Tender/1_Tender_selected.png")),
@@ -133,9 +132,9 @@ public class Images {
                     ImageIO.read(new File("src/main/resources/img/Monitor/1_Monitor_selected.png")),
                     ImageIO.read(new File("src/main/resources/img/Monitor/1_Monitor_under.png")));
             MONITOR_ND = new UnitIcons(
-                    ImageIO.read(new File("src/main/resources/img/Monitor/1_Monitor.png")),
-                    ImageIO.read(new File("src/main/resources/img/Monitor/1_Monitor_selected.png")),
-                    ImageIO.read(new File("src/main/resources/img/Monitor/1_Monitor_under.png")));
+                    ImageIO.read(new File("src/main/resources/img/Monitor/2_Monitor.png")),
+                    ImageIO.read(new File("src/main/resources/img/Monitor/2_Monitor_selected.png")),
+                    ImageIO.read(new File("src/main/resources/img/Monitor/2_Monitor_under.png")));
             FIRST_LINE_FORT_ST = new UnitIcons(
                     ImageIO.read(new File("src/main/resources/img/FLFort/1_FLFort.png")),
                     ImageIO.read(new File("src/main/resources/img/FLFort/1_FLFort_selected.png")),

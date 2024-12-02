@@ -21,7 +21,10 @@ public class GameUnit extends Unit {
         //this.unitType = unitType;
         this.isFirstPlayer = isFirstPlayer;
         setCoordinates(coordinates);
+        stateType = StateType.PASSIVE;
     }
-    public GameUnit(){}
+    public GameUnit(){
+        stateType=StateType.PASSIVE;
+    }
 
 }

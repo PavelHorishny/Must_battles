@@ -7,7 +7,6 @@ import org.game.gui.Coordinates;
 @Getter
 @Setter
 public abstract class Unit {
-    @Getter
     private Coordinates coordinates;
     private String id;
 

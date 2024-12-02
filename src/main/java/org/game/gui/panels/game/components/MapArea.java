@@ -6,6 +6,7 @@ import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
 import org.game.unit.GUIUnit;
+import org.game.unit.UnitType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,10 +14,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
     //ArrayList<MapCell> map = StandardMap.MAP;
-    MapAreaState state = new MapAreaState();
+    MapAreaState state;
     ArrayList<GUIUnit> fleet_st;
     ArrayList<MapCell> route;
     BufferedImage image;
@@ -98,10 +100,14 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
         });
     }
-    private void drawVessels(Graphics g){
-        fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX(),e.getCoordinates().axisX(),null));
+    private void drawVessels(Graphics g, GUIUnit unit){
+        //fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX(),e.getCoordinates().axisX(),null));
+        g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30+7,null);
         //g.drawImage(new GameUnit(Images.TWO_DECKER_SHIP_OF_LINE_ST,new Coordinates(11,10), StateType.PASSIVE).getCurrentIcon(),11*30,10*30,this);
         //g.drawImage(imageTwo,12*30,10*30,this);
+    }
+    private void drawFortification(Graphics g, GUIUnit unit){
+        g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30,null);
     }
     
     private void move(){
@@ -117,6 +123,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         super.paintComponent(g);
         if(state!=null) {
             drawMap(g);
+            drawFleet(g);
         }else {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);
@@ -131,11 +138,30 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     }
     private void drawFleet(Graphics g){
-
+        //state.getFleet().values().forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX()*30,e.getCoordinates().axisY()*30,null));
+        state.getFleet().values().forEach(guiUnit -> {if(guiUnit.getType().equals(UnitType.FORTIFICATION)){
+            drawFortification(g,guiUnit);
+        }else {
+            drawVessels(g,guiUnit);
+        }
+        });
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(e.getButton()==MouseEvent.BUTTON1){
+            //Coordinates target = new Coordinates(e.getX()/30,e.getY()/30);
+            Optional<GUIUnit> t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+            t.ifPresent(guiUnit -> {
+                mediator.unitSelected(guiUnit.getId());
+                System.out.println(guiUnit.getId());
+            });
+            if(t.isEmpty()) System.out.println("empty");
+           /* System.out.println("pressed");
+            System.out.println(e.getX()+" "+e.getY());
+            System.out.println(state.getFleet().get(new Coordinates(e.getX()/30,e.getY()/30)));*/
+
+        }
  /*       if(e.getButton()==MouseEvent.BUTTON2){
             //start = selected.getX();
             end = selected.getX()+90;

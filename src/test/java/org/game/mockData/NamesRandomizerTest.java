@@ -37,4 +37,8 @@ class NamesRandomizerTest {
         assertEquals(namesRandomizer.getMONITOR_QNT(),namesRandomizer.monitorNames.size());
         assertEquals(namesRandomizer.getSTEAMSHIP_QNT(),namesRandomizer.steamshipNames.size());
     }
+    @Test
+    void test(){
+        namesRandomizer.getBigBattleshipsNames().forEach(System.out::println);
+    }
 }

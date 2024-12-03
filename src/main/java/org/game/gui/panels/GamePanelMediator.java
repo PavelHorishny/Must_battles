@@ -1,6 +1,7 @@
 package org.game.gui.panels;
 
 import org.game.Context;
+import org.game.Request;
 import org.game.State;
 import org.game.gui.panels.game.components.*;
 import org.game.messaging.GameClient;
@@ -51,8 +52,8 @@ public class GamePanelMediator implements Mediator{
     }
 
     @Override
-    public void unitSelected(Message message) {
-
+    public void unitSelected(String vesselID) {
+        client.request(Request.builder().message(Message.SELECT).id(vesselID).build());
     }
 
     @Override
@@ -61,7 +62,7 @@ public class GamePanelMediator implements Mediator{
         client.connect(Context.getServer());
         client.registerMediator(this);
         //gameStarted();
-        client.request(Message.START);
+        client.request(Request.builder().message(Message.START).build());
     }
 
     @Override

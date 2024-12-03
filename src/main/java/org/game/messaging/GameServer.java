@@ -20,17 +20,20 @@ public class GameServer implements Server{
     }
 
     @Override
-    public void onRequest(Client client, Message message) {
-        switch (message){
+    public void onRequest(Client client, Request request) {
+        switch (request.getMessage()){
+            case SELECT -> {
+
+            }
             case START -> {
-                state = unitService.initialGameState();
+                //state = unitService.initialGameState();
                 //map = mapProcessor.generateStandardMap();
                 //state.setMapAreaState(new MapAreaState().setMap(StandardMap.MAP));
                 //state.setMapAreaState(new MapAreaState(BackToGUIConverter.convertMap(state.getMap())));
-                state.setLogAreaState(new LogAreaState("Day 1"));
+                //state.setLogAreaState(new LogAreaState("Day 1"));
                 //state.update();
                 //state.setMapAreaState(state.getMapAreaState());
-                client.response(state.update());
+                client.response(unitService.initialGameState());
             }
         }
     }

@@ -31,9 +31,12 @@ public class LogArea extends GamePanelComponent {
 
     @Override
     public void updateState(GameComponentState state) {
-        this.state = (LogAreaState) state;
-        l.setText(this.state.getLabel());
-        repaint();
+        if(state!=null){
+            this.state = (LogAreaState) state;
+            l.setText(this.state.getLabel());
+            repaint();
+        }
+
     }
 
     @Override

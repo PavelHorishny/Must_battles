@@ -81,9 +81,11 @@ public class FortificationProcessor implements FortificationService{
         fortifications.forEach(e->{
             if(e.getFortificationType()== FortificationType.ROYAL_PORT){
                 e.setId(namesRandomizer.royalPortNames.pop());
+                setBaseParameters(e);
                 fleet.put(e.getId(), e);
             }else {
                 e.setId(namesRandomizer.fortificationsNames.pop());
+                setBaseParameters(e);
                 fleet.put(e.getId(),e);
             }
         });
@@ -102,5 +104,30 @@ public class FortificationProcessor implements FortificationService{
                 fortification.getPort().add(map[fortification.getCoordinates().axisX()+cardinalPoint.getValue().axisX()][fortification.getCoordinates().axisY()+cardinalPoint.getValue().axisY()]);
             }
         });
+    }
+    private void setBaseParameters(Fortification fortification){
+        switch (fortification.getFortificationType()){
+            case FIRST_LINE_FORT -> {
+                fortification.setType(FortificationType.FIRST_LINE_FORT.getType());
+                fortification.setFire_range(FortificationType.FIRST_LINE_FORT.getFire_range());
+                fortification.setHit_points(FortificationType.FIRST_LINE_FORT.getHit_points());
+                fortification.setShots(FortificationType.FIRST_LINE_FORT.getShots());
+                fortification.setMovePoints(FortificationType.FIRST_LINE_FORT.getMovePoints());
+            }
+            case SECOND_LINE_FORT -> {
+                fortification.setType(FortificationType.SECOND_LINE_FORT.getType());
+                fortification.setFire_range(FortificationType.SECOND_LINE_FORT.getFire_range());
+                fortification.setHit_points(FortificationType.SECOND_LINE_FORT.getHit_points());
+                fortification.setShots(FortificationType.SECOND_LINE_FORT.getShots());
+                fortification.setMovePoints(FortificationType.SECOND_LINE_FORT.getMovePoints());
+            }
+            case ROYAL_PORT -> {
+                fortification.setType(FortificationType.ROYAL_PORT.getType());
+                fortification.setFire_range(FortificationType.ROYAL_PORT.getFire_range());
+                fortification.setHit_points(FortificationType.ROYAL_PORT.getHit_points());
+                fortification.setShots(FortificationType.ROYAL_PORT.getShots());
+                fortification.setMovePoints(FortificationType.ROYAL_PORT.getMovePoints());
+            }
+        }
     }
 }

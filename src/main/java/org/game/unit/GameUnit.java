@@ -11,7 +11,7 @@ public class GameUnit extends Unit {
     private UnitType unitType;
     private StateType stateType;
     private boolean isFirstPlayer;
-    private String description;
+    private String type;
     private int fire_range;
     private int hit_points;
     private int shots;

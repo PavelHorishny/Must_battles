@@ -56,6 +56,8 @@ public class InfoArea extends GamePanelComponent {
         if(s.isSelected()){
             ((CardLayout) this.getLayout()).show(this,"Selected");
             selectedInfoPanel.setState(((InfoAreaState) state).getSelectedData());
+        }else {
+            ((CardLayout) this.getLayout()).show(this,"General");
         }
     }
 }

@@ -2,8 +2,10 @@ package org.game.services;
 
 import lombok.Getter;
 import org.game.BackToGUIConverter;
-import org.game.MapAreaState;
-import org.game.State;
+import org.game.UnitData;
+import org.game.state.InfoAreaState;
+import org.game.state.MapAreaState;
+import org.game.state.State;
 import org.game.map.Surface;
 import org.game.unit.GameUnit;
 
@@ -16,7 +18,7 @@ import java.util.Map;
 public class UnitProcessor implements UnitService{
     private Surface[][] map;
     private ArrayList <Surface> route; // maybe redundant
-    private Map <String, GameUnit> fleet = new HashMap<>();
+    private final Map <String, GameUnit> fleet = new HashMap<>();
     private int day;
 
     private final MapService mapProcessor = new MapProcessor();
@@ -39,15 +41,18 @@ public class UnitProcessor implements UnitService{
         fortificationProcessor.getStandardFortifications(map,fleet);
         vesselProcessor.getVessels(fleet,map);
         //fleet.values().stream().map(Fortification.class::cast).toList().forEach(u-> System.out.println(u.getPort().size()+" "+u.getCoordinates().toString()));
-        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build()).build();
+        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+                .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
         //TODO make to gui converter
     }
 
     @Override
     public State unitSelected(String id) {
         GameUnit unit = fleet.get(id);
+        UnitData data = new UnitData(unit.getType(), unit.getId(), unit.getHit_points(), unit.getHit_points(), unit.getFire_range(), unit.getShots());
         System.out.println(unit.getId());
         System.out.println(unit.getHit_points());
-        return null;
+        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+                .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(data).build()).build();
     }
 }

@@ -1,7 +1,7 @@
 package org.game.gui.panels.game.components;
 
-import org.game.GameComponentState;
-import org.game.MapAreaState;
+import org.game.state.GameComponentState;
+import org.game.state.MapAreaState;
 import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;

@@ -1,7 +1,6 @@
 package org.game.gui.panels.game.components;
 
-import org.game.GameComponentState;
-import org.game.State;
+import org.game.state.GameComponentState;
 import org.game.gui.panels.Mediator;
 
 public interface GameComponent {

@@ -9,7 +9,7 @@ import org.game.UnitData;
 @Setter
 @Builder
 public class InfoAreaState extends GameComponentState {
-    private String day = "";
+    private String day;
     private boolean selected;
     private UnitData selectedData;
 }

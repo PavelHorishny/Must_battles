@@ -81,13 +81,11 @@ public class FortificationProcessor implements FortificationService{
         fortifications.forEach(e->{
             if(e.getFortificationType()== FortificationType.ROYAL_PORT){
                 e.setId(namesRandomizer.royalPortNames.pop());
-                setBaseParameters(e);
-                fleet.put(e.getId(), e);
             }else {
                 e.setId(namesRandomizer.fortificationsNames.pop());
-                setBaseParameters(e);
-                fleet.put(e.getId(),e);
             }
+            setBaseParameters(e);
+            fleet.put(e.getId(), e);
         });
     }
     /**

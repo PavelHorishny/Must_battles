@@ -1,4 +1,4 @@
-package org.game;
+package org.game.state;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +16,7 @@ public class State {
     Map <String, GameUnit> fleet;
     MapAreaState mapAreaState;
     LogAreaState logAreaState;
+    InfoAreaState infoAreaState;
 /*    public State update(){
         mapAreaState =
         mapAreaState.setMap(BackToGUIConverter.convertMap(map));

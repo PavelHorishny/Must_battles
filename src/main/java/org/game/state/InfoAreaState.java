@@ -12,4 +12,6 @@ public class InfoAreaState extends GameComponentState {
     private String day;
     private boolean selected;
     private UnitData selectedData;
+    private boolean target;
+    private UnitData targetData;
 }

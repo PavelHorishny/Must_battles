@@ -20,8 +20,8 @@ public class SelectedInfoPanel extends JPanel {
     public void setState(UnitData data){
         type.setText(data.type());
         name.setText(data.name());
-        hitPoints.setText(String.valueOf(data.current_hp()));
-        movePoints.setText(String.valueOf(data.fire_range()));
-        firePoints.setText(String.valueOf(data.fire_points()));
+        hitPoints.setText(String.valueOf(data.current_hit_points()));
+        movePoints.setText(String.valueOf(data.move_points()));
+        firePoints.setText(String.valueOf(data.fire_range()));
     }
 }

@@ -23,5 +23,37 @@ public class Vessel extends GameUnit {
         this.vesselType = vesselType;
         this.setId(id);
         this.setUnitType(UnitType.VESSEL);
+        initialState();
+    }
+
+    @Override
+    void initialState() {
+        super.initialState();
+        switch (vesselType){
+            case THREE_DECKER_SHIP_OF_LINE -> setUp(VesselType.THREE_DECKER_SHIP_OF_LINE);
+            case TWO_DECKER_SHIP_OF_LINE -> setUp(VesselType.TWO_DECKER_SHIP_OF_LINE);
+            case FRIGATE -> setUp(VesselType.FRIGATE);
+            case TENDER -> setUp(VesselType.TENDER);
+            case BRIG -> setUp(VesselType.BRIG);
+            case GALLEON -> setUp(VesselType.GALLEON);
+            case STEAM_FRIGATE -> setUp(VesselType.STEAM_FRIGATE);
+            case BATTERY -> setUp(VesselType.BATTERY);
+            case GALLEY -> setUp(VesselType.GALLEY);
+            case CORVETTE -> setUp(VesselType.CORVETTE);
+            case MONITOR -> setUp(VesselType.MONITOR);
+            case STEAMSHIP -> setUp(VesselType.STEAMSHIP);
+        }
+    }
+    private void setUp(VesselType type){
+        setType(type.getType());
+        setBase_hit_points(type.getHit_points());
+        setCurrent_hit_point(getBase_hit_points());
+        setBase_shots(type.getShots());
+        setCurrent_shots(getBase_shots());
+        setMovePoints(type.getBreeze_move_points());
+        setFire_range(type.getFire_range());
+        breeze_move_points = type.getBreeze_move_points();
+        calm_move_points = type.getCalm_move_points();
+        storm_move_points = type.getStorm_move_points();
     }
 }

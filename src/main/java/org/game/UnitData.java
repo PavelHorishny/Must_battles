@@ -1,10 +1,4 @@
 package org.game;
 
-public record UnitData
-    (String type,
-    String name,
-    int max_hp,
-    int current_hp,
-    int fire_range,
-    int fire_points){}
+public record UnitData (String name, String type, int base_hit_points, int current_hit_points, int base_shots, int current_shots, int move_points, int fire_range){}
 

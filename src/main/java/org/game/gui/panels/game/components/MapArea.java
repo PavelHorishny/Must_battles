@@ -156,7 +156,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 mediator.unitSelected(guiUnit.getId());
                 System.out.println(guiUnit.getId());
             });
-            if(t.isEmpty()) mediator.unitSelected(null);
+            if(t.isEmpty()) mediator.unitSelected("");
            /* System.out.println("pressed");
             System.out.println(e.getX()+" "+e.getY());
             System.out.println(state.getFleet().get(new Coordinates(e.getX()/30,e.getY()/30)));*/

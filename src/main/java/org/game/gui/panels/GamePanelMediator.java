@@ -3,7 +3,7 @@ package org.game.gui.panels;
 import org.game.Context;
 import org.game.Request;
 import org.game.state.State;
-import org.game.gui.panels.game.components.*;
+import org.game.gui.panels.game.areas.*;
 import org.game.messaging.GameClient;
 
 public class GamePanelMediator implements Mediator{

@@ -1,4 +1,4 @@
-package org.game.gui.panels.game.components;
+package org.game.gui.panels.game.areas;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

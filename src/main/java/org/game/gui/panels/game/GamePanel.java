@@ -2,7 +2,7 @@ package org.game.gui.panels.game;
 
 import org.game.Context;
 import org.game.gui.panels.*;
-import org.game.gui.panels.game.components.*;
+import org.game.gui.panels.game.areas.*;
 
 import javax.swing.*;
 

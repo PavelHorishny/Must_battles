@@ -1,4 +1,4 @@
-package org.game.gui.panels.game.components;
+package org.game.gui.panels.game.areas;
 
 import org.game.state.GameComponentState;
 import org.game.state.MapAreaState;

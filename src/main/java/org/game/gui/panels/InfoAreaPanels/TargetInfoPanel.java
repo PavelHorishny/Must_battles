@@ -8,26 +8,30 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class TargetInfoPanel extends JPanel implements MouseListener {
-    private JLabel type = new JLabel("type");
-    private JLabel name = new JLabel("type");
-    private JLabel hitPoints = new JLabel("1");
-    private JLabel movePoints = new JLabel("1");
-    private JLabel firePoints = new JLabel("1");
+
+    private final SolidTextComponent name = new SolidTextComponent();
+    private final SolidTextComponent type = new SolidTextComponent();
+    private final MixedComponent hit_points = new MixedComponent("HP", Color.RED);
+    private final MixedComponent move_points = new MixedComponent("MP", Color.RED);
+    private final MixedComponent fire_range = new MixedComponent("Range", Color.RED);
+    private final MixedComponent shots = new MixedComponent("Shots",Color.RED);
 
     public TargetInfoPanel(){
-        add(type);
         add(name);
-        add(hitPoints);
-        add(movePoints);
-        add(firePoints);
+        add(type);
+        add(hit_points);
+        add(move_points);
+        add(fire_range);
+        add(shots);
         addMouseListener(this);
     }
     public void setState(UnitData data){
-        type.setText(data.name());
-        name.setText(data.type());
-        hitPoints.setText(String.valueOf(data.current_hit_points()));
-        movePoints.setText(String.valueOf(data.move_points()));
-        firePoints.setText(String.valueOf(data.fire_range()));
+        name.setText(data.name());
+        type.setText(data.type());
+        hit_points.setData(data.base_hit_points(),data.base_hit_points());
+        move_points.setData(data.move_points(),data.move_points());
+        fire_range.setData(data.fire_range(),data.fire_range());
+        shots.setData(data.base_shots(),data.base_shots());
     }
 
     @Override

@@ -75,6 +75,7 @@ public class GamePanelMediator implements Mediator{
         game.updateState(state.getMapAreaState());
         log.updateState(state.getLogAreaState());
         info.updateState(state.getInfoAreaState());
+        wind.updateState(state.getWindRoseAreaState());
     }
 
     public void start() {

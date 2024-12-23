@@ -87,7 +87,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     }
 
 
-    private void drawMap(Graphics g){
+    private void drawMap(Graphics graphics){
         /*Arrays.stream(map).forEach(mc->Arrays.stream(mc).forEach(e->{
             g.setColor(e.getColor());
             g.fillRect(e.x,e.y,e.width,e.height);*//*
@@ -95,9 +95,16 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 g.drawImage(e.getUnits().getFirst().getCurrentIcon(),e.x,e.y,null);
             }*//*
         }));*/
+        Graphics2D g = (Graphics2D) graphics;
        state.getMap().forEach(mapCell -> {
             g.setColor(mapCell.getColor());
             g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
+    /*        if(mapCell.getType().equals(SurfaceType.ROUTE)){
+                System.out.println("YES");
+                g.setColor(Constants.PORT);
+                g.setStroke(new BasicStroke(2));
+                g.drawRect(mapCell.x+3,mapCell.y+3,mapCell.width-4,mapCell.height-4);
+            }*/
         });
     }
     private void drawVessels(Graphics g, GUIUnit unit){

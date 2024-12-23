@@ -3,6 +3,7 @@ package org.game.unit;
 import lombok.Getter;
 import lombok.Setter;
 import org.game.UnitData;
+import org.game.Weather;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 
@@ -12,6 +13,7 @@ public class GameUnit extends Unit {
     private UnitType unitType;
     private StateType stateType;
     private boolean isFirstPlayer;
+    private Weather temp_field_weather;
     private String type;
     private int fire_range;
     private int base_hit_points;

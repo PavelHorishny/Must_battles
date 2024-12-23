@@ -9,13 +9,17 @@ import java.awt.*;
 public class MapCell extends Rectangle {
     Coordinates coordinates;
     Color color;
+    SurfaceType type;
+
     public MapCell(Coordinates coordinates, SurfaceType type){
         color = setColor(type);
         this.coordinates = coordinates;
+        this.type=type;
         width = Constants.CELL_SIZE;
         height = Constants.CELL_SIZE;
         setPoints(coordinates);
     }
+
 
     private void setPoints(Coordinates coordinates) {
         x = coordinates.axisX() * Constants.CELL_SIZE;
@@ -26,7 +30,7 @@ public class MapCell extends Rectangle {
         return switch (type){
             case LAND -> Constants.LAND;
             case WATER -> Constants.WATER;
-            case PORT -> Constants.PORT;
+            case PORT, ROUTE -> Constants.PORT;
         };
     }
 }

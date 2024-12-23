@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.game.state.GameComponentState;
 import org.game.gui.panels.PanelsConstrains;
 import org.game.gui.panels.Settings;
+import org.game.state.WindRoseAreaState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,7 @@ public class WindRoseArea extends GamePanelComponent {
     private final JLabel southWest = new JLabel("SW");
     private final JLabel southEast = new JLabel("SE");
     private final JLabel south = new JLabel("S");
-    private JLabel force = new JLabel("CALM");
+    private final JLabel force = new JLabel("CALM");
     private final JLabel [] set = new JLabel[] {
             north,northWest, northEast,west,east,southWest,southEast,south,force
     };
@@ -68,6 +69,20 @@ public class WindRoseArea extends GamePanelComponent {
 
     @Override
     public void updateState(GameComponentState state) {
-
+        System.out.println("WINDROSEAREA");
+        System.out.println(state);
+        System.out.println("WINDROSEAREA");
+        if(state!=null) {
+            WindRoseAreaState s = (WindRoseAreaState) state;
+            if (s.getWeather() != null) {
+                highLight(s.getWeather().cardinalPoint().getName(), s.getWeather().wind().getValue());
+            }else {
+                this.force.setForeground(Color.BLACK);
+                this.active.setForeground(Color.BLACK);
+            }
+        }else{
+            this.force.setForeground(Color.BLACK);
+            this.active.setForeground(Color.BLACK);
+        }
     }
 }

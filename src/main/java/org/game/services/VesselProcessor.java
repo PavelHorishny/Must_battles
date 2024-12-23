@@ -21,9 +21,19 @@ public class VesselProcessor implements VesselService{
      * Method calls setFleet with necessary parameters*/
 
     @Override
-    public void getVessels(Map<String, GameUnit> fleet, Surface[][] map) {
+    public void setVessels(Map<String, GameUnit> fleet, Surface[][] map) {
         setFleet(randomizeFleet(generateVesselsWithNames(true)),randomizeFleet(generateVesselsWithNames(false)),fleet,map);
     }
+
+    /**
+     * @param fleet
+     * @return
+     */
+    @Override
+    public List<Vessel> getVessels(Map<String,GameUnit> fleet) {
+        return fleet.values().stream().filter(e->e.getUnitType().equals(UnitType.VESSEL)).map(Vessel.class::cast).toList();
+    }
+
     /**
      * Accepts Stack<Vessel> that keeps vessel objects in random order for first player,
      *      Stack<Vessel> that keeps vessel objects in random order for second player, Map<String,GameUnit> to keep game unit objects and Surface [][] that keeps map

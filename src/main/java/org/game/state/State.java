@@ -17,6 +17,7 @@ public class State {
     MapAreaState mapAreaState;
     LogAreaState logAreaState;
     InfoAreaState infoAreaState;
+    WindRoseAreaState windRoseAreaState;
 /*    public State update(){
         mapAreaState =
         mapAreaState.setMap(BackToGUIConverter.convertMap(map));

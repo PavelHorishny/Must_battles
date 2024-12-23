@@ -1,4 +1,4 @@
-package org.game.gui.panels.game.components;
+package org.game.gui.panels.game.areas;
 
 import lombok.Setter;
 import org.game.gui.panels.GamePanelMediator;

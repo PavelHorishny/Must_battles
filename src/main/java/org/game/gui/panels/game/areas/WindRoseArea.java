@@ -1,8 +1,8 @@
-package org.game.gui.panels.game.components;
+package org.game.gui.panels.game.areas;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.game.GameComponentState;
+import org.game.state.GameComponentState;
 import org.game.gui.panels.PanelsConstrains;
 import org.game.gui.panels.Settings;
 

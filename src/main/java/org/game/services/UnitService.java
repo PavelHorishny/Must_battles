@@ -1,6 +1,6 @@
 package org.game.services;
 
-import org.game.State;
+import org.game.state.State;
 
 public interface UnitService {
     State initialGameState();

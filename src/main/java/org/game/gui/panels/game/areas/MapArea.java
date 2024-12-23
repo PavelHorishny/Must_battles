@@ -1,7 +1,7 @@
-package org.game.gui.panels.game.components;
+package org.game.gui.panels.game.areas;
 
-import org.game.GameComponentState;
-import org.game.MapAreaState;
+import org.game.state.GameComponentState;
+import org.game.state.MapAreaState;
 import org.game.gui.*;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
@@ -87,7 +87,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     }
 
 
-    private void drawMap(Graphics g){
+    private void drawMap(Graphics graphics){
         /*Arrays.stream(map).forEach(mc->Arrays.stream(mc).forEach(e->{
             g.setColor(e.getColor());
             g.fillRect(e.x,e.y,e.width,e.height);*//*
@@ -95,9 +95,16 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 g.drawImage(e.getUnits().getFirst().getCurrentIcon(),e.x,e.y,null);
             }*//*
         }));*/
+        Graphics2D g = (Graphics2D) graphics;
        state.getMap().forEach(mapCell -> {
             g.setColor(mapCell.getColor());
             g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
+    /*        if(mapCell.getType().equals(SurfaceType.ROUTE)){
+                System.out.println("YES");
+                g.setColor(Constants.PORT);
+                g.setStroke(new BasicStroke(2));
+                g.drawRect(mapCell.x+3,mapCell.y+3,mapCell.width-4,mapCell.height-4);
+            }*/
         });
     }
     private void drawVessels(Graphics g, GUIUnit unit){
@@ -156,7 +163,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 mediator.unitSelected(guiUnit.getId());
                 System.out.println(guiUnit.getId());
             });
-            if(t.isEmpty()) System.out.println("empty");
+            if(t.isEmpty()) mediator.unitSelected("");
            /* System.out.println("pressed");
             System.out.println(e.getX()+" "+e.getY());
             System.out.println(state.getFleet().get(new Coordinates(e.getX()/30,e.getY()/30)));*/

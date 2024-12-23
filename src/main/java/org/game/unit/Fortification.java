@@ -18,5 +18,25 @@ public class Fortification extends GameUnit {
         super(player,coordinates);
         this.fortificationType = fortificationType;
         this.setUnitType(UnitType.FORTIFICATION);
+        initialState();
+    }
+
+    @Override
+    void initialState() {
+        super.initialState();
+        switch (fortificationType){
+            case FIRST_LINE_FORT -> setUp(FortificationType.FIRST_LINE_FORT);
+            case SECOND_LINE_FORT -> setUp(FortificationType.SECOND_LINE_FORT);
+            case ROYAL_PORT -> setUp(FortificationType.ROYAL_PORT);
+        }
+    }
+    private void setUp(FortificationType type){
+        setType(type.getType());
+        setFire_range(type.getFire_range());
+        setBase_hit_points(type.getHit_points());
+        setCurrent_hit_point(getBase_hit_points());
+        setBase_shots(type.getShots());
+        setCurrent_shots(getBase_shots());
+        setMovePoints(type.getMovePoints());
     }
 }

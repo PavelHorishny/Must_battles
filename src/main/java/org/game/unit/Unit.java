@@ -9,5 +9,5 @@ import org.game.gui.Coordinates;
 public abstract class Unit {
     private Coordinates coordinates;
     private String id;
-
+    abstract void initialState();
 }

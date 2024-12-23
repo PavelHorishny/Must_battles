@@ -17,7 +17,7 @@ public enum VesselType {
     MONITOR("Monitor",3,2,3,1,3,3),
     STEAMSHIP("Steamship",5,2,2,1,3,3);
 
-    private final String description;
+    private final String type;
     private final int breeze_move_points;
     private final int calm_move_points;
     private final int storm_move_points;
@@ -25,9 +25,9 @@ public enum VesselType {
     private final int fire_range;
     private final int hit_points;
 
-    VesselType(String description, int breeze_move_points, int calm_move_points, int storm_move_points,
+    VesselType(String type, int breeze_move_points, int calm_move_points, int storm_move_points,
                int shots, int fire_range, int hit_points) {
-        this.description = description;
+        this.type = type;
         this.breeze_move_points = breeze_move_points;
         this.calm_move_points = calm_move_points;
         this.storm_move_points = storm_move_points;

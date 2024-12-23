@@ -2,6 +2,7 @@ package org.game.unit;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.game.UnitData;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 
@@ -11,11 +12,14 @@ public class GameUnit extends Unit {
     private UnitType unitType;
     private StateType stateType;
     private boolean isFirstPlayer;
-    private String description;
+    private String type;
     private int fire_range;
-    private int hit_points;
-    private int shots;
+    private int base_hit_points;
+    private int current_hit_point;
+    private int base_shots;
+    private int current_shots;
     private int movePoints;
+
 
     public GameUnit(boolean isFirstPlayer, Coordinates coordinates) {
         //this.unitType = unitType;
@@ -27,4 +31,13 @@ public class GameUnit extends Unit {
         stateType=StateType.PASSIVE;
     }
 
+
+    public UnitData toUnitData() {
+        return new UnitData(getId(),type,base_hit_points,current_hit_point,base_shots,current_shots,movePoints,fire_range);
+    }
+
+    @Override
+    void initialState() {
+
+    }
 }

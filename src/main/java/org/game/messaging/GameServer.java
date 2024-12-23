@@ -1,13 +1,12 @@
 package org.game.messaging;
 
 import org.game.*;
-import org.game.gui.panels.Message;
 import org.game.map.Surface;
-import org.game.mockData.StandardMap;
 import org.game.services.MapProcessor;
 import org.game.services.MapService;
 import org.game.services.UnitProcessor;
 import org.game.services.UnitService;
+import org.game.state.State;
 
 public class GameServer implements Server{
     State state;
@@ -23,7 +22,7 @@ public class GameServer implements Server{
     public void onRequest(Client client, Request request) {
         switch (request.getMessage()){
             case SELECT -> {
-
+                client.response(unitService.unitSelected(request.getId()));
             }
             case START -> {
                 //state = unitService.initialGameState();

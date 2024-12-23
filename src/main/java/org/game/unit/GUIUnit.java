@@ -45,6 +45,13 @@ public class GUIUnit extends Unit {
             case AIMED -> currentIcon=icons.aimed();
         }
     }
+
+    @Override
+    void initialState() {
+
+    }
+
+
 /*    private void setPosition(Coordinates coordinates){
         x=coordinates.axisX()*Constants.CELL_SIZE;
         y=coordinates.axisY()*Constants.CELL_SIZE;

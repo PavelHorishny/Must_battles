@@ -1,9 +1,8 @@
 package org.game.messaging;
 
 import org.game.Request;
-import org.game.State;
+import org.game.state.State;
 import org.game.gui.panels.Mediator;
-import org.game.gui.panels.Message;
 
 public class GameClient implements Client{
     Mediator mediator;

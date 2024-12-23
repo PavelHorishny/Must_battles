@@ -8,23 +8,24 @@ import org.game.unit.GameUnit;
 @Getter
 @Setter
 public class Surface {
-/*    private int X;
-    private int Y;*/
+
     private Coordinates coordinates;
     private SurfaceType type;
     private GameUnit unit;
     private boolean isUnderAttack;
 
-/*    public Surface(int x, int y, SurfaceType type) {
-        X = x;
-        Y = y;
-        this.type = type;
-    }
-    public Surface (Coordinates coordinates){
-        this.coordinates=coordinates;
-    }*/
     public Surface (Coordinates coordinates,SurfaceType type){
         this.coordinates=coordinates;
         this.type = type;
+    }
+
+    public void setType(SurfaceType type) {
+        if(this.type!=null){
+            if(this.type.equals(SurfaceType.WATER)&&type.equals(SurfaceType.ROUTE)) this.type = type;
+            if(this.type.equals(SurfaceType.WATER)&&type.equals(SurfaceType.PORT)) this.type = type;
+            if(this.type.equals(SurfaceType.ROUTE)&&type.equals(SurfaceType.WATER)) this.type = type;
+        }else{
+            this.type = type;
+        }
     }
 }

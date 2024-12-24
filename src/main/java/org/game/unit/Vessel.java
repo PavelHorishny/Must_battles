@@ -1,10 +1,12 @@
 package org.game.unit;
 
 import lombok.Getter;
+import org.game.Weather;
 import org.game.gui.Coordinates;
 @Getter
 public class Vessel extends GameUnit {
     private VesselType vesselType;
+    //private Weather currentWeather;
     private int breeze_move_points;
     private int calm_move_points;
     private int storm_move_points;
@@ -52,8 +54,22 @@ public class Vessel extends GameUnit {
         setCurrent_shots(getBase_shots());
         setMovePoints(type.getBreeze_move_points());
         setFire_range(type.getFire_range());
+        setMaxMP(type.getBreeze_move_points());
         breeze_move_points = type.getBreeze_move_points();
         calm_move_points = type.getCalm_move_points();
         storm_move_points = type.getStorm_move_points();
+    }
+
+    /**
+     * @param currentWeather 
+     */
+    @Override
+    public void setCurrentWeather(Weather currentWeather) {
+        super.setCurrentWeather(currentWeather);
+        switch (currentWeather.wind()){
+            case BREEZE -> setMovePoints(vesselType.getBreeze_move_points());
+            case CALM -> setMovePoints(vesselType.getCalm_move_points());
+            case STORM -> setMovePoints(vesselType.getStorm_move_points());
+        }
     }
 }

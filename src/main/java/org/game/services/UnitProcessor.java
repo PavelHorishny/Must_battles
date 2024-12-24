@@ -9,8 +9,7 @@ import org.game.state.MapAreaState;
 import org.game.state.State;
 import org.game.map.Surface;
 import org.game.state.WindRoseAreaState;
-import org.game.unit.Fortification;
-import org.game.unit.GameUnit;
+import org.game.unit.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +49,12 @@ public class UnitProcessor implements UnitService{
         fortificationProcessor.getStandardFortifications(map,fleet);
         fleet.values().stream().map(Fortification.class::cast).toList().forEach(fortification -> fortificationProcessor.setPortLocations(mapProcessor.getPort(fortification.getCoordinates(),map),fortification));
         vesselProcessor.setVessels(fleet,map);
-        vesselProcessor.getVessels(fleet).forEach(e->e.setTemp_field_weather(weatherProcessor.getWeather()));
+        vesselProcessor.getVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
+    /*    map[7][19].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
+        map[7][19].getUnit().setCoordinates(new Coordinates(7,19));
+        map[7][19].getUnit().setUnitType(UnitType.VESSEL);
+
+        fleet.put("test",map[7][19].getUnit());*/
         //fleet.values().stream().map(Fortification.class::cast).toList().forEach(u-> System.out.println(u.getPort().size()+" "+u.getCoordinates().toString()));
         return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                 .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
@@ -70,7 +74,7 @@ public class UnitProcessor implements UnitService{
             System.out.println(map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].getUnit());
             System.out.println("watch");
             if(unit.isFirstPlayer()==isFirstPlayerMove){
-                mapProcessor.getRoute(unit.getCoordinates(), unit.getMovePoints(), route,map);
+                mapProcessor.getRoute(unit, route,map);
                 if(selected.isPresent()){
                     if(!selected.get().equals(unit)){
                         mapProcessor.clearRoute(route);
@@ -80,11 +84,11 @@ public class UnitProcessor implements UnitService{
                 }
                 unit.setStateType(StateType.SELECTED);
                 selected = Optional.of(unit);
-                mapProcessor.getRoute(unit.getCoordinates(), unit.getMovePoints(), route,map);
+                mapProcessor.getRoute(unit, route,map);
                 UnitData data = unit.toUnitData();
                 return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                         .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(data).build())
-                        .windRoseAreaState(WindRoseAreaState.builder().weather(unit.getTemp_field_weather()).build())
+                        .windRoseAreaState(WindRoseAreaState.builder().weather(unit.getCurrentWeather()).build())
                         .build();
             }else{
                 UnitData data = unit.toUnitData();

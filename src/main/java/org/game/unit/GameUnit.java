@@ -13,7 +13,8 @@ public class GameUnit extends Unit {
     private UnitType unitType;
     private StateType stateType;
     private boolean isFirstPlayer;
-    private Weather temp_field_weather;
+    @Setter
+    private Weather currentWeather;
     private String type;
     private int fire_range;
     private int base_hit_points;
@@ -21,6 +22,7 @@ public class GameUnit extends Unit {
     private int base_shots;
     private int current_shots;
     private int movePoints;
+    private int maxMP;
 
 
     public GameUnit(boolean isFirstPlayer, Coordinates coordinates) {
@@ -35,11 +37,12 @@ public class GameUnit extends Unit {
 
 
     public UnitData toUnitData() {
-        return new UnitData(getId(),type,base_hit_points,current_hit_point,base_shots,current_shots,movePoints,fire_range);
+        return new UnitData(getId(),type,base_hit_points,current_hit_point,base_shots,current_shots,maxMP,fire_range);
     }
 
     @Override
     void initialState() {
 
     }
+
 }

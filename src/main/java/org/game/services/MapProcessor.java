@@ -8,6 +8,9 @@ import org.game.map.Surface;
 import org.game.map.SurfaceType;
 
 import org.game.mockData.MockedData;
+import org.game.unit.GameUnit;
+import org.game.unit.UnitType;
+import org.game.unit.Vessel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MapProcessor implements MapService{
+    private final WeatherService weatherProcessor = new WeatherProcessor();
 
 
     @Override
@@ -46,31 +50,47 @@ public class MapProcessor implements MapService{
             if(checkIfPositionValid(map,new Coordinates(coordinates.axisX()+cardinalPoint.getValue().axisX(),coordinates.axisY()+cardinalPoint.getValue().axisY()))){
                 map[coordinates.axisX()+cardinalPoint.getValue().axisX()][coordinates.axisY()+cardinalPoint.getValue().axisY()].setType(SurfaceType.PORT);
                 tmp.add(map[coordinates.axisX()+cardinalPoint.getValue().axisX()][coordinates.axisY()+cardinalPoint.getValue().axisY()]);
-                //TODO add missing check on unit presence in surface object
             }
         });
         return tmp;
     }
 
     /**
-     * @param coordinates
+     * @param unit
      * @param route
      * @param map
      */
     @Override
-    public void getRoute(Coordinates coordinates, int current_move_points,  ArrayList<Surface> route, Surface[][] map) {
-        Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-                for(int i = 1; i<=current_move_points; i++){
-                    if(checkIfPositionValid(map,new Coordinates(coordinates.axisX()+cardinalPoint.getValue().axisX()*i,coordinates.axisY()+cardinalPoint.getValue().axisY()*i))){
-                        //if(map[coordinates.axisX()+cardinalPoint.getValue().axisX()*i][coordinates.axisY()+cardinalPoint.getValue().axisY()*i].getType().equals(SurfaceType.PORT)) break;
-                        map[coordinates.axisX()+cardinalPoint.getValue().axisX()*i][coordinates.axisY()+cardinalPoint.getValue().axisY()*i].setType(SurfaceType.ROUTE);
-                        route.add(map[coordinates.axisX()+cardinalPoint.getValue().axisX()*i][coordinates.axisY()+cardinalPoint.getValue().axisY()*i]);
-                    }else {
-                        break;
-                    }
+    public void getRoute(GameUnit unit, ArrayList<Surface> route, Surface[][] map) {
+        if(unit.getUnitType().equals(UnitType.VESSEL)){
+            Vessel vessel = (Vessel) unit;
+            switch (vessel.getCurrentWeather().wind()){
+                case BREEZE -> {
+                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
+                        setRoute(vessel.getMovePoints()-weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
+                    });
                 }
-        });
-        //route.forEach(System.out::println);
+                case CALM -> {
+                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
+                            setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),cardinalPoint,route));
+                }
+                case STORM -> {
+                    setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),vessel.getCurrentWeather().cardinalPoint(),route);
+                }
+            }
+        }
+    }
+    private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route){
+        for(int i = 1; i<=current_move_points; i++) {
+            if (checkIfPositionValid(map, new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i, coordinates.axisY() + cardinalPoint.getValue().axisY() * i))) {
+                if (!map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].isEmpty())
+                    break;
+                map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].setType(SurfaceType.ROUTE);
+                route.add(map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i]);
+            } else {
+                break;
+            }
+        }
     }
 
     /**

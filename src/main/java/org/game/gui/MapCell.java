@@ -30,7 +30,8 @@ public class MapCell extends Rectangle {
         return switch (type){
             case LAND -> Constants.LAND;
             case WATER -> Constants.WATER;
-            case PORT, ROUTE -> Constants.PORT;
+            case PORT -> Constants.PORT;
+            case ROUTE -> Constants.ROUTE;
         };
     }
 }

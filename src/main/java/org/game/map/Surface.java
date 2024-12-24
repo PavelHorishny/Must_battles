@@ -28,4 +28,7 @@ public class Surface {
             this.type = type;
         }
     }
+    public boolean isEmpty(){
+        return this.unit==null;
+    }
 }

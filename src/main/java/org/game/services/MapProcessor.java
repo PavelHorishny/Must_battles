@@ -8,6 +8,8 @@ import org.game.map.Surface;
 import org.game.map.SurfaceType;
 
 import org.game.mockData.MockedData;
+import org.game.unit.GameUnit;
+import org.game.unit.UnitType;
 import org.game.unit.Vessel;
 
 import java.util.ArrayList;
@@ -54,28 +56,29 @@ public class MapProcessor implements MapService{
     }
 
     /**
-     * @param vessel
+     * @param unit
      * @param route
      * @param map
      */
     @Override
-    public void getRoute(Vessel vessel, ArrayList<Surface> route, Surface[][] map) {
-        switch (vessel.getCurrentWeather().wind()){
-            case BREEZE -> {
-                Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-                    setRoute(vessel.getMovePoints()-weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
-                });
-            }
-            case CALM -> {
-                Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
-                        setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),cardinalPoint,route));
-            }
-            case STORM -> {
-                setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),vessel.getCurrentWeather().cardinalPoint(),route);
+    public void getRoute(GameUnit unit, ArrayList<Surface> route, Surface[][] map) {
+        if(unit.getUnitType().equals(UnitType.VESSEL)){
+            Vessel vessel = (Vessel) unit;
+            switch (vessel.getCurrentWeather().wind()){
+                case BREEZE -> {
+                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
+                        setRoute(vessel.getMovePoints()-weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
+                    });
+                }
+                case CALM -> {
+                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
+                            setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),cardinalPoint,route));
+                }
+                case STORM -> {
+                    setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),vessel.getCurrentWeather().cardinalPoint(),route);
+                }
             }
         }
-
-        //route.forEach(System.out::println);
     }
     private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route){
         for(int i = 1; i<=current_move_points; i++) {

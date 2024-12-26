@@ -3,6 +3,7 @@ package org.game.services;
 import lombok.Getter;
 import org.game.BackToGUIConverter;
 import org.game.UnitData;
+import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 import org.game.state.InfoAreaState;
 import org.game.state.MapAreaState;
@@ -98,14 +99,41 @@ public class UnitProcessor implements UnitService{
                         .build();
             }
         }else{
+
             if(selected.isPresent()){
                 selected.get().setStateType(StateType.PASSIVE);
                 selected = Optional.empty();
             }
+            mapProcessor.clearRoute(route);
             return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                     .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(false).build())
                     .windRoseAreaState(WindRoseAreaState.builder().weather(null).build())
                     .build();
         }
+    }
+
+    /**
+     * @return 
+     */
+    @Override
+    public State movementStarts(String id) {
+        fleet.get(id).setStateType(StateType.PASSIVE);
+        mapProcessor.clearRoute(route);
+        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+                .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
+    }
+
+    /**
+     * @param id 
+     * @param destination
+     * @return
+     */
+    @Override
+    public State movementEnds(String id, Coordinates destination) {
+        //fleet.get(id);
+        vesselProcessor.move((Vessel)fleet.get(id),destination,map);
+        return unitSelected(id);
+        //return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+        //        .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
     }
 }

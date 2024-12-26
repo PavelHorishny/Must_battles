@@ -1,6 +1,8 @@
 package org.game.services;
 
+import org.game.CardinalPoint;
 import org.game.Context;
+import org.game.gui.Coordinates;
 import org.game.map.Surface;
 import org.game.mockData.MockedData;
 import org.game.mockData.NamesRandomizer;
@@ -10,6 +12,7 @@ import java.util.*;
 
 public class VesselProcessor implements VesselService{
     NamesRandomizer namesRandomizer = Context.getNameRandomizer();
+    WeatherService weatherProcessor = new WeatherProcessor();
     ArrayList <Vessel> firstPlayerVessels = new ArrayList<>();
 
     public VesselProcessor(){
@@ -32,6 +35,38 @@ public class VesselProcessor implements VesselService{
     @Override
     public List<Vessel> getVessels(Map<String,GameUnit> fleet) {
         return fleet.values().stream().filter(e->e.getUnitType().equals(UnitType.VESSEL)).map(Vessel.class::cast).toList();
+    }
+
+    /**
+     * @param vessel
+     * @param destination
+     * @param map
+     */
+    @Override
+    public void move(Vessel vessel, Coordinates destination, Surface[][] map) {
+        Coordinates start = new Coordinates(vessel.getCoordinates().axisX(),vessel.getCoordinates().axisY());
+        int distance;
+        int x;
+        int y;
+        //Coordinates c = new Coordinates(0,0);
+        if(destination.axisX()-vessel.getCoordinates().axisX()!=0){
+            distance = Math.abs(destination.axisX()-vessel.getCoordinates().axisX());
+            x=destination.axisX()-vessel.getCoordinates().axisX()>0 ? 1 : -1;
+            y=Integer.compare(destination.axisY()-vessel.getCoordinates().axisY(),0);
+        }else{
+            distance = Math.abs(destination.axisY()-vessel.getCoordinates().axisY());
+            x=0;
+            y=destination.axisY()-vessel.getCoordinates().axisY()>0 ? 1 : -1;
+        }
+        CardinalPoint direction = Arrays.stream(CardinalPoint.cardinalPoints).filter(cp->cp.getValue().equals(new Coordinates(x,y))).findAny().orElse(null);
+        //int penalty = weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),direction);
+        vessel.setMovePoints(vessel.getMovePoints()-distance);
+        //map [destination.axisX()][destination.axisY()].setUnit(vessel);
+
+
+
+        map[start.axisX()][start.axisY()].setUnit(null);
+        map [destination.axisX()][destination.axisY()].setUnit(vessel);
     }
 
     /**

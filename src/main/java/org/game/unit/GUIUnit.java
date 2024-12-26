@@ -2,6 +2,7 @@ package org.game.unit;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.game.gui.Constants;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 
@@ -16,6 +17,8 @@ public class GUIUnit extends Unit {
     private BufferedImage currentIcon;
     private StateType currentState;
     private UnitType type;
+    private int x;
+    private int y;
 
     public GUIUnit() {
     }
@@ -80,4 +83,14 @@ public class GUIUnit extends Unit {
             currentIcon =
         }
     }*/
+
+    /**
+     * @param coordinates 
+     */
+    @Override
+    public void setCoordinates(Coordinates coordinates) {
+        super.setCoordinates(coordinates);
+        x=coordinates.axisX()* Constants.CELL_SIZE;
+        y=coordinates.axisY()*Constants.CELL_SIZE;
+    }
 }

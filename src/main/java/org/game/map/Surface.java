@@ -31,4 +31,12 @@ public class Surface {
     public boolean isEmpty(){
         return this.unit==null;
     }
+    public void setUnit(GameUnit unit){
+        if(unit == null){
+            this.unit = null;
+        }else {
+            this.unit = unit;
+            unit.setCoordinates(coordinates);
+        }
+    }
 }

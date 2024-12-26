@@ -15,6 +15,7 @@ import java.util.Map;
 @Builder
 public class MapAreaState extends GameComponentState {
     Map<Coordinates,GUIUnit> fleet;
-    ArrayList<MapCell> map;
+    //ArrayList<MapCell> map;
+    MapCell [][] map;
 
 }

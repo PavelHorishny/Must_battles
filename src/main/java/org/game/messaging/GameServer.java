@@ -34,6 +34,8 @@ public class GameServer implements Server{
                 //state.setMapAreaState(state.getMapAreaState());
                 client.response(unitService.initialGameState());
             }
+            case MOVEMENTS_START -> client.response(unitService.movementStarts(request.getId()));
+            case MOVEMENTS_END -> client.response(unitService.movementEnds(request.getId(),request.getDestination()));
         }
     }
 }

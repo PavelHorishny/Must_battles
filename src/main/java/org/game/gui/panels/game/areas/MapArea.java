@@ -1,5 +1,6 @@
 package org.game.gui.panels.game.areas;
 
+import org.game.map.SurfaceType;
 import org.game.state.GameComponentState;
 import org.game.state.MapAreaState;
 import org.game.gui.*;
@@ -8,12 +9,16 @@ import org.game.gui.panels.Settings;
 import org.game.unit.GUIUnit;
 import org.game.unit.UnitType;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
@@ -25,6 +30,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     BufferedImage imageTwo;
     GUIUnit selected;
     BufferedImage anchor;
+    Coordinates destination;
 
     int start;
     int end;
@@ -33,46 +39,21 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     int x;
     int y;
 
-/*    {
+    {
         try {
-            image = ImageIO.read(new File("src/main/resources/selected.png"));
-            imageTwo = ImageIO.read(new File("src/main/resources/underattack.png"));
-            anchor = ImageIO.read(new File("src/main/resources/anchor.png"));
-
+            anchor = ImageIO.read(new File("src/main/resources/img/Anchor.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }*/
+    }
 
     public MapArea(Settings settings){
         super(settings);
-        //setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
-/*        timer = new Timer(100,e-> {
-            selected.setX(selected.getX() + 1);
-            repaint();
-            if(end-selected.getX()==0) timer.stop();
-        });*/
-        //map = StandardMap.MAP; //13.14.15; 16
-        //map[14][16].color=Constants.ROUTE;
-        //map[15][16].color=Constants.ROUTE;
-        //map[16][16].color=Constants.ROUTE;
-        //fleet_st=StandardMap.FLEET_ST;
     }
 
     public MapArea(){
-        //setPreferredSize(new Dimension(960,690));
         addMouseListener(this);
-/*        timer = new Timer(100,e-> {
-                selected.setX(selected.getX() + 1);
-                repaint();
-            if(end-selected.getX()==0) timer.stop();
-        });*/
-        //map = StandardMap.MAP; //13.14.15; 16
-        //map[14][16].color=Constants.ROUTE;
-        //map[15][16].color=Constants.ROUTE;
-        //map[16][16].color=Constants.ROUTE;
-        //fleet_st=StandardMap.FLEET_ST;
     }
 
     @Override
@@ -88,41 +69,42 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
 
     private void drawMap(Graphics graphics){
-        /*Arrays.stream(map).forEach(mc->Arrays.stream(mc).forEach(e->{
-            g.setColor(e.getColor());
-            g.fillRect(e.x,e.y,e.width,e.height);*//*
-          *//*  if(!e.getUnits().isEmpty()){
-                g.drawImage(e.getUnits().getFirst().getCurrentIcon(),e.x,e.y,null);
-            }*//*
-        }));*/
         Graphics2D g = (Graphics2D) graphics;
-       state.getMap().forEach(mapCell -> {
-            g.setColor(mapCell.getColor());
-            g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
-    /*        if(mapCell.getType().equals(SurfaceType.ROUTE)){
-                System.out.println("YES");
-                g.setColor(Constants.PORT);
-                g.setStroke(new BasicStroke(2));
-                g.drawRect(mapCell.x+3,mapCell.y+3,mapCell.width-4,mapCell.height-4);
-            }*/
-        });
+       Arrays.stream(state.getMap()).forEach(subArray-> Arrays.stream(subArray).forEach(mapCell -> {
+           g.setColor(mapCell.getColor());
+           g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
+        }));
     }
     private void drawVessels(Graphics g, GUIUnit unit){
-        //fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX(),e.getCoordinates().axisX(),null));
-        g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30+7,null);
-        //g.drawImage(new GameUnit(Images.TWO_DECKER_SHIP_OF_LINE_ST,new Coordinates(11,10), StateType.PASSIVE).getCurrentIcon(),11*30,10*30,this);
-        //g.drawImage(imageTwo,12*30,10*30,this);
+        g.drawImage(unit.getCurrentIcon(),unit.getX(),unit.getY()+7,null);
     }
+
     private void drawFortification(Graphics g, GUIUnit unit){
         g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30,null);
     }
     
-    private void move(){
-        //ActionEvent event = new ActionEvent(AWTEvent.PAINT_EVENT_MASK);
-        //end = selected.getX()+90;
-        timer.start();
-        //if(end-selected.getX()==0) timer.stop();
+    private void move(GUIUnit unit, Coordinates destination){
+        int incrementX = getIncrement(unit.getCoordinates().axisX(),destination.axisX());
+        int incrementY = getIncrement(unit.getCoordinates().axisY(),destination.axisY());
+        mediator.movementStarts(selected.getId());
+        point=false;
+        timer = new Timer(30, actionEvent -> {
 
+            state.getFleet().get(selected.getCoordinates()).setX(state.getFleet().get(selected.getCoordinates()).getX()+incrementX);
+            state.getFleet().get(selected.getCoordinates()).setY(state.getFleet().get(selected.getCoordinates()).getY()+incrementY);
+
+            if(state.getFleet().get(selected.getCoordinates()).getX()==destination.axisX()*30&&state.getFleet().get(selected.getCoordinates()).getY()==destination.axisY()*30) {
+                timer.stop();
+                mediator.movementEnds(selected.getId(),destination);
+                selected = state.getFleet().get(new Coordinates(destination.axisX(),destination.axisY()));
+            }
+            repaint();
+        });
+        timer.start();
+    }
+
+    private int getIncrement(int start, int end){
+        return Integer.compare(end - start, 0);
     }
 
     @Override
@@ -131,21 +113,18 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         if(state!=null) {
             drawMap(g);
             drawFleet(g);
+            if(point) drawAnchor(g, destination);
         }else {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);
         }
-       /* drawVessels(g);
-        //grid(g);
-        if(point) drawAnchor(g);*/
     }
 
-    private void drawAnchor(Graphics g) {
-        g.drawImage(anchor,x*Constants.CELL_SIZE,y*Constants.CELL_SIZE,null);
+    private void drawAnchor(Graphics g, Coordinates destination) {
+        g.drawImage(anchor,destination.axisX()*Constants.CELL_SIZE+4,destination.axisY()*Constants.CELL_SIZE+4,null);
 
     }
     private void drawFleet(Graphics g){
-        //state.getFleet().values().forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX()*30,e.getCoordinates().axisY()*30,null));
         state.getFleet().values().forEach(guiUnit -> {if(guiUnit.getType().equals(UnitType.FORTIFICATION)){
             drawFortification(g,guiUnit);
         }else {
@@ -156,50 +135,34 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        Optional<GUIUnit> t;
+        MapCell cell = state.getMap()[e.getX()/30][e.getY()/30];
         if(e.getButton()==MouseEvent.BUTTON1){
-            //Coordinates target = new Coordinates(e.getX()/30,e.getY()/30);
-            Optional<GUIUnit> t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
-            t.ifPresent(guiUnit -> {
-                mediator.unitSelected(guiUnit.getId());
-                System.out.println(guiUnit.getId());
+            t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+            t.ifPresentOrElse(unit -> {
+                mediator.unitSelected(unit.getId());
+                selected = unit;
+                repaint();
+            },()->{
+                if(selected!=null){
+                    if(cell.getType().equals(SurfaceType.ROUTE)){
+                        destination = cell.getCoordinates();
+                        point=true;
+                        repaint();
+                    }
+                }else {
+                    mediator.unitSelected("");
+                    selected = null;
+                    point = false;
+                    repaint();
+                }
             });
-            if(t.isEmpty()) mediator.unitSelected("");
-           /* System.out.println("pressed");
-            System.out.println(e.getX()+" "+e.getY());
-            System.out.println(state.getFleet().get(new Coordinates(e.getX()/30,e.getY()/30)));*/
 
         }
- /*       if(e.getButton()==MouseEvent.BUTTON2){
-            //start = selected.getX();
-            end = selected.getX()+90;
-            move();
+        if(e.getButton()==MouseEvent.BUTTON3){
+            if(selected!=null&&point) move(selected,destination);
         }
-        if(e.getButton()==MouseEvent.BUTTON1){
-            if(map[e.getX()/30][e.getY()/30].getUnits().isEmpty()){
-                System.out.println("empty");
-               *//* selected = null;
-                point = false;
-                repaint();*//*
-                if(map[e.getX()/30][e.getY()/30].getColor().equals(Constants.ROUTE)&&selected!=null){
-                    point=true;
-                    x=e.getX()/30;
-                    y=e.getY()/30;
-                    repaint();
-                }else{
-                    point = false;
-                    select();
-                }
-            }else {
-               select(map[e.getX()/30][e.getY()/30].getUnits().getFirst());
-            }*/
-            //if(Arrays.stream(map).forEach(a->Arrays.stream(a).anyMatch(mapCell -> mapCell.contains(e.getPoint())))){}
-            /*GameUnit u = map[e.getX()/30][e.getY()/30].getUnits().getFirst();
-            if(u!=null){
-                System.out.println("fdfdfdf");
-            }else{
-                System.out.println("empty");
-            }*/
-        }
+    }
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
@@ -220,35 +183,10 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     public void mouseExited(MouseEvent mouseEvent) {
 
     }
-    //move();
 
-    /*    if(map.stream().anyMatch(mapCell -> mapCell.contains(e.getPoint()))){
-            *//*GameUnit gu = *//*fleet_st.stream().filter(
-                    gameUnit -> gameUnit.getCoordinates().equals(new Coordinates(e.getX()/30,e.getY()/30)))
-                    .findFirst().ifPresentOrElse(this::select, this::select);
-            repaint();
-            System.out.println("x:"+e.getX()/30);
-            System.out.println("y:"+e.getY()/30);
-        }
 
-    }*/
 
-/*    private void select(){
-        if(selected!=null){
-            selected.setActivity(StateType.PASSIVE);
-        }
-        selected = null;
-        repaint();
-    }*/
-/*    private void select(GameUnit unit){
-       *//* if(selected!=null){
-            selected.setActivity(StateType.PASSIVE);
-        }*//*
-        select();
-        unit.setActivity(StateType.SELECTED);
-        selected=unit;
-        repaint();
-    }*/
+
 /*    private void grid(Graphics g){
         for(int i = 0; i<=960;i=i+30){
             g.setColor(Color.BLACK);

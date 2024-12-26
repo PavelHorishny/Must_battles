@@ -2,6 +2,7 @@ package org.game.gui.panels;
 
 import org.game.Context;
 import org.game.Request;
+import org.game.gui.Coordinates;
 import org.game.state.State;
 import org.game.gui.panels.game.areas.*;
 import org.game.messaging.GameClient;
@@ -82,8 +83,17 @@ public class GamePanelMediator implements Mediator{
      *
      */
     @Override
-    public void clearRoute(String id) {
-        client.request(Request.builder().message(Message.CLEAR).id(id).build());
+    public void movementStarts(String id) {
+        client.request(Request.builder().message(Message.MOVEMENTS_START).id(id).build());
+    }
+
+    /**
+     * @param id
+     * @param destination
+     */
+    @Override
+    public void movementEnds(String id, Coordinates destination) {
+        client.request(Request.builder().message(Message.MOVEMENTS_END).id(id).destination(destination).build());
     }
 
     public void start() {

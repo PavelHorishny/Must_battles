@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BackToGUIConverter {
-    public static ArrayList<MapCell> convertMap(Surface [] [] map){
-        ArrayList<MapCell> tmp = new ArrayList<>();
-        Arrays.stream(map).forEach(subArr -> Arrays.stream(subArr).forEach(surface -> tmp.add(new MapCell(surface.getCoordinates(),surface.getType()))));
+    public static MapCell [] [] convertMap(Surface [] [] map){
+        MapCell[][] tmp = new MapCell[map.length][map[0].length];
+        Arrays.stream(map).forEach(subArr -> Arrays.stream(subArr).forEach(surface -> tmp[surface.getCoordinates().axisX()][surface.getCoordinates().axisY()]=new MapCell(surface.getCoordinates(),surface.getType())));
         return tmp;
     }
     public static Map<Coordinates,GUIUnit> convertFleet(Map<String, GameUnit> fleet){

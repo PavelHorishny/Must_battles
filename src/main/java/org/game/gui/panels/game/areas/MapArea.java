@@ -1,5 +1,6 @@
 package org.game.gui.panels.game.areas;
 
+import org.game.map.SurfaceType;
 import org.game.state.GameComponentState;
 import org.game.state.MapAreaState;
 import org.game.gui.*;
@@ -8,12 +9,16 @@ import org.game.gui.panels.Settings;
 import org.game.unit.GUIUnit;
 import org.game.unit.UnitType;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
@@ -25,6 +30,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     BufferedImage imageTwo;
     GUIUnit selected;
     BufferedImage anchor;
+    Coordinates destination;
 
     int start;
     int end;
@@ -33,16 +39,16 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     int x;
     int y;
 
-/*    {
+    {
         try {
-            image = ImageIO.read(new File("src/main/resources/selected.png"));
-            imageTwo = ImageIO.read(new File("src/main/resources/underattack.png"));
-            anchor = ImageIO.read(new File("src/main/resources/anchor.png"));
+         /*   image = ImageIO.read(new File("src/main/resources/selected.png"));
+            imageTwo = ImageIO.read(new File("src/main/resources/underattack.png"));*/
+            anchor = ImageIO.read(new File("src/main/resources/img/Anchor.png"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }*/
+    }
 
     public MapArea(Settings settings){
         super(settings);
@@ -96,20 +102,20 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             }*//*
         }));*/
         Graphics2D g = (Graphics2D) graphics;
-       state.getMap().forEach(mapCell -> {
-            g.setColor(mapCell.getColor());
-            g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
+       Arrays.stream(state.getMap()).forEach(subArray-> Arrays.stream(subArray).forEach(mapCell -> {
+           g.setColor(mapCell.getColor());
+           g.fillRect(mapCell.x,mapCell.y,mapCell.width,mapCell.height);
     /*        if(mapCell.getType().equals(SurfaceType.ROUTE)){
                 System.out.println("YES");
                 g.setColor(Constants.PORT);
                 g.setStroke(new BasicStroke(2));
                 g.drawRect(mapCell.x+3,mapCell.y+3,mapCell.width-4,mapCell.height-4);
             }*/
-        });
+        }));
     }
     private void drawVessels(Graphics g, GUIUnit unit){
         //fleet_st.forEach(e->g.drawImage(e.getCurrentIcon(),e.getCoordinates().axisX(),e.getCoordinates().axisX(),null));
-        g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30+7,null);
+        g.drawImage(unit.getCurrentIcon(),unit.getX(),unit.getY()+7,null);
         //g.drawImage(new GameUnit(Images.TWO_DECKER_SHIP_OF_LINE_ST,new Coordinates(11,10), StateType.PASSIVE).getCurrentIcon(),11*30,10*30,this);
         //g.drawImage(imageTwo,12*30,10*30,this);
     }
@@ -117,12 +123,53 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         g.drawImage(unit.getCurrentIcon(),unit.getCoordinates().axisX()*30,unit.getCoordinates().axisY()*30,null);
     }
     
-    private void move(){
+    private void move(GUIUnit unit, Coordinates destination){
+        //unit.getCoordinates().axisX();
         //ActionEvent event = new ActionEvent(AWTEvent.PAINT_EVENT_MASK);
         //end = selected.getX()+90;
+        //timer = new Timer(30,this::actionPerformed);
+        int incrementX = getIncrement(unit.getCoordinates().axisX(),destination.axisX());
+        int incrementY = getIncrement(unit.getCoordinates().axisY(),destination.axisY());
+        int x = unit.getX();
+        int y = unit.getY();
+        mediator.clearRoute(selected.getId());
+        point=false;
+        timer = new Timer(30, actionEvent -> {
+            //do{
+            System.out.println("timer started");
+            System.out.println(unit.getX()+"  "+ unit.getY());
+            int x1 = unit.getX();
+            int y1 = unit.getY();
+            state.getFleet().get(selected.getCoordinates()).setX(state.getFleet().get(selected.getCoordinates()).getX()+incrementX);
+            state.getFleet().get(selected.getCoordinates()).setY(state.getFleet().get(selected.getCoordinates()).getY()+incrementY);
+                //unit.setX(x1 +incrementX);
+                //unit.setY(y1 +incrementY);
+
+            //}while (unit.getX()==destination.axisX()*30&&unit.getY()==destination.axisY()*30);
+            if(state.getFleet().get(selected.getCoordinates()).getX()==destination.axisX()*30&&state.getFleet().get(selected.getCoordinates()).getY()==destination.axisY()*30) {
+                timer.stop();
+                mediator.unitSelected(selected.getId());
+            }
+            repaint();
+            System.out.println(state.getFleet().get(selected.getCoordinates()).getX());
+        });
+/*        timer = new Timer(30,actionEvent -> {
+            //timer.start();
+            do{
+                unit.setX(unit.getX()+incrementX);
+                unit.setY(unit.getY()+incrementY);
+            }while (unit.getX()==destination.axisX()*30&&unit.getY()==destination.axisY()*30);
+            //timer.stop();
+        });*/
+
         timer.start();
+
+        //timer.stop();
         //if(end-selected.getX()==0) timer.stop();
 
+    }
+    private int getIncrement(int start, int end){
+        return Integer.compare(end - start, 0);
     }
 
     @Override
@@ -131,17 +178,19 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         if(state!=null) {
             drawMap(g);
             drawFleet(g);
+            if(point) drawAnchor(g, destination);
         }else {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);
         }
+
        /* drawVessels(g);
         //grid(g);
         if(point) drawAnchor(g);*/
     }
 
-    private void drawAnchor(Graphics g) {
-        g.drawImage(anchor,x*Constants.CELL_SIZE,y*Constants.CELL_SIZE,null);
+    private void drawAnchor(Graphics g, Coordinates destination) {
+        g.drawImage(anchor,destination.axisX()*Constants.CELL_SIZE+4,destination.axisY()*Constants.CELL_SIZE+4,null);
 
     }
     private void drawFleet(Graphics g){
@@ -156,18 +205,62 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        Optional<GUIUnit> t= Optional.empty();
         if(e.getButton()==MouseEvent.BUTTON1){
             //Coordinates target = new Coordinates(e.getX()/30,e.getY()/30);
-            Optional<GUIUnit> t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+            point = false;
+            t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+            //selected = t.get();
+
             t.ifPresent(guiUnit -> {
                 mediator.unitSelected(guiUnit.getId());
+                selected = guiUnit;
                 System.out.println(guiUnit.getId());
             });
-            if(t.isEmpty()) mediator.unitSelected("");
+            t.ifPresentOrElse(unit -> {
+
+                mediator.unitSelected(unit.getId());
+                selected = unit;
+            }, () -> {
+                if(selected!=null){
+                    MapCell cell = state.getMap()[e.getX()/30][e.getY()/30];
+                    System.out.println(cell.getType());
+                    if(cell.getType().equals(SurfaceType.ROUTE)){
+                        destination = cell.getCoordinates();
+                        point=true;
+                        //selected=t.get();
+                        repaint();
+                    }
+                }else {
+                    mediator.unitSelected("");
+                    point = false;
+                }
+            });
+
+            /*if(selected!=null){
+                MapCell cell = state.getMap()[e.getX()/30][e.getY()/30];
+                System.out.println(cell.getType());
+                if(cell.getType().equals(SurfaceType.ROUTE)){
+                    destination = cell.getCoordinates();
+                    point=true;
+                    //selected=t.get();
+                    repaint();
+                }
+            }*/
+
+/*            if(t.isEmpty()){
+                //mediator.unitSelected("");
+                mediator.unitSelected("");
+                point = false;
+
+            }*/
            /* System.out.println("pressed");
             System.out.println(e.getX()+" "+e.getY());
             System.out.println(state.getFleet().get(new Coordinates(e.getX()/30,e.getY()/30)));*/
 
+        }
+        if(e.getButton()==MouseEvent.BUTTON3){
+            if(selected!=null&&point) move(selected,destination);
         }
  /*       if(e.getButton()==MouseEvent.BUTTON2){
             //start = selected.getX();
@@ -220,6 +313,14 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     public void mouseExited(MouseEvent mouseEvent) {
 
     }
+
+/*    *//**
+     * @param actionEvent
+     *//*
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+
+    }*/
     //move();
 
     /*    if(map.stream().anyMatch(mapCell -> mapCell.contains(e.getPoint()))){

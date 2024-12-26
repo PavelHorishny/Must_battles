@@ -7,6 +7,7 @@ import org.game.unit.GameUnit;
 import org.game.unit.Vessel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -16,5 +17,6 @@ public interface MapService {
     Set<Surface> getPort(Coordinates coordinates, Surface [] [] map);
     void getRoute(GameUnit unit, ArrayList<Surface> route, Surface [][] map);
     void clearRoute(ArrayList<Surface> route);
+    List <Surface> getFiringZone(GameUnit unit,Surface [] [] map);
     //TODO remake generateStandardMap (Surface [][] map) <- change signature
 }

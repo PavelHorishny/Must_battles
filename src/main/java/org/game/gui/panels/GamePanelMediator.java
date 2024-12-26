@@ -78,6 +78,14 @@ public class GamePanelMediator implements Mediator{
         wind.updateState(state.getWindRoseAreaState());
     }
 
+    /**
+     *
+     */
+    @Override
+    public void clearRoute(String id) {
+        client.request(Request.builder().message(Message.CLEAR).id(id).build());
+    }
+
     public void start() {
 
     }

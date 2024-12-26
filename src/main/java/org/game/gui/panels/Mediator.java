@@ -12,5 +12,7 @@ public interface Mediator {
     void gameStarted();
     void test (String message);
     void update(State state);
+
+    void clearRoute(String id);
 }
 

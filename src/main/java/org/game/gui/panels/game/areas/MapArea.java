@@ -132,7 +132,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         int incrementY = getIncrement(unit.getCoordinates().axisY(),destination.axisY());
         int x = unit.getX();
         int y = unit.getY();
-        mediator.clearRoute(selected.getId());
+        mediator.movementStarts(selected.getId());
         point=false;
         timer = new Timer(30, actionEvent -> {
             //do{
@@ -148,10 +148,12 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             //}while (unit.getX()==destination.axisX()*30&&unit.getY()==destination.axisY()*30);
             if(state.getFleet().get(selected.getCoordinates()).getX()==destination.axisX()*30&&state.getFleet().get(selected.getCoordinates()).getY()==destination.axisY()*30) {
                 timer.stop();
-                mediator.unitSelected(selected.getId());
+                mediator.movementEnds(selected.getId(),destination);
+                selected = state.getFleet().get(new Coordinates(destination.axisX()/30,destination.axisY()/30));
+                //mediator.movementEnds(selected.getId(),destination);
             }
             repaint();
-            System.out.println(state.getFleet().get(selected.getCoordinates()).getX());
+            //System.out.println(state.getFleet().get(selected.getCoordinates()).getX());
         });
 /*        timer = new Timer(30,actionEvent -> {
             //timer.start();

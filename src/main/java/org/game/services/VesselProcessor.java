@@ -62,6 +62,9 @@ public class VesselProcessor implements VesselService{
         //int penalty = weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),direction);
         vessel.setMovePoints(vessel.getMovePoints()-distance);
         //map [destination.axisX()][destination.axisY()].setUnit(vessel);
+
+
+
         map[start.axisX()][start.axisY()].setUnit(null);
         map [destination.axisX()][destination.axisY()].setUnit(vessel);
     }

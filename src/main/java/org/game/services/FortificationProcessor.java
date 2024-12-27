@@ -30,6 +30,7 @@ public class FortificationProcessor implements FortificationService{
     @Override
     public void getStandardFortifications(Surface[][] map, Map<String, GameUnit> fleet) {
         ArrayList <Fortification> tmp = MockedData.STANDARD_FORT_POSITION;
+        tmp.forEach(fortification -> map[fortification.getCoordinates().axisX()][fortification.getCoordinates().axisY()].setUnit(fortification));
         setFortificationNames(fleet,tmp);
     }
 

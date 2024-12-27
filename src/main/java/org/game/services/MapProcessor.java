@@ -100,19 +100,22 @@ public class MapProcessor implements MapService{
     }
 
     /**
-     * @param unit 
+     * @param unit
      * @param map
      * @return
      */
     @Override
-    public List<Surface> getFiringZone(GameUnit unit, Surface[][] map) {
+    public List<GameUnit> getFiringZone(GameUnit unit, Surface[][] map) {
         int range = unit.getFire_range();
-        List<Surface> tmp = new ArrayList<>();
+        List<GameUnit> tmp = new ArrayList<>();
         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-            for(int i = range; i>0; i--){
+            for(int i = 1; i<=range; i++){
                 Coordinates c = new Coordinates(unit.getCoordinates().axisX()+cardinalPoint.getValue().axisX()*i,unit.getCoordinates().axisY()+cardinalPoint.getValue().axisY()*i);
                 if(checkIfPositionIsValid(map,c)) {
-                    tmp.add(map[unit.getCoordinates().axisX() + cardinalPoint.getValue().axisX() * i][unit.getCoordinates().axisY() + cardinalPoint.getValue().axisY() * i]);
+                    if(!map[c.axisX()][c.axisY()].isEmpty()){
+                        tmp.add(map[c.axisX()][c.axisY()].getUnit());
+                    }
+                    //tmp.add(map[unit.getCoordinates().axisX() + cardinalPoint.getValue().axisX() * i][unit.getCoordinates().axisY() + cardinalPoint.getValue().axisY() * i]);
                 }
             }
         });

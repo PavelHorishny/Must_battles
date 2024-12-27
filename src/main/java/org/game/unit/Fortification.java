@@ -18,6 +18,7 @@ public class Fortification extends GameUnit {
         super(player,coordinates);
         this.fortificationType = fortificationType;
         this.setUnitType(UnitType.FORTIFICATION);
+        setCoordinates(coordinates);
         initialState();
     }
 

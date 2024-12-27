@@ -21,7 +21,8 @@ import java.util.Optional;
 
 public class UnitProcessor implements UnitService{
     private Surface[][] map;
-    private final ArrayList <Surface> route = new ArrayList<>(); // maybe redundant
+    private final ArrayList <Surface> route = new ArrayList<>();
+    private final ArrayList <GameUnit> aimedUnits = new ArrayList<>();
     @Getter
     private final Map <String, GameUnit> fleet = new HashMap<>();
     private int day;
@@ -32,6 +33,7 @@ public class UnitProcessor implements UnitService{
     private final FortificationService fortificationProcessor = new FortificationProcessor();
     private final VesselService vesselProcessor = new VesselProcessor();
     private final WeatherService weatherProcessor = new WeatherProcessor();
+    private final FiringService firingProcessor = new FiringProcessor();
 
 
 
@@ -45,17 +47,21 @@ public class UnitProcessor implements UnitService{
     public State initialGameState() {
         day = 1;
         isFirstPlayerMove = true;
+
         map = mapProcessor.generateStandardMap();
         //fortificationProcessor.setPortLocations(map);
         fortificationProcessor.getStandardFortifications(map,fleet);
         fleet.values().stream().map(Fortification.class::cast).toList().forEach(fortification -> fortificationProcessor.setPortLocations(mapProcessor.getPort(fortification.getCoordinates(),map),fortification));
         vesselProcessor.setVessels(fleet,map);
-        vesselProcessor.getVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
-    /*    map[7][19].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
-        map[7][19].getUnit().setCoordinates(new Coordinates(7,19));
-        map[7][19].getUnit().setUnitType(UnitType.VESSEL);
+        map[20][3].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
+        map[20][3].getUnit().setCoordinates(new Coordinates(20,3));
+        map[20][3].getUnit().setUnitType(UnitType.VESSEL);
+        map[20][3].getUnit().setId("test");
 
-        fleet.put("test",map[7][19].getUnit());*/
+        fleet.put("test",map[20][3].getUnit());
+
+        vesselProcessor.getVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
+
         //fleet.values().stream().map(Fortification.class::cast).toList().forEach(u-> System.out.println(u.getPort().size()+" "+u.getCoordinates().toString()));
         return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                 .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
@@ -72,8 +78,7 @@ public class UnitProcessor implements UnitService{
          * if not replace optional and change state*/
         if(!id.isEmpty()){
             GameUnit unit = fleet.get(id);
-            System.out.println(map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].getUnit());
-            System.out.println("watch");
+
             if(unit.isFirstPlayer()==isFirstPlayerMove){
                 mapProcessor.getRoute(unit, route,map);
                 if(selected.isPresent()){
@@ -84,6 +89,7 @@ public class UnitProcessor implements UnitService{
                     }
                 }
                 unit.setStateType(StateType.SELECTED);
+                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(unit,map), aimedUnits, isFirstPlayerMove);
                 selected = Optional.of(unit);
                 mapProcessor.getRoute(unit, route,map);
                 UnitData data = unit.toUnitData();

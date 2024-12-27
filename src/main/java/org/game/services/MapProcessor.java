@@ -12,10 +12,7 @@ import org.game.unit.GameUnit;
 import org.game.unit.UnitType;
 import org.game.unit.Vessel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MapProcessor implements MapService{
     private final WeatherService weatherProcessor = new WeatherProcessor();
@@ -47,7 +44,7 @@ public class MapProcessor implements MapService{
     public Set<Surface> getPort(Coordinates coordinates, Surface [] [] map) {
         Set<Surface> tmp = new HashSet<>();
         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-            if(checkIfPositionValid(map,new Coordinates(coordinates.axisX()+cardinalPoint.getValue().axisX(),coordinates.axisY()+cardinalPoint.getValue().axisY()))){
+            if(checkIfPositionValidAndWater(map,new Coordinates(coordinates.axisX()+cardinalPoint.getValue().axisX(),coordinates.axisY()+cardinalPoint.getValue().axisY()))){
                 map[coordinates.axisX()+cardinalPoint.getValue().axisX()][coordinates.axisY()+cardinalPoint.getValue().axisY()].setType(SurfaceType.PORT);
                 tmp.add(map[coordinates.axisX()+cardinalPoint.getValue().axisX()][coordinates.axisY()+cardinalPoint.getValue().axisY()]);
             }
@@ -82,7 +79,7 @@ public class MapProcessor implements MapService{
     }
     private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route){
         for(int i = 1; i<=current_move_points; i++) {
-            if (checkIfPositionValid(map, new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i, coordinates.axisY() + cardinalPoint.getValue().axisY() * i))) {
+            if (checkIfPositionValidAndWater(map, new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i, coordinates.axisY() + cardinalPoint.getValue().axisY() * i))) {
                 if (!map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].isEmpty())
                     break;
                 map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].setType(SurfaceType.ROUTE);
@@ -103,6 +100,29 @@ public class MapProcessor implements MapService{
     }
 
     /**
+     * @param unit
+     * @param map
+     * @return
+     */
+    @Override
+    public List<GameUnit> getFiringZone(GameUnit unit, Surface[][] map) {
+        int range = unit.getFire_range();
+        List<GameUnit> tmp = new ArrayList<>();
+        Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
+            for(int i = 1; i<=range; i++){
+                Coordinates c = new Coordinates(unit.getCoordinates().axisX()+cardinalPoint.getValue().axisX()*i,unit.getCoordinates().axisY()+cardinalPoint.getValue().axisY()*i);
+                if(checkIfPositionIsValid(map,c)) {
+                    if(!map[c.axisX()][c.axisY()].isEmpty()){
+                        tmp.add(map[c.axisX()][c.axisY()].getUnit());
+                    }
+                    //tmp.add(map[unit.getCoordinates().axisX() + cardinalPoint.getValue().axisX() * i][unit.getCoordinates().axisY() + cardinalPoint.getValue().axisY() * i]);
+                }
+            }
+        });
+        return tmp;
+    }
+
+    /**
      * Method accepts Surface multidimensional array and int
      * returns boolean
      * checks if int in bounds of sub array*/
@@ -116,11 +136,18 @@ public class MapProcessor implements MapService{
     private boolean checkValidPositionOnAxisX(Surface [][] map, int index){
         return index >= 0 && index < map.length;
     }
+    private boolean checkIfPositionIsValid(Surface [] [] map, Coordinates coordinates){
+        if(checkValidPositionOnAxisX(map,coordinates.axisX())){
+            return checkValidPositionOnAxisY(map, coordinates.axisY());
+        }else {
+            return false;
+        }
+    }
     /**
      * Accepts Surface multidimensional array and Coordinate object
      * Returns boolean
      * Checks if Coordinate object might be in bounds of multidimensional array*/
-    private boolean checkIfPositionValid(Surface[][] map, Coordinates coordinates){
+    private boolean checkIfPositionValidAndWater(Surface[][] map, Coordinates coordinates){
         if(checkValidPositionOnAxisX(map,coordinates.axisX())){
             if(checkValidPositionOnAxisY(map,coordinates.axisY())){
                 return checkIfSurfaceIsWaterOrPort(map[coordinates.axisX()][coordinates.axisY()]);

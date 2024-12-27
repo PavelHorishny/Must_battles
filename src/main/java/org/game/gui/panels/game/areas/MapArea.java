@@ -118,6 +118,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);
         }
+        grid(g);
     }
 
     private void drawAnchor(Graphics g, Coordinates destination) {
@@ -187,7 +188,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
 
 
-/*    private void grid(Graphics g){
+    private void grid(Graphics g){
         for(int i = 0; i<=960;i=i+30){
             g.setColor(Color.BLACK);
             g.drawLine(i,0,i,690);
@@ -196,5 +197,5 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             g.setColor(Color.BLACK);
             g.drawLine(0,i,960,i);
         }
-    }*/
+    }
 }

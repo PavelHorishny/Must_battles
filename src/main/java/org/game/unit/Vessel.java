@@ -18,6 +18,7 @@ public class Vessel extends GameUnit {
         super();
         this.setFirstPlayer(isFirstPlayer);
         this.vesselType = vesselType;
+        initialState();
     }
     public Vessel(boolean isFirstPlayer, VesselType vesselType,String id){
         super();

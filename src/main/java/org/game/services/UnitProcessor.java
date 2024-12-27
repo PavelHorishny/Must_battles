@@ -21,7 +21,8 @@ import java.util.Optional;
 
 public class UnitProcessor implements UnitService{
     private Surface[][] map;
-    private final ArrayList <Surface> route = new ArrayList<>(); // maybe redundant
+    private final ArrayList <Surface> route = new ArrayList<>();
+    private final ArrayList <GameUnit> aimedUnits = new ArrayList<>();
     @Getter
     private final Map <String, GameUnit> fleet = new HashMap<>();
     private int day;
@@ -58,7 +59,7 @@ public class UnitProcessor implements UnitService{
         map[20][3].getUnit().setId("test");
 
         fleet.put("test",map[20][3].getUnit());
-        System.out.println(fleet.get("test").toUnitData());
+
         vesselProcessor.getVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
 
         //fleet.values().stream().map(Fortification.class::cast).toList().forEach(u-> System.out.println(u.getPort().size()+" "+u.getCoordinates().toString()));
@@ -77,8 +78,7 @@ public class UnitProcessor implements UnitService{
          * if not replace optional and change state*/
         if(!id.isEmpty()){
             GameUnit unit = fleet.get(id);
-            System.out.println(map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].getUnit());
-            System.out.println("watch");
+
             if(unit.isFirstPlayer()==isFirstPlayerMove){
                 mapProcessor.getRoute(unit, route,map);
                 if(selected.isPresent()){
@@ -89,7 +89,7 @@ public class UnitProcessor implements UnitService{
                     }
                 }
                 unit.setStateType(StateType.SELECTED);
-                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(unit,map),isFirstPlayerMove);
+                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(unit,map), aimedUnits, isFirstPlayerMove);
                 selected = Optional.of(unit);
                 mapProcessor.getRoute(unit, route,map);
                 UnitData data = unit.toUnitData();

@@ -12,21 +12,28 @@ public class FiringProcessor implements FiringService{
     /**
      * @param inFiringZone
      * @param aimedUnits
-     * @param isFirstPlayer
+     * @param attacker
      */
     @Override
-    public void setUnderAttack(List<GameUnit> inFiringZone, ArrayList<GameUnit> aimedUnits, boolean isFirstPlayer) {
+    public void setUnderAttack(List<GameUnit> inFiringZone, ArrayList<GameUnit> aimedUnits, GameUnit attacker) {
         if(!aimedUnits.isEmpty()) {
-            aimedUnits.forEach(unit -> unit.setStateType(StateType.PASSIVE));
+            aimedUnits.forEach(unit -> {
+                if(!unit.getStateType().equals(StateType.DESTROYED)){
+                    unit.setStateType(StateType.PASSIVE);
+                }
+            });
             aimedUnits.clear();
         }
-
-        inFiringZone.forEach(unit -> {
-            if(unit.isFirstPlayer()!=isFirstPlayer){
-                unit.setStateType(StateType.AIMED);
-                aimedUnits.add(unit);
-            }
-        });
+        if(attacker.getCurrent_shots()>0) {
+            inFiringZone.forEach(unit -> {
+                if (unit.isFirstPlayer() != attacker.isFirstPlayer()) {
+                    if (!unit.getStateType().equals(StateType.DESTROYED)) {
+                        unit.setStateType(StateType.AIMED);
+                        aimedUnits.add(unit);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -36,16 +43,18 @@ public class FiringProcessor implements FiringService{
      */
     @Override
     public Optional<GameUnit> shot(GameUnit attacker, GameUnit target) {
-            if(getHit()){
-                attacker.setCurrent_shots(attacker.getCurrent_shots()-1);
-                target.setCurrent_hit_point(target.getCurrent_hit_point()-1);
-                if(target.getCurrent_hit_point()<=0){
+        attacker.setCurrent_shots(10);
+
+            if (getHit()) {
+                attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
+                target.setCurrent_hit_point(target.getCurrent_hit_point() - 1);
+                if (target.getCurrent_hit_point() <= 0) {
                     return Optional.of(target);
-                }else{
+                } else {
                     return Optional.empty();
                 }
-            }else {
-                attacker.setCurrent_shots(attacker.getCurrent_shots()-1);
+            } else {
+                attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 return Optional.empty();
             }
     }
@@ -73,6 +82,8 @@ public class FiringProcessor implements FiringService{
     }
     private boolean getHit(){
         Random random = new Random();
-        return random.nextInt(0, 1) > 0;
+        //return random.nextInt(0, 1) > 0;
+        //TODO calc hit
+        return true;
     }
 }

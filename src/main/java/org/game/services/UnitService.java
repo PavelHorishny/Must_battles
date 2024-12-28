@@ -10,4 +10,6 @@ public interface UnitService {
     State movementStarts(String id);
 
     State movementEnds(String id, Coordinates destination);
+
+    State makeShot(String attackerID, String targetID, String shotType);
 }

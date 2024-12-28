@@ -2,6 +2,7 @@ package org.game;
 
 import org.game.gui.Coordinates;
 import org.game.gui.MapCell;
+import org.game.gui.StateType;
 import org.game.map.Surface;
 import org.game.unit.*;
 
@@ -50,11 +51,19 @@ public class BackToGUIConverter {
     }
 
     private static UnitIcons setFortificationIcons(Fortification unit) {
-        return switch (unit.getFortificationType()){
-            case FIRST_LINE_FORT -> checkPlayer(unit) ? Images.FIRST_LINE_FORT_ST : Images.FIRST_LINE_FORT_ND;
-            case SECOND_LINE_FORT -> checkPlayer(unit) ? Images.SECOND_LINE_FORT_ST : Images.SECOND_LINE_FORT_ND;
-            case ROYAL_PORT -> checkPlayer(unit) ? Images.ROYAL_PORT_ST : Images.ROYAL_PORT_ND;
-        };
+        if(unit.getStateType().equals(StateType.DESTROYED)){
+            return switch (unit.getFortificationType()) {
+                case FIRST_LINE_FORT -> Images.FIRST_LINE_FORT_DESTROYED;
+                case SECOND_LINE_FORT -> Images.SECOND_LINE_FORT_DESTROYED;
+                case ROYAL_PORT -> null;
+            };
+        }else {
+            return switch (unit.getFortificationType()) {
+                case FIRST_LINE_FORT -> checkPlayer(unit) ? Images.FIRST_LINE_FORT_ST : Images.FIRST_LINE_FORT_ND;
+                case SECOND_LINE_FORT -> checkPlayer(unit) ? Images.SECOND_LINE_FORT_ST : Images.SECOND_LINE_FORT_ND;
+                case ROYAL_PORT -> checkPlayer(unit) ? Images.ROYAL_PORT_ST : Images.ROYAL_PORT_ND;
+            };
+        }
     }
 
     private static boolean checkPlayer(GameUnit unit) {
@@ -67,6 +76,7 @@ public class BackToGUIConverter {
         tmp.setId(unit.getId());
         tmp.setIcons(setIcons(unit));
         tmp.setType(unit.getUnitType());
+        tmp.setStateType(unit.getStateType());
 /*        if(unit.getUnitType()==UnitType.FORTIFICATION){
             Fortification f = (Fortification) unit;
             if(f.getFortificationType()==FortificationType.ROYAL_PORT){

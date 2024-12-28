@@ -3,6 +3,7 @@ package org.game.unit;
 import lombok.Getter;
 import lombok.Setter;
 import org.game.gui.Coordinates;
+import org.game.gui.StateType;
 import org.game.map.Surface;
 
 import java.util.ArrayList;

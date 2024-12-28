@@ -17,5 +17,7 @@ public interface Mediator {
     void movementStarts(String id);
 
     void movementEnds(String id, Coordinates destination);
+
+    void shot(String attackerID, String targetID, String shotType);
 }
 

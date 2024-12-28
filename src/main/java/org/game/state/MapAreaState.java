@@ -9,6 +9,7 @@ import org.game.unit.GUIUnit;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -17,5 +18,7 @@ public class MapAreaState extends GameComponentState {
     Map<Coordinates,GUIUnit> fleet;
     //ArrayList<MapCell> map;
     MapCell [][] map;
+    Optional<Coordinates> selectedID_TEST;
+    Optional<Coordinates> targetID_TEST;
 
 }

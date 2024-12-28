@@ -11,5 +11,7 @@ import org.game.gui.panels.Message;
 public class Request {
     Message message;
     String id;
+    String targetID;
+    String shotType;
     Coordinates destination;
 }

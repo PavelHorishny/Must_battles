@@ -11,7 +11,7 @@ import org.game.gui.StateType;
 @Getter
 public class GameUnit extends Unit {
     private UnitType unitType;
-    private StateType stateType;
+    //private StateType stateType;
     private boolean isFirstPlayer;
     @Setter
     private Weather currentWeather;
@@ -29,10 +29,10 @@ public class GameUnit extends Unit {
         //this.unitType = unitType;
         this.isFirstPlayer = isFirstPlayer;
         setCoordinates(coordinates);
-        stateType = StateType.PASSIVE;
+        setStateType(StateType.PASSIVE);
     }
     public GameUnit(){
-        stateType=StateType.PASSIVE;
+        setStateType(StateType.PASSIVE);
     }
 
 

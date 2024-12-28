@@ -43,7 +43,7 @@ public class GUIUnit extends Unit {
 
     public void setActivity(StateType type){
         switch (type){
-            case PASSIVE -> currentIcon=icons.icon();
+            case PASSIVE, DESTROYED -> currentIcon=icons.icon();
             case SELECTED -> currentIcon=icons.active();
             case AIMED -> currentIcon=icons.aimed();
         }

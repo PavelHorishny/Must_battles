@@ -36,6 +36,7 @@ public class GameServer implements Server{
             }
             case MOVEMENTS_START -> client.response(unitService.movementStarts(request.getId()));
             case MOVEMENTS_END -> client.response(unitService.movementEnds(request.getId(),request.getDestination()));
+            case SHOT -> client.response(unitService.makeShot(request.getId(),request.getTargetID(),request.getShotType()));
         }
     }
 }

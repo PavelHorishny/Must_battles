@@ -28,7 +28,7 @@ public class TargetInfoPanel extends JPanel implements MouseListener {
     public void setState(UnitData data){
         name.setText(data.name());
         type.setText(data.type());
-        hit_points.setData(data.base_hit_points(),data.base_hit_points());
+        hit_points.setData(data.base_hit_points(),data.current_hit_points());
         move_points.setData(data.move_points(),data.move_points());
         fire_range.setData(data.fire_range(),data.fire_range());
         shots.setData(data.base_shots(),data.base_shots());

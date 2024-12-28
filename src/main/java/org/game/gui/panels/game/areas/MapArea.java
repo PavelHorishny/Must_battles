@@ -157,24 +157,23 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                     repaint();
                 }, () -> {
                     if (selected != null) {
-                        if (cell.getType().equals(SurfaceType.ROUTE)) {
+                        if (state.getRoute().contains(cell.getCoordinates())) {
                             destination = cell.getCoordinates();
                             point = true;
                             repaint();
                         } else {
-                            mediator.unitSelected("");
-                            //selected = null;
                             destination = null;
                             point = false;
+                            mediator.unitSelected("");
                             repaint();
                         }
-                    } /*else {
+                    } else {
                         mediator.unitSelected("");
-                        selected = null;
+                        //selected = null;
                         destination = null;
                         point = false;
                         repaint();
-                    }*/
+                    }
                 });
             }
         }

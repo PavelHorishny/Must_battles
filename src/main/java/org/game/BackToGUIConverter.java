@@ -86,4 +86,9 @@ public class BackToGUIConverter {
         tmp.setActivity(unit.getStateType());
         return tmp;
     }
+    public static ArrayList<Coordinates> convertRoute(ArrayList<Surface> route){
+        ArrayList <Coordinates> tmp = new ArrayList<>();
+        route.forEach(surface -> tmp.add(surface.getCoordinates()));
+        return tmp;
+    }
 }

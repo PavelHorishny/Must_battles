@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 
 public class UnitProcessor implements UnitService{
@@ -77,84 +77,10 @@ public class UnitProcessor implements UnitService{
          * check if unit is belonged to player 
          * if so check is unit is already selected
          * if not replace optional and change state*/
-/*        if(!id.isBlank()){*/
-    /*        Optional.of(fleet.get(id)).ifPresent(unit -> {
-                if(unit.isFirstPlayer()==isFirstPlayerMove){
-                    selected_Test = unit;
-                }else{
-                    target_Test = unit;
-                }
-            });*/
-/*            if(Optional.of(fleet.get(id)).isPresent()){
-                GameUnit unit = fleet.get(id);
-                if(unit.isFirstPlayer()==isFirstPlayerMove){
-                    mapProcessor.getRoute(unit,route,map);
-                    if(selected_Test!=null&&!selected_Test.equals(unit))
-                        //selected_Test = unit;
-                        mapProcessor.clearRoute(route);
-                    assert selected_Test != null;
-                    selected_Test.setStateType(StateType.PASSIVE);
-                        selected_Test = unit;
-                        selected_Test.setStateType(StateType.SELECTED);
-                }else{
-                    target_Test = unit;
-                }
-            }
-
-        }else{}*/
-        //ALMOST WORKING
-/*        if(!id.isEmpty()){
-            GameUnit unit = fleet.get(id);
-
-            if(unit.isFirstPlayer()==isFirstPlayerMove){
-                mapProcessor.getRoute(unit, route,map);
-                if(selected.isPresent()){
-                    if(!selected.get().equals(unit)){
-                        mapProcessor.clearRoute(route);
-                        selected.get().setStateType(StateType.PASSIVE);
-                        selected = Optional.empty();
-                    }
-                }
-                unit.setStateType(StateType.SELECTED);
-                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(unit,map), aimedUnits, unit);
-                selected = Optional.of(unit);
-                mapProcessor.getRoute(unit, route,map);
-                UnitData data = unit.toUnitData();
-                return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                        .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(data).build())
-                        .windRoseAreaState(WindRoseAreaState.builder().weather(unit.getCurrentWeather()).build())
-                        .build();
-            }else{
-                if(selected.isPresent()){
-                    return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                            .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(selected.get().toUnitData()).target(true).targetData(unit.toUnitData()).build())
-                            .windRoseAreaState(WindRoseAreaState.builder().weather(selected.get().getCurrentWeather()).build())
-                            .build();
-                }else {
-                    UnitData data = unit.toUnitData();
-                    return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                            .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).target(true).targetData(data).build())
-                            //.windRoseAreaState(WindRoseAreaState.builder().weather(unit.getTemp_field_weather()).build())
-                            .build();
-                }
-            }
-        }else{
-
-            if(selected.isPresent()){
-                selected.get().setStateType(StateType.PASSIVE);
-                selected = Optional.empty();
-            }
-            mapProcessor.clearRoute(route);
-            return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                    .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(false).build())
-                    .windRoseAreaState(WindRoseAreaState.builder().weather(null).build())
-                    .build();
-        }*/
-        //ALMOST WORKING
         if(id.isBlank()){
             selected_Test=null;
             target_Test=null;
-
+            mapProcessor.clearRoute(route);
             return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).build())
                     .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(false).build())
                     .windRoseAreaState(WindRoseAreaState.builder().weather(null).build())
@@ -171,7 +97,7 @@ public class UnitProcessor implements UnitService{
                 mapProcessor.getRoute(selected_Test,route,map);
                 firingProcessor.setUnderAttack(mapProcessor.getFiringZone(selected_Test,map),aimedUnits,selected_Test);
 
-                return State.builder().mapAreaState(MapAreaState.builder().selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+                return State.builder().mapAreaState(MapAreaState.builder().route(BackToGUIConverter.convertRoute(route)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                         .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(selected_Test.toUnitData()).build())
                         .windRoseAreaState(WindRoseAreaState.builder().weather(selected_Test.getCurrentWeather()).build())
                         .build();

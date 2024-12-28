@@ -29,6 +29,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     BufferedImage image;
     BufferedImage imageTwo;
     GUIUnit selected;
+    GUIUnit target;
     BufferedImage anchor;
     Coordinates destination;
 
@@ -64,6 +65,8 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     @Override
     public void updateState(GameComponentState state) {
         this.state=(MapAreaState) state;
+        this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
+        this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
         repaint();
     }
 
@@ -84,6 +87,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     }
     
     private void move(GUIUnit unit, Coordinates destination){
+        point = false;
         int incrementX = getIncrement(unit.getCoordinates().axisX(),destination.axisX());
         int incrementY = getIncrement(unit.getCoordinates().axisY(),destination.axisY());
         mediator.movementStarts(selected.getId());
@@ -96,7 +100,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             if(state.getFleet().get(selected.getCoordinates()).getX()==destination.axisX()*30&&state.getFleet().get(selected.getCoordinates()).getY()==destination.axisY()*30) {
                 timer.stop();
                 mediator.movementEnds(selected.getId(),destination);
-                selected = state.getFleet().get(new Coordinates(destination.axisX(),destination.axisY()));
+                //selected = state.getFleet().get(new Coordinates(destination.axisX(),destination.axisY()));
             }
             repaint();
         });
@@ -138,41 +142,76 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         Optional<GUIUnit> t;
         MapCell cell = state.getMap()[e.getX()/30][e.getY()/30];
-        if(e.getButton()==MouseEvent.BUTTON1){
-            t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
-            t.ifPresentOrElse(unit -> {
-                mediator.unitSelected(unit.getId());
-                selected = unit;
-                repaint();
-            },()->{
-                if(selected!=null){
-                    if(cell.getType().equals(SurfaceType.ROUTE)){
-                        destination = cell.getCoordinates();
-                        point=true;
-                        repaint();
-                    }
-                }else {
-                    mediator.unitSelected("");
-                    selected = null;
-                    point = false;
-                    repaint();
-                }
-            });
 
+        if(e.getButton()==MouseEvent.BUTTON1){
+            if(new Coordinates(e.getX()/30,e.getY()/30).equals(destination)&& point&&selected!=null) {
+                point = false;
+                repaint();
+                move(selected, destination);
+            }else {
+                point = false;
+                t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+                t.ifPresentOrElse(unit -> {
+                    mediator.unitSelected(unit.getId());
+                    //selected = unit;
+                    repaint();
+                }, () -> {
+                    if (selected != null) {
+                        if (cell.getType().equals(SurfaceType.ROUTE)) {
+                            destination = cell.getCoordinates();
+                            point = true;
+                            repaint();
+                        } else {
+                            mediator.unitSelected("");
+                            //selected = null;
+                            destination = null;
+                            point = false;
+                            repaint();
+                        }
+                    } /*else {
+                        mediator.unitSelected("");
+                        selected = null;
+                        destination = null;
+                        point = false;
+                        repaint();
+                    }*/
+                });
+            }
+        }
+        if(e.getButton()==MouseEvent.BUTTON2){
+            if(selected!=null){
+                t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+                t.ifPresent(unit -> {
+                    if(unit.getStateType().equals(StateType.AIMED)){
+                        System.out.println("SALVO SHOT!");
+                        mediator.shot(selected.getId(),unit.getId(),"salvo");
+                    }
+                });
+            }
         }
         if(e.getButton()==MouseEvent.BUTTON3){
-            if(selected!=null&&point) move(selected,destination);
+            if(selected!=null){
+               t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
+               t.ifPresent(unit -> {
+                   if(unit.getStateType().equals(StateType.AIMED)){
+                       System.out.println("SHOT!");
+                       mediator.shot(selected.getId(),unit.getId(),"single");
+                   }
+               });
+            }
         }
     }
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
-
+        System.out.println("pressed");
     }
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-
+        if(mouseEvent.getButton()==MouseEvent.BUTTON3) {
+            System.out.println("released");
+        }
     }
 
     @Override

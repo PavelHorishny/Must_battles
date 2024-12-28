@@ -8,9 +8,7 @@ import org.game.map.Surface;
 import org.game.map.SurfaceType;
 
 import org.game.mockData.MockedData;
-import org.game.unit.GameUnit;
-import org.game.unit.UnitType;
-import org.game.unit.Vessel;
+import org.game.unit.*;
 
 import java.util.*;
 
@@ -79,15 +77,51 @@ public class MapProcessor implements MapService{
     }
     private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route){
         for(int i = 1; i<=current_move_points; i++) {
-            if (checkIfPositionValidAndWater(map, new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i, coordinates.axisY() + cardinalPoint.getValue().axisY() * i))) {
-                if (!map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].isEmpty())
-                    break;
-                map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i].setType(SurfaceType.ROUTE);
-                route.add(map[coordinates.axisX() + cardinalPoint.getValue().axisX() * i][coordinates.axisY() + cardinalPoint.getValue().axisY() * i]);
-            } else {
+            Coordinates c = new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i,coordinates.axisY() + cardinalPoint.getValue().axisY() * i);
+            if(checkIfPositionIsValid(map,c)){
+                if(checkIfPositionIsWater(map,c)){
+                    if(!map[c.axisX()][c.axisY()].isEmpty()) break;
+                    map[c.axisX()][c.axisY()].setType(SurfaceType.ROUTE);
+                    route.add(map[c.axisX()][c.axisY()]);
+                } else if (checkIfPositionIsPort(map,c)) {
+                    if(!map[c.axisX()][c.axisY()].isEmpty()){
+                        break;
+                    }else{
+                        Arrays.stream(CardinalPoint.cardinalPoints).forEach(cp -> {
+                            if(!map[c.axisX()+cp.getValue().axisX()][c.axisY()+cp.getValue().axisY()].isEmpty()){
+                                GameUnit unit = map[c.axisX()+cp.getValue().axisX()][c.axisY()+cp.getValue().axisY()].getUnit();
+                                if(unit.getUnitType().equals(UnitType.FORTIFICATION)){
+                                    Fortification f = (Fortification) unit;
+                                    switch (f.getFortificationType()){
+                                        case FIRST_LINE_FORT, SECOND_LINE_FORT -> {
+                                            if(f.isFirstPlayer()==map[coordinates.axisX()][coordinates.axisY()].getUnit().isFirstPlayer()){
+                                                route.add(map[c.axisX()][c.axisY()]);
+                                            }
+                                        }
+                                        case ROYAL_PORT -> {
+                                            if(f.isFirstPlayer()!=map[coordinates.axisX()][coordinates.axisY()].getUnit().isFirstPlayer()){
+                                                route.add(map[c.axisX()][c.axisY()]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                }
+            }else{
                 break;
             }
         }
+    }
+
+    private boolean checkIfPositionIsPort(Surface[][] map, Coordinates c) {
+        return map[c.axisX()][c.axisY()].getType().equals(SurfaceType.PORT);
+    }
+
+    private boolean checkIfPositionIsWater(Surface[][] map, Coordinates c) {
+        return map[c.axisX()][c.axisY()].getType().equals(SurfaceType.WATER);
     }
 
     /**

@@ -4,6 +4,7 @@ import org.game.CardinalPoint;
 import org.game.CardinalPointsNet;
 import org.game.Weather;
 import org.game.Wind;
+import org.game.unit.GameUnit;
 
 import java.util.Random;
 
@@ -16,7 +17,8 @@ public class WeatherProcessor implements WeatherService{
     public Weather getWeather() {
         CardinalPoint cardinalPoint = CardinalPoint.cardinalPoints[random.nextInt(CardinalPoint.cardinalPoints.length)];
         Wind wind = Wind.windForce[random.nextInt(Wind.windForce.length)];
-        return new Weather(cardinalPoint,wind);
+        //return new Weather(cardinalPoint,wind);
+        return new Weather(CardinalPoint.WEST,Wind.STORM);
     }
 
     /**
@@ -41,5 +43,14 @@ public class WeatherProcessor implements WeatherService{
             right = CardinalPointsNet.pointers.get(right).getRight();
         }
         return result;
+    }
+
+    /**
+     * @param unit 
+     * @return
+     */
+    @Override
+    public boolean isStorm(GameUnit unit) {
+        return unit.getCurrentWeather().wind().equals(Wind.STORM);
     }
 }

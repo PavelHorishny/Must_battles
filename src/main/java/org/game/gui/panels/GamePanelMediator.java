@@ -96,6 +96,16 @@ public class GamePanelMediator implements Mediator{
         client.request(Request.builder().message(Message.MOVEMENTS_END).id(id).destination(destination).build());
     }
 
+    /**
+     * @param attackerID
+     * @param targetID
+     * @param shotType
+     */
+    @Override
+    public void shot(String attackerID, String targetID, String shotType) {
+        client.request(Request.builder().message(Message.SHOT).id(attackerID).targetID(targetID).shotType(shotType).build());
+    }
+
     public void start() {
 
     }

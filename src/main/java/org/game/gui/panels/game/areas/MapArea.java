@@ -67,6 +67,11 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         this.state=(MapAreaState) state;
         this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
         this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
+        if(this.state.getVesselInStorm()!=null){
+            selected=this.state.getFleet().get(this.state.getVesselInStorm());
+            destination = this.state.getStormDestination();
+            move(selected,destination);
+        }
         repaint();
     }
 
@@ -142,7 +147,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         Optional<GUIUnit> t;
         MapCell cell = state.getMap()[e.getX()/30][e.getY()/30];
-
+        System.out.println(cell.getCoordinates());
         if(e.getButton()==MouseEvent.BUTTON1){
             if(new Coordinates(e.getX()/30,e.getY()/30).equals(destination)&& point&&selected!=null) {
                 point = false;

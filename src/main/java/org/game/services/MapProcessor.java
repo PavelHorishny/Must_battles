@@ -157,6 +157,15 @@ public class MapProcessor implements MapService{
     }
 
     /**
+     * @param unit 
+     * @return
+     */
+    @Override
+    public boolean isNotInPort(GameUnit unit, Surface [] [] map) {
+        return !map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].getType().equals(SurfaceType.PORT);
+    }
+
+    /**
      * Method accepts Surface multidimensional array and int
      * returns boolean
      * checks if int in bounds of sub array*/

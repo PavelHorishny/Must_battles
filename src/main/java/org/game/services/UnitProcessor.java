@@ -21,6 +21,8 @@ import java.util.Optional;
 public class UnitProcessor implements UnitService{
     private GameUnit selected_Test;
     private GameUnit target_Test;
+    private Coordinates vesselInStorm;
+    private Coordinates stormMove;
     private Surface[][] map;
     private final ArrayList <Surface> route = new ArrayList<>();
     private final ArrayList <GameUnit> aimedUnits = new ArrayList<>();
@@ -71,6 +73,8 @@ public class UnitProcessor implements UnitService{
 
     @Override
     public State unitSelected(String id) {
+        stormMove=null;
+        vesselInStorm = null;
         /**
          * if id is not empty
          * get unit by id
@@ -90,14 +94,29 @@ public class UnitProcessor implements UnitService{
             if(unit.isFirstPlayer()==isFirstPlayerMove){
                 if(selected_Test!=null&&!selected_Test.equals(unit)) {
                     selected_Test.setStateType(StateType.PASSIVE);
+                    //stormMove=null;
+                    //vesselInStorm = null;
                     mapProcessor.clearRoute(route);
                 }
                 selected_Test = unit;
                 selected_Test.setStateType(StateType.SELECTED);
                 mapProcessor.getRoute(selected_Test,route,map);
                 firingProcessor.setUnderAttack(mapProcessor.getFiringZone(selected_Test,map),aimedUnits,selected_Test);
+                Optional.of(unit).ifPresent(unit1 -> {
+                    if(unit1.getUnitType().equals(UnitType.VESSEL)){
+                        if(unit.getMovePoints()>0) {
+                            if (weatherProcessor.isStorm(unit1) && mapProcessor.isNotInPort(unit1, map)) {
+                                //System.out.println("Storm");
+                                //System.out.println(route.get(route.size()-1).getCoordinates());
+                                selected_Test = unit1;
+                                vesselInStorm = unit1.getCoordinates();
+                                stormMove = route.get(route.size() - 1).getCoordinates();
+                            }
+                        }
+                    }
+                });
 
-                return State.builder().mapAreaState(MapAreaState.builder().route(BackToGUIConverter.convertRoute(route)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
+                return State.builder().mapAreaState(MapAreaState.builder().vesselInStorm(vesselInStorm).stormDestination(stormMove).route(BackToGUIConverter.convertRoute(route)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
                         .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(selected_Test.toUnitData()).build())
                         .windRoseAreaState(WindRoseAreaState.builder().weather(selected_Test.getCurrentWeather()).build())
                         .build();
@@ -142,6 +161,7 @@ public class UnitProcessor implements UnitService{
         //return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
         //        .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
     }
+    //TODO merge movement methods as shoot methods
 
     /**
      * @param attackerID 

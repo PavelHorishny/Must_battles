@@ -20,5 +20,6 @@ public class MapAreaState extends GameComponentState {
     MapCell [][] map;
     Optional<Coordinates> selectedID_TEST;
     Optional<Coordinates> targetID_TEST;
-
+    Coordinates vesselInStorm;
+    Coordinates stormDestination;
 }

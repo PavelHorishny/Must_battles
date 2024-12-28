@@ -16,7 +16,7 @@ import java.util.Optional;
 @Builder
 public class MapAreaState extends GameComponentState {
     Map<Coordinates,GUIUnit> fleet;
-    //ArrayList<MapCell> map;
+    ArrayList<Coordinates> route;
     MapCell [][] map;
     Optional<Coordinates> selectedID_TEST;
     Optional<Coordinates> targetID_TEST;

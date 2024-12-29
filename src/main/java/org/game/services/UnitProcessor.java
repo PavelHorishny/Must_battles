@@ -204,6 +204,28 @@ public class UnitProcessor implements UnitService{
         }
         return unitSelected(attackerID);
     }
+
+    /**
+     * @return 
+     */
+    @Override
+    public State dayEnd() {
+        Optional.of(selected_Test).ifPresent(unit -> unit.setStateType(StateType.PASSIVE));
+        selected_Test = null;
+        target_Test = null;
+        vesselInStorm = null;
+        stormMove = null;
+        mapProcessor.clearRoute(route);
+        firingProcessor.clearAimed(aimedUnits);
+        if(isFirstPlayerMove){
+              isFirstPlayerMove = false;
+        }else {
+            isFirstPlayerMove = true;
+            day++;
+        }
+        return unitSelected("");
+    }
+
     private Optional<Coordinates> getOpt(GameUnit unit){
         if(unit==null){
             return Optional.empty();

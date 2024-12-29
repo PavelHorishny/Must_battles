@@ -56,12 +56,12 @@ public class UnitProcessor implements UnitService{
         fortificationProcessor.getStandardFortifications(map,fleet);
         fleet.values().stream().map(Fortification.class::cast).toList().forEach(fortification -> fortificationProcessor.setPortLocations(mapProcessor.getPort(fortification.getCoordinates(),map),fortification));
         vesselProcessor.setVessels(fleet,map);
-        map[20][3].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
-        map[20][3].getUnit().setCoordinates(new Coordinates(20,3));
-        map[20][3].getUnit().setUnitType(UnitType.VESSEL);
-        map[20][3].getUnit().setId("test");
+        map[31][7].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
+        map[31][7].getUnit().setCoordinates(new Coordinates(31,7));
+        map[31][7].getUnit().setUnitType(UnitType.VESSEL);
+        map[31][7].getUnit().setId("test");
 
-        fleet.put("test",map[20][3].getUnit());
+        fleet.put("test",map[31][7].getUnit());
 
         vesselProcessor.getVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
 

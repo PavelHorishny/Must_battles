@@ -222,6 +222,7 @@ public class UnitProcessor implements UnitService{
         }else {
             isFirstPlayerMove = true;
             day++;
+            fortificationProcessor.checkFortificationsAtMoveEnd(fleet);
         }
         return unitSelected("");
     }

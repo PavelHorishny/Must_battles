@@ -1,11 +1,14 @@
 package org.game.unit;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.game.Weather;
 import org.game.gui.Coordinates;
 @Getter
 public class Vessel extends GameUnit {
     private VesselType vesselType;
+    @Setter
+    private boolean canShot;
     //private Weather currentWeather;
     private int breeze_move_points;
     private int calm_move_points;
@@ -59,6 +62,7 @@ public class Vessel extends GameUnit {
         breeze_move_points = type.getBreeze_move_points();
         calm_move_points = type.getCalm_move_points();
         storm_move_points = type.getStorm_move_points();
+        canShot = true;
     }
 
     /**
@@ -73,4 +77,16 @@ public class Vessel extends GameUnit {
             case STORM -> setMovePoints(vesselType.getStorm_move_points());
         }
     }
+
+    /**
+     * @param current_shots 
+     */
+    @Override
+    public void setCurrent_shots(int current_shots) {
+        super.setCurrent_shots(current_shots);
+        if(getCurrent_shots()<=0){
+            canShot=false;
+        }
+    }
+    //TODO Check if canShot might be moved to parent class
 }

@@ -7,6 +7,7 @@ import org.game.mockData.NamesRandomizer;
 import org.game.unit.Fortification;
 import org.game.unit.FortificationType;
 import org.game.unit.GameUnit;
+import org.game.unit.UnitType;
 
 import java.util.*;
 
@@ -55,5 +56,12 @@ public class FortificationProcessor implements FortificationService{
     @Override
     public void setPortLocations(Set<Surface> port, Fortification fortification) {
         port.forEach(surface -> fortification.getPort().add(surface));
+    }
+    public void checkFortificationsAtMoveEnd(Map <String,GameUnit> fleet){
+        fleet.values().stream().filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION)).toList().forEach(fort-> checkForCapturing((Fortification)fort));
+    }
+
+    private void checkForCapturing(Fortification fort) {
+
     }
 }

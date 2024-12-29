@@ -162,7 +162,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                     repaint();
                 }, () -> {
                     if (selected != null) {
-                        if (state.getRoute().contains(cell.getCoordinates())) {
+                        if (state.getRoute()!=null&&state.getRoute().contains(cell.getCoordinates())) {
                             destination = cell.getCoordinates();
                             point = true;
                             repaint();

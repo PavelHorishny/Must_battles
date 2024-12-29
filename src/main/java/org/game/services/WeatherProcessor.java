@@ -18,7 +18,7 @@ public class WeatherProcessor implements WeatherService{
         CardinalPoint cardinalPoint = CardinalPoint.cardinalPoints[random.nextInt(CardinalPoint.cardinalPoints.length)];
         Wind wind = Wind.windForce[random.nextInt(Wind.windForce.length)];
         //return new Weather(cardinalPoint,wind);
-        return new Weather(CardinalPoint.WEST,Wind.STORM);
+        return new Weather(CardinalPoint.EAST,Wind.BREEZE);
     }
 
     /**

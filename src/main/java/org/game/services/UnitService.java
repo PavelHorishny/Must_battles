@@ -12,4 +12,6 @@ public interface UnitService {
     State movementEnds(String id, Coordinates destination);
 
     State makeShot(String attackerID, String targetID, String shotType);
+
+    State dayEnd();
 }

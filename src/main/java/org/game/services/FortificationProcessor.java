@@ -4,10 +4,7 @@ import org.game.Context;
 import org.game.map.Surface;
 import org.game.mockData.MockedData;
 import org.game.mockData.NamesRandomizer;
-import org.game.unit.Fortification;
-import org.game.unit.FortificationType;
-import org.game.unit.GameUnit;
-import org.game.unit.UnitType;
+import org.game.unit.*;
 
 import java.util.*;
 
@@ -57,11 +54,24 @@ public class FortificationProcessor implements FortificationService{
     public void setPortLocations(Set<Surface> port, Fortification fortification) {
         port.forEach(surface -> fortification.getPort().add(surface));
     }
+    @Override
     public void checkFortificationsAtMoveEnd(Map <String,GameUnit> fleet){
         fleet.values().stream().filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION)).toList().forEach(fort-> checkForCapturing((Fortification)fort));
     }
 
     private void checkForCapturing(Fortification fort) {
-
+        if(fort.getFortificationType().equals(FortificationType.ROYAL_PORT)){
+            if(fort.isCapturing()){
+                fort.setCurrent_hit_point(fort.getCurrent_hit_point()-1);
+            }else {
+                fort.getPort().forEach(surface -> {
+                    if (!surface.isEmpty()) {
+                        Vessel vessel = (Vessel) surface.getUnit();
+                        vessel.setCanShot(false);
+                        fort.setCapturing(true);
+                    }
+                });
+            }
+        }
     }
 }

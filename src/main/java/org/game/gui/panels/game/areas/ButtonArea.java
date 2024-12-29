@@ -10,10 +10,11 @@ import java.awt.*;
 
 public class ButtonArea extends GamePanelComponent {
     public static final Logger logger = LogManager.getLogger(ButtonArea.class);
-    JButton menu = new JButton("menu");
+    JButton menu = new JButton("Menu");
+    JButton end = new JButton("End");
     public ButtonArea(Settings settings) {
         super(settings);
-
+        end.addActionListener(e->mediator.endTurn());
         logger.debug(name);
         menu.addActionListener(e -> {
             System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
@@ -26,6 +27,7 @@ public class ButtonArea extends GamePanelComponent {
             d.setVisible(true);
             d.setLayout(new FlowLayout());
             JButton button = new JButton("back");
+
             button.setSize(40,20);
             JButton mainMenu = new JButton("Main Menu");
             mainMenu.setSize(40,20);
@@ -42,7 +44,7 @@ public class ButtonArea extends GamePanelComponent {
             d.add(mainMenu);
             System.out.println(" ");
         });
-
+        add(end);
         add(menu);
         System.out.println("Button panel exists");
     }

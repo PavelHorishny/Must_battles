@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum FortificationType {
     FIRST_LINE_FORT("1st line fort",5,7,3),
     SECOND_LINE_FORT("2nd line fort",4,5,2),
-    ROYAL_PORT("Royal port",0,2,0);
+    ROYAL_PORT("Royal port",0,3,0);
 
     private final String type;
     private final int fire_range;

@@ -13,5 +13,6 @@ public interface FortificationService {
     //void setPortLocations(Surface[][] map);
 
     void getStandardFortifications(Surface [][] map, Map<String, GameUnit> fleet);
-    void setPortLocations(Set<Surface> port, Fortification fortification) ;
+    void setPortLocations(Set<Surface> port, Fortification fortification);
+    void checkFortificationsAtMoveEnd(Map <String,GameUnit> fleet);
 }

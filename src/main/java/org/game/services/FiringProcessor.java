@@ -17,12 +17,7 @@ public class FiringProcessor implements FiringService{
     @Override
     public void setUnderAttack(List<GameUnit> inFiringZone, ArrayList<GameUnit> aimedUnits, GameUnit attacker) {
         if(!aimedUnits.isEmpty()) {
-            aimedUnits.forEach(unit -> {
-                if(!unit.getStateType().equals(StateType.DESTROYED)){
-                    unit.setStateType(StateType.PASSIVE);
-                }
-            });
-            aimedUnits.clear();
+            clearAimed(aimedUnits);
         }
         if(attacker.getCurrent_shots()>0) {
             inFiringZone.forEach(unit -> {
@@ -80,6 +75,20 @@ public class FiringProcessor implements FiringService{
             return Optional.empty();
         }
     }
+
+    /**
+     * @param aimedUnits
+     */
+    @Override
+    public void clearAimed(ArrayList<GameUnit> aimedUnits) {
+        aimedUnits.forEach(unit -> {
+            if(!unit.getStateType().equals(StateType.DESTROYED)){
+                unit.setStateType(StateType.PASSIVE);
+            }
+        });
+        aimedUnits.clear();
+    }
+
     private boolean getHit(){
         Random random = new Random();
         //return random.nextInt(0, 1) > 0;

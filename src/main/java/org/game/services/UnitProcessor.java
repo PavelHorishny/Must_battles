@@ -2,6 +2,7 @@ package org.game.services;
 
 import lombok.Getter;
 import org.game.BackToGUIConverter;
+import org.game.EndGame;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 import org.game.state.InfoAreaState;
@@ -19,6 +20,8 @@ import java.util.Optional;
 
 
 public class UnitProcessor implements UnitService{
+    private boolean lost;
+    private final EndGame endGame = new EndGame();
     private GameUnit selected_Test;
     private GameUnit target_Test;
     private Coordinates vesselInStorm;
@@ -210,21 +213,28 @@ public class UnitProcessor implements UnitService{
      */
     @Override
     public State dayEnd() {
-        Optional.of(selected_Test).ifPresent(unit -> unit.setStateType(StateType.PASSIVE));
+        Optional.ofNullable(selected_Test).ifPresent(unit -> unit.setStateType(StateType.PASSIVE));
         selected_Test = null;
         target_Test = null;
         vesselInStorm = null;
         stormMove = null;
         mapProcessor.clearRoute(route);
         firingProcessor.clearAimed(aimedUnits);
+        fortificationProcessor.checkFortificationsAtMoveEnd(fleet,isFirstPlayerMove);
         if(isFirstPlayerMove){
               isFirstPlayerMove = false;
         }else {
             isFirstPlayerMove = true;
             day++;
-            fortificationProcessor.checkFortificationsAtMoveEnd(fleet);
+            fortificationProcessor.checkFortificationsAtDayEnd(fleet, endGame);
         }
-        return unitSelected("");
+        if(!endGame.isEmpty()){
+            return State.builder().mapAreaState(MapAreaState.builder().lost(endGame.isEndGame()).looser(endGame.getMessage()).build()).build();
+        }else {
+            //System.out.println(looser);
+            return unitSelected("");
+
+        }
     }
 
     private Optional<Coordinates> getOpt(GameUnit unit){

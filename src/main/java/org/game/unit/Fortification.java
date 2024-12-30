@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Fortification extends GameUnit {
+    private boolean capturing;
     private FortificationType fortificationType;
     private List<Surface> port = new ArrayList<>();
 
@@ -40,5 +41,6 @@ public class Fortification extends GameUnit {
         setBase_shots(type.getShots());
         setCurrent_shots(getBase_shots());
         setMovePoints(type.getMovePoints());
+        capturing = false;
     }
 }

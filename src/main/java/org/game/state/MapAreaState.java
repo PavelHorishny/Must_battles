@@ -15,11 +15,13 @@ import java.util.Optional;
 @Setter
 @Builder
 public class MapAreaState extends GameComponentState {
+    boolean lost;
+    String looser;
     Map<Coordinates,GUIUnit> fleet;
     ArrayList<Coordinates> route;
     MapCell [][] map;
-    Optional<Coordinates> selectedID_TEST;
-    Optional<Coordinates> targetID_TEST;
+    Optional<Coordinates> selectedID_TEST = Optional.empty();
+    Optional<Coordinates> targetID_TEST = Optional.empty();
     Coordinates vesselInStorm;
     Coordinates stormDestination;
 }

@@ -1,6 +1,5 @@
 package org.game.gui.panels.game.areas;
 
-import org.game.map.SurfaceType;
 import org.game.state.GameComponentState;
 import org.game.state.MapAreaState;
 import org.game.gui.*;
@@ -23,6 +22,7 @@ import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
     //ArrayList<MapCell> map = StandardMap.MAP;
+    boolean looser;
     MapAreaState state;
     ArrayList<GUIUnit> fleet_st;
     ArrayList<MapCell> route;
@@ -65,12 +65,18 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     @Override
     public void updateState(GameComponentState state) {
         this.state=(MapAreaState) state;
-        this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
-        this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
-        if(this.state.getVesselInStorm()!=null){
-            selected=this.state.getFleet().get(this.state.getVesselInStorm());
-            destination = this.state.getStormDestination();
-            move(selected,destination);
+
+        if(this.state.isLost()){
+            this.looser = true;
+        }else {
+            this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
+            //Optional.ofNullable(this.state.getSelectedID_TEST()).ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
+            this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
+            if(this.state.getVesselInStorm()!=null){
+                selected=this.state.getFleet().get(this.state.getVesselInStorm());
+                destination = this.state.getStormDestination();
+                move(selected,destination);
+            }
         }
         repaint();
     }
@@ -120,9 +126,17 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(state!=null) {
-            drawMap(g);
+    /*        drawMap(g);
             drawFleet(g);
-            if(point) drawAnchor(g, destination);
+            if(point) drawAnchor(g, destination);*/
+            if (looser){
+                g.setColor(Color.RED);
+                g.drawString(this.state.getLooser(), 250, 250);
+            }else{
+                drawMap(g);
+                drawFleet(g);
+                if(point) drawAnchor(g, destination);
+            }
         }else {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);

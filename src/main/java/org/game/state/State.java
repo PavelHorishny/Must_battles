@@ -18,10 +18,5 @@ public class State {
     LogAreaState logAreaState;
     InfoAreaState infoAreaState;
     WindRoseAreaState windRoseAreaState;
-/*    public State update(){
-        mapAreaState =
-        mapAreaState.setMap(BackToGUIConverter.convertMap(map));
-        //mapAreaState.setFleet();
-        return this;
-    }*/
+    ButtonAreaState buttonAreaState;
 }

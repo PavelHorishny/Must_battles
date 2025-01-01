@@ -10,12 +10,7 @@ import org.game.messaging.GameClient;
 public class GamePanelMediator implements Mediator{
     GameClient client = new GameClient();
     public GamePanelMediator() {
-        /*client = new GameClient();
-        client.connect(Context.getServer());
-        client.registerMediator(this);*/
-        //gameStarted();
         System.out.println("Mediator exists");
-
     }
 
     private MapArea game;
@@ -77,6 +72,7 @@ public class GamePanelMediator implements Mediator{
         log.updateState(state.getLogAreaState());
         info.updateState(state.getInfoAreaState());
         wind.updateState(state.getWindRoseAreaState());
+        buttons.updateState(state.getButtonAreaState());
     }
 
     /**
@@ -112,6 +108,22 @@ public class GamePanelMediator implements Mediator{
     @Override
     public void endTurn() {
         client.request(Request.builder().message(Message.END).build());
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void unitReadyForRepair(boolean state) {
+        client.request(Request.builder().message(Message.REPAIR).state(state).build());
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void unitReadyForHelp(boolean state) {
+        client.request(Request.builder().message(Message.HELP).state(state).build());
     }
 
     public void start() {

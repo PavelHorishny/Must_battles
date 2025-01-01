@@ -4,6 +4,7 @@ import org.game.CardinalPoint;
 import org.game.Context;
 import org.game.gui.Coordinates;
 import org.game.map.Surface;
+import org.game.map.SurfaceType;
 import org.game.mockData.MockedData;
 import org.game.mockData.NamesRandomizer;
 import org.game.unit.*;
@@ -39,6 +40,24 @@ public class VesselProcessor implements VesselService{
 
     /**
      * @param vessel
+     * @param map
+     * @return
+     */
+    @Override
+    public boolean checkIfVesselCanBeRepaired(Vessel vessel, Surface[][] map) {
+        if(vessel.getCurrent_hit_point()<vessel.getVesselType().getHit_points()){
+            if(map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)){
+                return map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()].getFortification().isFirstPlayer() == vessel.isFirstPlayer();
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * @param vessel
      * @param destination
      * @param map
      */
@@ -48,7 +67,6 @@ public class VesselProcessor implements VesselService{
         int distance;
         int x;
         int y;
-        //Coordinates c = new Coordinates(0,0);
         if(destination.axisX()-vessel.getCoordinates().axisX()!=0){
             distance = Math.abs(destination.axisX()-vessel.getCoordinates().axisX());
             x=destination.axisX()-vessel.getCoordinates().axisX()>0 ? 1 : -1;
@@ -59,14 +77,46 @@ public class VesselProcessor implements VesselService{
             y=destination.axisY()-vessel.getCoordinates().axisY()>0 ? 1 : -1;
         }
         CardinalPoint direction = Arrays.stream(CardinalPoint.cardinalPoints).filter(cp->cp.getValue().equals(new Coordinates(x,y))).findAny().orElse(null);
-        //int penalty = weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),direction);
         vessel.setMovePoints(vessel.getMovePoints()-distance);
-        //map [destination.axisX()][destination.axisY()].setUnit(vessel);
-
-
-
         map[start.axisX()][start.axisY()].setUnit(null);
         map [destination.axisX()][destination.axisY()].setUnit(vessel);
+    }
+
+    /**
+     * @param fleet
+     */
+    @Override
+    public void restoreVesselsData(Map<String, GameUnit> fleet) {
+        fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(Vessel::newDayState);
+    }
+
+    /**
+     * @param fleet
+     */
+    @Override
+    public void checkVesselsAtDayEnd(Map<String, GameUnit> fleet) {
+        fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(vessel ->{
+            if(vessel.isOnRepair()) repairVessel(vessel);
+            if(vessel.isReadyForRepair()){
+                vessel.setOnRepair(true);
+                vessel.setReadyForRepair(false);
+            }
+        });
+    }
+
+    /**
+     * @param vessel
+     * @param map
+     * @return
+     */
+    @Override
+    public boolean checkIfVesselCanHelp(Vessel vessel, Surface[][] map) {
+        Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
+        if(surface.getType().equals(SurfaceType.PORT)){
+            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points();
+        }else {
+            return false;
+        }
     }
 
     /**
@@ -177,6 +227,13 @@ public class VesselProcessor implements VesselService{
     private void addVesselsWithNames(ArrayList<Vessel> vessels,int qnt,boolean player,Stack<String> names,VesselType vesselType){
         for (int i = 0; i<qnt; i++){
             vessels.add(new Vessel(player,vesselType,names.pop()));
+        }
+    }
+    private void repairVessel(Vessel vessel){
+        vessel.setCurrent_hit_point(vessel.getCurrent_hit_point()+1);
+        if(vessel.getCurrent_hit_point()>=vessel.getVesselType().getHit_points()){
+            vessel.setCurrent_hit_point(vessel.getVesselType().getHit_points());
+            vessel.setOnRepair(false);
         }
     }
     /**

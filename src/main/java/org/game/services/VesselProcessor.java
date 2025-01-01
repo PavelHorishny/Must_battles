@@ -3,6 +3,7 @@ package org.game.services;
 import org.game.CardinalPoint;
 import org.game.Context;
 import org.game.gui.Coordinates;
+import org.game.gui.StateType;
 import org.game.map.Surface;
 import org.game.map.SurfaceType;
 import org.game.mockData.MockedData;
@@ -113,7 +114,7 @@ public class VesselProcessor implements VesselService{
     public boolean checkIfVesselCanHelp(Vessel vessel, Surface[][] map) {
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
         if(surface.getType().equals(SurfaceType.PORT)){
-            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points();
+            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points() && surface.getFortification().isFirstPlayer()==vessel.isFirstPlayer()|surface.getFortification().getStateType().equals(StateType.DESTROYED);
         }else {
             return false;
         }

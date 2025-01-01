@@ -7,6 +7,5 @@ import org.game.unit.GameUnit;
 public interface WeatherService {
     Weather getWeather();
     int getPenalty(CardinalPoint windDirection, CardinalPoint routeDirection);
-
     boolean isStorm(GameUnit unit);
 }

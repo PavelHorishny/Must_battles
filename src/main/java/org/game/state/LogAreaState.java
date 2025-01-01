@@ -9,6 +9,4 @@ import lombok.Setter;
 @Builder
 public class LogAreaState extends GameComponentState {
     String label;
-    public LogAreaState() {
-    }
 }

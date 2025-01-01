@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class LogArea extends GamePanelComponent {
     private static final Logger logger = LogManager.getLogger(LogArea.class);
-    LogAreaState state = new LogAreaState();
+    LogAreaState state;
     JLabel l;
     public LogArea() {
 /*        name="log_area";

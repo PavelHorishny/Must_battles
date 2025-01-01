@@ -4,12 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.game.Weather;
 import org.game.gui.Coordinates;
+
 @Getter
 public class Vessel extends GameUnit {
     private VesselType vesselType;
     @Setter
-    private boolean canShot;
-    //private Weather currentWeather;
+    private boolean readyToHelp;
+    @Setter
+    private boolean helping;
+    @Setter
+    private boolean canMove;
     private int breeze_move_points;
     private int calm_move_points;
     private int storm_move_points;
@@ -62,7 +66,8 @@ public class Vessel extends GameUnit {
         breeze_move_points = type.getBreeze_move_points();
         calm_move_points = type.getCalm_move_points();
         storm_move_points = type.getStorm_move_points();
-        canShot = true;
+        setCanShoot(true);
+        setCanMove(true);
     }
 
     /**
@@ -85,8 +90,29 @@ public class Vessel extends GameUnit {
     public void setCurrent_shots(int current_shots) {
         super.setCurrent_shots(current_shots);
         if(getCurrent_shots()<=0){
-            canShot=false;
+            setCanShoot(false);
         }
     }
-    //TODO Check if canShot might be moved to parent class
+
+    /**
+     * 
+     */
+    @Override
+    public void newDayState() {
+        super.newDayState();
+        setMovePoints(getVesselType().getBreeze_move_points());
+        setCurrent_shots(getVesselType().getShots());
+        if(isOnRepair()){
+            canMove = false;
+            setCanShoot(false);
+        }
+    }
+    public void setHelping(boolean isHelping){
+        if(isHelping) {
+            this.helping = true;
+            this.readyToHelp = false;
+        }else{
+            this.helping = false;
+        }
+    }
 }

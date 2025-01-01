@@ -39,7 +39,7 @@ public class FiringProcessor implements FiringService{
     @Override
     public Optional<GameUnit> shot(GameUnit attacker, GameUnit target) {
         attacker.setCurrent_shots(10);
-
+        if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
             if (getHit()) {
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 target.setCurrent_hit_point(target.getCurrent_hit_point() - 1);
@@ -52,6 +52,9 @@ public class FiringProcessor implements FiringService{
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 return Optional.empty();
             }
+        }else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -61,17 +64,21 @@ public class FiringProcessor implements FiringService{
      */
     @Override
     public Optional<GameUnit> salvoShot(GameUnit attacker, GameUnit target) {
-        int salvo = attacker.getCurrent_shots();
-        if(getHit()){
-            attacker.setCurrent_shots(attacker.getCurrent_shots()-salvo);
-            target.setCurrent_hit_point(target.getCurrent_hit_point()-salvo);
-            if(target.getCurrent_hit_point()<=0){
-                return Optional.of(target);
-            }else{
+        if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
+            int salvo = attacker.getCurrent_shots();
+            if (getHit()) {
+                attacker.setCurrent_shots(attacker.getCurrent_shots() - salvo);
+                target.setCurrent_hit_point(target.getCurrent_hit_point() - salvo);
+                if (target.getCurrent_hit_point() <= 0) {
+                    return Optional.of(target);
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                attacker.setCurrent_shots(attacker.getCurrent_shots() - salvo);
                 return Optional.empty();
             }
         }else {
-            attacker.setCurrent_shots(attacker.getCurrent_shots()-salvo);
             return Optional.empty();
         }
     }

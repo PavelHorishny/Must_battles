@@ -149,7 +149,6 @@ public class MapProcessor implements MapService{
                     if(!map[c.axisX()][c.axisY()].isEmpty()){
                         tmp.add(map[c.axisX()][c.axisY()].getUnit());
                     }
-                    //tmp.add(map[unit.getCoordinates().axisX() + cardinalPoint.getValue().axisX() * i][unit.getCoordinates().axisY() + cardinalPoint.getValue().axisY() * i]);
                 }
             }
         });

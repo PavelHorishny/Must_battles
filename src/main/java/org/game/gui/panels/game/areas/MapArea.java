@@ -70,7 +70,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             this.looser = true;
         }else {
             this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
-            //Optional.ofNullable(this.state.getSelectedID_TEST()).ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
             this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
             if(this.state.getVesselInStorm()!=null){
                 selected=this.state.getFleet().get(this.state.getVesselInStorm());
@@ -111,7 +110,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             if(state.getFleet().get(selected.getCoordinates()).getX()==destination.axisX()*30&&state.getFleet().get(selected.getCoordinates()).getY()==destination.axisY()*30) {
                 timer.stop();
                 mediator.movementEnds(selected.getId(),destination);
-                //selected = state.getFleet().get(new Coordinates(destination.axisX(),destination.axisY()));
             }
             repaint();
         });
@@ -126,9 +124,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(state!=null) {
-    /*        drawMap(g);
-            drawFleet(g);
-            if(point) drawAnchor(g, destination);*/
             if (looser){
                 g.setColor(Color.RED);
                 g.drawString(this.state.getLooser(), 250, 250);
@@ -172,7 +167,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                 t = Optional.ofNullable(state.getFleet().get(new Coordinates(e.getX() / 30, e.getY() / 30)));
                 t.ifPresentOrElse(unit -> {
                     mediator.unitSelected(unit.getId());
-                    //selected = unit;
                     repaint();
                 }, () -> {
                     if (selected != null) {
@@ -188,7 +182,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
                         }
                     } else {
                         mediator.unitSelected("");
-                        //selected = null;
                         destination = null;
                         point = false;
                         repaint();
@@ -241,9 +234,6 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     public void mouseExited(MouseEvent mouseEvent) {
 
     }
-
-
-
 
     private void grid(Graphics g){
         for(int i = 0; i<=960;i=i+30){

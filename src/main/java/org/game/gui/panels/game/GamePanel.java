@@ -11,7 +11,6 @@ public class GamePanel extends JPanel {
     public GamePanel(){
         mediator = (GamePanelMediator) Context.getMediator();
         init();
-        //mediator.gameStarted();
        }
     private void init(){
         setLayout(PanelsConstrains.LAYOUT);
@@ -30,9 +29,6 @@ public class GamePanel extends JPanel {
         GamePanelComponent logArea = new LogArea(PanelsConstrains.LOG_AREA_SETTINGS);
         mediator.registerComponent(logArea);
         add(logArea,PanelsConstrains.LOG_AREA);
-
-        //mediator.test("test");
-        //mediator.gameStarted();
     }
 
     public void setMediator(GamePanelMediator mediator) {

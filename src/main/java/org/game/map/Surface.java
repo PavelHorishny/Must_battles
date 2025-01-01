@@ -3,7 +3,9 @@ package org.game.map;
 import lombok.Getter;
 import lombok.Setter;
 import org.game.gui.Coordinates;
+import org.game.unit.Fortification;
 import org.game.unit.GameUnit;
+import org.game.unit.Vessel;
 
 @Getter
 @Setter
@@ -12,6 +14,7 @@ public class Surface {
     private Coordinates coordinates;
     private SurfaceType type;
     private GameUnit unit;
+    private Fortification fortification;
     private boolean isUnderAttack;
 
     public Surface (Coordinates coordinates,SurfaceType type){
@@ -37,6 +40,13 @@ public class Surface {
         }else {
             this.unit = unit;
             unit.setCoordinates(coordinates);
+            if(!getType().equals(SurfaceType.PORT)){
+                this.unit.setReadyForRepair(false);
+                if(this.unit.getCurrent_shots()>0) this.unit.setCanShoot(true);
+                if(this.unit instanceof Vessel){
+                    ((Vessel) this.unit).setReadyToHelp(false);
+                }
+            }
         }
     }
 }

@@ -28,11 +28,9 @@ public class MixedComponent extends JComponent {
                 g.setColor(Color.BLACK);
                 g.drawRect((50 + (20 * i)), 0, 15, 30);
             }
-
     }
 
     public void setData(int empty,int filled){
-
         this.empty = empty;
         this.filled = filled;
         repaint();

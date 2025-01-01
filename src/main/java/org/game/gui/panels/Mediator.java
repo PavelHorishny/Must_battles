@@ -6,20 +6,15 @@ import org.game.gui.panels.game.areas.GameComponent;
 
 public interface Mediator {
     void registerComponent(GameComponent gameComponent);
-
     void unitSelected(String vesselID);
-
-
     void gameStarted();
     void test (String message);
     void update(State state);
-
     void movementStarts(String id);
-
     void movementEnds(String id, Coordinates destination);
-
     void shot(String attackerID, String targetID, String shotType);
-
     void endTurn();
+    void unitReadyForRepair(boolean state);
+    void unitReadyForHelp(boolean state);
 }
 

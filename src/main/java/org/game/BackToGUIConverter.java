@@ -77,12 +77,6 @@ public class BackToGUIConverter {
         tmp.setIcons(setIcons(unit));
         tmp.setType(unit.getUnitType());
         tmp.setStateType(unit.getStateType());
-/*        if(unit.getUnitType()==UnitType.FORTIFICATION){
-            Fortification f = (Fortification) unit;
-            if(f.getFortificationType()==FortificationType.ROYAL_PORT){
-                tmp.setCurrentIcon(checkPlayer(f) ? Images.ROYAL_PORT_ST : Images.ROYAL_PORT_ND);
-            }
-        }*/
         tmp.setActivity(unit.getStateType());
         return tmp;
     }

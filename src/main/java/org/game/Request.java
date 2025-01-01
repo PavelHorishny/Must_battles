@@ -14,4 +14,5 @@ public class Request {
     String targetID;
     String shotType;
     Coordinates destination;
+    boolean state;
 }

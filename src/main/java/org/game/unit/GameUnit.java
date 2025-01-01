@@ -11,10 +11,14 @@ import org.game.gui.StateType;
 @Getter
 public class GameUnit extends Unit {
     private UnitType unitType;
-    //private StateType stateType;
     private boolean isFirstPlayer;
     @Setter
     private Weather currentWeather;
+    @Setter
+    private boolean readyForRepair;
+    private boolean onRepair;
+    private boolean canShoot;
+
     private String type;
     private int fire_range;
     private int base_hit_points;
@@ -26,7 +30,7 @@ public class GameUnit extends Unit {
 
 
     public GameUnit(boolean isFirstPlayer, Coordinates coordinates) {
-        //this.unitType = unitType;
+
         this.isFirstPlayer = isFirstPlayer;
         setCoordinates(coordinates);
         setStateType(StateType.PASSIVE);
@@ -44,5 +48,7 @@ public class GameUnit extends Unit {
     void initialState() {
 
     }
+    public void newDayState(){
 
+    }
 }

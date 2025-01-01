@@ -33,13 +33,6 @@ public class InfoArea extends GamePanelComponent {
         add(generalInfoPanel,"General");
         add(selectedInfoPanel,"Selected");
         add(targetInfoPanel,"Target");
-   /*     l.setText(name);
-        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-        add(l);
-        add(hit_points);
-        add(shots);
-        add(movePoints);*/
-        /*bu*/
         logger.debug(name);
     }
     public void setHit_pointsData(int data){

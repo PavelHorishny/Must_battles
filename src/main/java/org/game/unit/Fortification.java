@@ -3,7 +3,6 @@ package org.game.unit;
 import lombok.Getter;
 import lombok.Setter;
 import org.game.gui.Coordinates;
-import org.game.gui.StateType;
 import org.game.map.Surface;
 
 import java.util.ArrayList;
@@ -42,5 +41,14 @@ public class Fortification extends GameUnit {
         setCurrent_shots(getBase_shots());
         setMovePoints(type.getMovePoints());
         capturing = false;
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public void newDayState() {
+        super.newDayState();
+        setCurrent_shots(getFortificationType().getShots());
     }
 }

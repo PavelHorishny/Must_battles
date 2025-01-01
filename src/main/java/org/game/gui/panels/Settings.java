@@ -10,7 +10,6 @@ import java.awt.*;
 @AllArgsConstructor
 @Builder
 public class Settings {
-
     private String name;
     private Color background;
     private Dimension preferredSize;

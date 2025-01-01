@@ -28,9 +28,7 @@ public class GUIUnit extends Unit {
 
     public GUIUnit(UnitIcons icons, Coordinates coordinates, StateType state){
         this.icons = icons;
-        //this.coordinates=coordinates;
         this.setCoordinates(coordinates);
-        //setPosition(this.getCoordinates());
         setActivity(state);
     }
 
@@ -53,36 +51,6 @@ public class GUIUnit extends Unit {
     void initialState() {
 
     }
-
-
-/*    private void setPosition(Coordinates coordinates){
-        x=coordinates.axisX()*Constants.CELL_SIZE;
-        y=coordinates.axisY()*Constants.CELL_SIZE;
-    }*//*
-    @Override
-    public Coordinates getCoordinates() {
-    return super.getCoordinates();
-    }
-
-    @Override
-    public String getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setCoordinates(Coordinates coordinates) {
-        super.setCoordinates(coordinates);
-    }
-
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }*/
-/*    public void setCurrentIcon(UnitIcons icons){
-        if(icons==null){
-            currentIcon =
-        }
-    }*/
 
     /**
      * @param coordinates 

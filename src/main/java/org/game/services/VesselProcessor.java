@@ -3,6 +3,7 @@ package org.game.services;
 import org.game.CardinalPoint;
 import org.game.Context;
 import org.game.gui.Coordinates;
+import org.game.gui.StateType;
 import org.game.map.Surface;
 import org.game.map.SurfaceType;
 import org.game.mockData.MockedData;
@@ -113,9 +114,28 @@ public class VesselProcessor implements VesselService{
     public boolean checkIfVesselCanHelp(Vessel vessel, Surface[][] map) {
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
         if(surface.getType().equals(SurfaceType.PORT)){
-            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points();
+            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points() && surface.getFortification().isFirstPlayer()==vessel.isFirstPlayer()|checkingPresenceOfEnemyVessels(surface);
         }else {
             return false;
+        }
+    }
+    private boolean checkingPresenceOfEnemyVessels(Surface surface){
+        Fortification fortification = surface.getFortification();
+        boolean first = fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).anyMatch(surface1 -> surface1.getUnit().isFirstPlayer());
+        boolean second = fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).anyMatch(surface1 -> !surface1.getUnit().isFirstPlayer());
+        if(first&&second){
+            if(fortification.getStateType().equals(StateType.DESTROYED)){
+                fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).forEach(surface1 -> {
+                    Vessel vessel = (Vessel) surface1.getUnit();
+                    vessel.setHelping(false);
+                    vessel.setReadyToHelp(false);
+                });
+                fortification.setOnRepair(false);
+                fortification.setCurrent_hit_point(0);
+            }
+            return false;
+        }else {
+            return true;
         }
     }
 

@@ -3,6 +3,7 @@ package org.game.services;
 import org.game.CardinalPoint;
 import org.game.gui.Constants;
 import org.game.gui.Coordinates;
+import org.game.gui.StateType;
 import org.game.gui.panels.PanelsConstrains;
 import org.game.map.Surface;
 import org.game.map.SurfaceType;
@@ -94,7 +95,7 @@ public class MapProcessor implements MapService{
                                     Fortification f = (Fortification) unit;
                                     switch (f.getFortificationType()){
                                         case FIRST_LINE_FORT, SECOND_LINE_FORT -> {
-                                            if(f.isFirstPlayer()==map[coordinates.axisX()][coordinates.axisY()].getUnit().isFirstPlayer()){
+                                            if(f.isFirstPlayer()==map[coordinates.axisX()][coordinates.axisY()].getUnit().isFirstPlayer()||f.getStateType().equals(StateType.DESTROYED)){
                                                 route.add(map[c.axisX()][c.axisY()]);
                                             }
                                         }

@@ -74,10 +74,13 @@ public class BackToGUIConverter {
         GUIUnit tmp = new GUIUnit();
         tmp.setCoordinates(unit.getCoordinates());
         tmp.setId(unit.getId());
-        tmp.setIcons(setIcons(unit));
-        tmp.setType(unit.getUnitType());
         tmp.setStateType(unit.getStateType());
+        tmp.setIcons(setIcons(unit));
         tmp.setActivity(unit.getStateType());
+
+        tmp.setType(unit.getUnitType());
+     /*   tmp.setStateType(unit.getStateType());
+        tmp.setActivity(unit.getStateType());*/
         return tmp;
     }
     public static ArrayList<Coordinates> convertRoute(ArrayList<Surface> route){

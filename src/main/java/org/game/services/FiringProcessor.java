@@ -19,7 +19,7 @@ public class FiringProcessor implements FiringService{
         if(!aimedUnits.isEmpty()) {
             clearAimed(aimedUnits);
         }
-        if(attacker.getCurrent_shots()>0) {
+        if(attacker.getCurrent_shots()>0&&attacker.isCanShoot()) {
             inFiringZone.forEach(unit -> {
                 if (unit.isFirstPlayer() != attacker.isFirstPlayer()) {
                     if (!unit.getStateType().equals(StateType.DESTROYED)) {

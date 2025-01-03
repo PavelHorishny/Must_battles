@@ -98,6 +98,8 @@ public class VesselProcessor implements VesselService{
         fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(vessel ->{
             vessel.setMovePoints(vessel.getVesselType().getBreeze_move_points());
             vessel.setCurrent_shots(vessel.getVesselType().getShots());
+            vessel.setCanMove(true);
+            vessel.setCanShoot(true);
             if(vessel.isOnRepair()) repairVessel(vessel);
             if(vessel.isReadyForRepair()){
                 vessel.setOnRepair(true);
@@ -105,6 +107,7 @@ public class VesselProcessor implements VesselService{
             }
         });
     }
+
 
     /**
      * @param vessel
@@ -121,6 +124,21 @@ public class VesselProcessor implements VesselService{
             return false;
         }
     }
+
+    /**
+     * @param unit
+     */
+    @Override
+    public void destroyRepairingVessels(GameUnit unit,Map<String,GameUnit> fleet) {
+        Fortification fortification = (Fortification) unit;
+        fortification.getPort().stream().filter(surface -> !surface.isEmpty()).forEach(surface -> {
+            if(surface.getUnit().isOnRepair()){
+                fleet.remove(surface.getUnit().getId(),surface.getUnit());
+            }
+        });
+
+    }
+
     private boolean checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(Fortification fortification){
         boolean first = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> surface.getUnit().isFirstPlayer());
         boolean second = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> !surface.getUnit().isFirstPlayer());

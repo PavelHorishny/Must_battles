@@ -60,18 +60,20 @@ public class MapProcessor implements MapService{
     public void getRoute(GameUnit unit, ArrayList<Surface> route, Surface[][] map) {
         if(unit.getUnitType().equals(UnitType.VESSEL)){
             Vessel vessel = (Vessel) unit;
-            switch (vessel.getCurrentWeather().wind()){
-                case BREEZE -> {
-                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-                        setRoute(vessel.getMovePoints()-weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(),cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
-                    });
-                }
-                case CALM -> {
-                    Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
-                            setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),cardinalPoint,route));
-                }
-                case STORM -> {
-                    setRoute(vessel.getMovePoints(),map,vessel.getCoordinates(),vessel.getCurrentWeather().cardinalPoint(),route);
+            if(vessel.isCanMove()) {
+                switch (vessel.getCurrentWeather().wind()) {
+                    case BREEZE -> {
+                        Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
+                            setRoute(vessel.getMovePoints() - weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(), cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
+                        });
+                    }
+                    case CALM -> {
+                        Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
+                                setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), cardinalPoint, route));
+                    }
+                    case STORM -> {
+                        setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), vessel.getCurrentWeather().cardinalPoint(), route);
+                    }
                 }
             }
         }

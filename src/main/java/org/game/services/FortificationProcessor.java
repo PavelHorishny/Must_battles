@@ -91,7 +91,8 @@ public class FortificationProcessor implements FortificationService{
     @Override
     public void checkFortificationsAtDayEnd(Map<String, GameUnit> fleet, EndGame endGame) {
         fleet.values().stream().filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION)).map(Fortification.class::cast).forEach(fortification -> {
-
+            fortification.setCurrent_shots(fortification.getFortificationType().getShots());
+            fortification.setCanShoot(true);
             if(fortification.getFortificationType().equals(FortificationType.ROYAL_PORT)){
                 if(fortification.isCapturing()){
                     fortification.setCurrent_hit_point(fortification.getCurrent_hit_point()-1);

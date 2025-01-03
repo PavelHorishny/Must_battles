@@ -99,19 +99,43 @@ public class Vessel extends GameUnit {
     @Override
     public void newDayState() {
         super.newDayState();
-        setMovePoints(getVesselType().getBreeze_move_points());
+/*        setMovePoints(getVesselType().getBreeze_move_points());
         setCurrent_shots(getVesselType().getShots());
         if(isOnRepair()){
             canMove = false;
             setCanShoot(false);
-        }
+        }*/
     }
     public void setHelping(boolean isHelping){
         if(isHelping) {
             this.helping = true;
             this.readyToHelp = false;
+            canMove = false;
+            setCanShoot(false);
         }else{
             this.helping = false;
+        }
+    }
+
+    /**
+     * @param onRepair 
+     */
+    @Override
+    public void setOnRepair(boolean onRepair) {
+        super.setOnRepair(onRepair);
+        if(onRepair){
+            canMove = false;
+        }
+    }
+
+    /**
+     * @param movePoints 
+     */
+    @Override
+    public void setMovePoints(int movePoints) {
+        super.setMovePoints(movePoints);
+        if(getMovePoints()<=0){
+            canMove=false;
         }
     }
 }

@@ -24,4 +24,5 @@ public class MapAreaState extends GameComponentState {
     Optional<Coordinates> targetID_TEST = Optional.empty();
     Coordinates vesselInStorm;
     Coordinates stormDestination;
+    //TODO think how to get rid of Optional
 }

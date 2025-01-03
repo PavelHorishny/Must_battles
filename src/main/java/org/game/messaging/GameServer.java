@@ -1,21 +1,14 @@
 package org.game.messaging;
 
 import org.game.*;
-import org.game.map.Surface;
-import org.game.services.MapProcessor;
-import org.game.services.MapService;
 import org.game.services.UnitProcessor;
 import org.game.services.UnitService;
-import org.game.state.State;
+
 
 public class GameServer implements Server{
-    State state;
-    Surface [] [] map;
-    MapService mapProcessor = new MapProcessor();
     private final UnitService unitService = new UnitProcessor();
     public GameServer() {
         Context.setServer(this);
-        System.out.println("Server exists");
     }
 
     @Override

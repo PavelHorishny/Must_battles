@@ -16,29 +16,19 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
-    //ArrayList<MapCell> map = StandardMap.MAP;
     boolean looser;
     MapAreaState state;
-    ArrayList<GUIUnit> fleet_st;
-    ArrayList<MapCell> route;
-    BufferedImage image;
-    BufferedImage imageTwo;
     GUIUnit selected;
     GUIUnit target;
     BufferedImage anchor;
     Coordinates destination;
 
-    int start;
-    int end;
     boolean point = false;
     Timer timer;
-    int x;
-    int y;
 
     {
         try {

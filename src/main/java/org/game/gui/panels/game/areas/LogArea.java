@@ -15,12 +15,6 @@ public class LogArea extends GamePanelComponent {
     LogAreaState state;
     JLabel l;
     public LogArea() {
-/*        name="log_area";
-        setBackground(Color.DARK_GRAY);
-        setPreferredSize(new Dimension(800,25));
-        JLabel l = new JLabel("test log area");
-        add(l);
-        logger.debug(name);*/
     }
     public LogArea(Settings settings){
         super(settings);

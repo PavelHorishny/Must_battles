@@ -81,9 +81,12 @@ public class MapProcessor implements MapService{
             Coordinates c = new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i,coordinates.axisY() + cardinalPoint.getValue().axisY() * i);
             if(checkIfPositionIsValid(map,c)){
                 if(checkIfPositionIsWater(map,c)){
-                    if(!map[c.axisX()][c.axisY()].isEmpty()) break;
-                    map[c.axisX()][c.axisY()].setType(SurfaceType.ROUTE);
-                    route.add(map[c.axisX()][c.axisY()]);
+                    if(!map[c.axisX()][c.axisY()].isEmpty()){
+                        break;
+                    }else {
+                        map[c.axisX()][c.axisY()].setType(SurfaceType.ROUTE);
+                        route.add(map[c.axisX()][c.axisY()]);
+                    }
                 } else if (checkIfPositionIsPort(map,c)) {
                     if(!map[c.axisX()][c.axisY()].isEmpty()){
                         break;
@@ -169,19 +172,19 @@ public class MapProcessor implements MapService{
      * Method accepts Surface multidimensional array and int
      * returns boolean
      * checks if int in bounds of sub array*/
-    private boolean checkValidPositionOnAxisY(Surface [][] map, int index){
+    private boolean checkIfPositionIsValidOnAxisY(Surface [][] map, int index){
         return index >= 0 && index < map[0].length;
     }
     /**
      * @param map, index
      * @return boolean
      */
-    private boolean checkValidPositionOnAxisX(Surface [][] map, int index){
+    private boolean checkIfPositionIsValidOnAxisX(Surface [][] map, int index){
         return index >= 0 && index < map.length;
     }
     private boolean checkIfPositionIsValid(Surface [] [] map, Coordinates coordinates){
-        if(checkValidPositionOnAxisX(map,coordinates.axisX())){
-            return checkValidPositionOnAxisY(map, coordinates.axisY());
+        if(checkIfPositionIsValidOnAxisX(map,coordinates.axisX())){
+            return checkIfPositionIsValidOnAxisY(map, coordinates.axisY());
         }else {
             return false;
         }
@@ -191,8 +194,8 @@ public class MapProcessor implements MapService{
      * Returns boolean
      * Checks if Coordinate object might be in bounds of multidimensional array*/
     private boolean checkIfPositionValidAndWater(Surface[][] map, Coordinates coordinates){
-        if(checkValidPositionOnAxisX(map,coordinates.axisX())){
-            if(checkValidPositionOnAxisY(map,coordinates.axisY())){
+        if(checkIfPositionIsValidOnAxisX(map,coordinates.axisX())){
+            if(checkIfPositionIsValidOnAxisY(map,coordinates.axisY())){
                 return checkIfSurfaceIsWaterOrPort(map[coordinates.axisX()][coordinates.axisY()]);
             }else {
                 return false;

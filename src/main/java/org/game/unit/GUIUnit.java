@@ -9,7 +9,6 @@ import org.game.gui.StateType;
 import java.awt.image.BufferedImage;
 @Getter
 @Setter
-
 public class GUIUnit extends Unit {
 
 

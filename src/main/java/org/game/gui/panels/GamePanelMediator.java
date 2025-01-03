@@ -25,7 +25,6 @@ public class GamePanelMediator implements Mediator{
             case "GAME_AREA" -> {
                 game = (MapArea)  gameComponent;
                 game.setMediator(this);
-                //game.moveVessel();
             }
             case "WIND_ROSE_AREA" -> {
                 wind = (WindRoseArea) gameComponent;
@@ -57,7 +56,6 @@ public class GamePanelMediator implements Mediator{
 
         client.connect(Context.getServer());
         client.registerMediator(this);
-        //gameStarted();
         client.request(Request.builder().message(Message.START).build());
     }
 

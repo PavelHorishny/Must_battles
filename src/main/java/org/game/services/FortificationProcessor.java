@@ -82,8 +82,6 @@ public class FortificationProcessor implements FortificationService{
                 });
             }
         });
-        System.out.println("isRoyalPortResult: ");
-        System.out.println(isRoyalPortIsNotEmpty(fort));
     }
 
     /**
@@ -108,7 +106,6 @@ public class FortificationProcessor implements FortificationService{
             }else {
                 if(fortification.isOnRepair()){
                 repairFortification(fortification);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!REPAIR STARTS!!!!!!!!!!!");
                     }
                 if(fortification.isReadyForRepair()){
                     fortification.setOnRepair(true);
@@ -135,8 +132,6 @@ public class FortificationProcessor implements FortificationService{
      */
     @Override
     public boolean checkIfFortificationCanBeRepaired(Fortification fortification/*, Surface[][] map*/) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!checkIfFortificationCanBeRepaired!!!!!!!!!!!!!!!!!!!!!!!!" );
-
         if(checkingPresenceOfEnemyVessels(fortification)) {
             int qnt = 0;
             for (int i = 0; i < fortification.getPort().size(); i++) {

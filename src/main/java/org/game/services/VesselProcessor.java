@@ -1,6 +1,5 @@
 package org.game.services;
 
-import org.game.CardinalPoint;
 import org.game.Context;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
@@ -18,7 +17,6 @@ public class VesselProcessor implements VesselService{
     ArrayList <Vessel> firstPlayerVessels = new ArrayList<>();
 
     public VesselProcessor(){
-        //namesRandomizer = new NamesRandomizer();
     }
     /**
      * Accepts Map<String,GameUnit> to keep added vessels objects, Surface [][] that keeps map
@@ -26,8 +24,8 @@ public class VesselProcessor implements VesselService{
      * Method calls setFleet with necessary parameters*/
 
     @Override
-    public void setVessels(Map<String, GameUnit> fleet, Surface[][] map) {
-        setFleet(randomizeFleet(generateVesselsWithNames(true)),randomizeFleet(generateVesselsWithNames(false)),fleet,map);
+    public void setTheFleet(Map<String, GameUnit> fleet, Surface[][] map) {
+        setUpVesselsForBothPlayers(shufflePlayersVessels(generateVesselsWithNames(true)), shufflePlayersVessels(generateVesselsWithNames(false)),fleet,map);
     }
 
     /**
@@ -35,7 +33,7 @@ public class VesselProcessor implements VesselService{
      * @return
      */
     @Override
-    public List<Vessel> getVessels(Map<String,GameUnit> fleet) {
+    public List<Vessel> getListOfAllVessels(Map<String,GameUnit> fleet) {
         return fleet.values().stream().filter(e->e.getUnitType().equals(UnitType.VESSEL)).map(Vessel.class::cast).toList();
     }
 
@@ -47,7 +45,7 @@ public class VesselProcessor implements VesselService{
     @Override
     public boolean checkIfVesselCanBeRepaired(Vessel vessel, Surface[][] map) {
         if(vessel.getCurrent_hit_point()<vessel.getVesselType().getHit_points()){
-            if(map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)){
+            if(checkIfSurfaceIsPort(map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()])){
                 return map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()].getFortification().isFirstPlayer() == vessel.isFirstPlayer();
             }else {
                 return false;
@@ -56,6 +54,9 @@ public class VesselProcessor implements VesselService{
             return false;
         }
     }
+    private boolean checkIfSurfaceIsPort(Surface surface){
+        return surface.getType().equals(SurfaceType.PORT);
+    }
 
     /**
      * @param vessel
@@ -63,33 +64,31 @@ public class VesselProcessor implements VesselService{
      * @param map
      */
     @Override
-    public void move(Vessel vessel, Coordinates destination, Surface[][] map) {
+    public void moveVesselToDestinationPoint(Vessel vessel, Coordinates destination, Surface[][] map) {
         Coordinates start = new Coordinates(vessel.getCoordinates().axisX(),vessel.getCoordinates().axisY());
-        int distance;
-        int x;
-        int y;
-        if(destination.axisX()-vessel.getCoordinates().axisX()!=0){
-            distance = Math.abs(destination.axisX()-vessel.getCoordinates().axisX());
-            x=destination.axisX()-vessel.getCoordinates().axisX()>0 ? 1 : -1;
-            y=Integer.compare(destination.axisY()-vessel.getCoordinates().axisY(),0);
-        }else{
-            distance = Math.abs(destination.axisY()-vessel.getCoordinates().axisY());
-            x=0;
-            y=destination.axisY()-vessel.getCoordinates().axisY()>0 ? 1 : -1;
-        }
-        CardinalPoint direction = Arrays.stream(CardinalPoint.cardinalPoints).filter(cp->cp.getValue().equals(new Coordinates(x,y))).findAny().orElse(null);
+        int distance = getDistance(vessel, destination);
         vessel.setMovePoints(vessel.getMovePoints()-distance);
         map[start.axisX()][start.axisY()].setUnit(null);
         map [destination.axisX()][destination.axisY()].setUnit(vessel);
     }
 
-    /**
+    private static int getDistance(Vessel vessel, Coordinates destination) {
+        int distance;
+        if(destination.axisX()- vessel.getCoordinates().axisX()!=0){
+            distance = Math.abs(destination.axisX() - vessel.getCoordinates().axisX());
+        }else{
+            distance = Math.abs(destination.axisY() - vessel.getCoordinates().axisY());
+        }
+        return distance;
+    }
+
+    /*    *//**
      * @param fleet
-     */
+     *//*
     @Override
     public void restoreVesselsData(Map<String, GameUnit> fleet) {
         fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(Vessel::newDayState);
-    }
+    }*/
 
     /**
      * @param fleet
@@ -97,6 +96,8 @@ public class VesselProcessor implements VesselService{
     @Override
     public void checkVesselsAtDayEnd(Map<String, GameUnit> fleet) {
         fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(vessel ->{
+            vessel.setMovePoints(vessel.getVesselType().getBreeze_move_points());
+            vessel.setCurrent_shots(vessel.getVesselType().getShots());
             if(vessel.isOnRepair()) repairVessel(vessel);
             if(vessel.isReadyForRepair()){
                 vessel.setOnRepair(true);
@@ -113,22 +114,21 @@ public class VesselProcessor implements VesselService{
     @Override
     public boolean checkIfVesselCanHelp(Vessel vessel, Surface[][] map) {
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
-        if(surface.getType().equals(SurfaceType.PORT)){
-            return !vessel.isHelping() && surface.getFortification().getCurrent_hit_point() < surface.getFortification().getFortificationType().getHit_points() && surface.getFortification().isFirstPlayer()==vessel.isFirstPlayer()|checkingPresenceOfEnemyVessels(surface);
+        if(checkIfSurfaceIsPort(surface)){
+            Fortification fortification = surface.getFortification();
+            return !vessel.isHelping() && fortification.getCurrent_hit_point() < fortification.getFortificationType().getHit_points() && fortification.isFirstPlayer()==vessel.isFirstPlayer() | checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(fortification);
         }else {
             return false;
         }
     }
-    private boolean checkingPresenceOfEnemyVessels(Surface surface){
-        Fortification fortification = surface.getFortification();
-        boolean first = fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).anyMatch(surface1 -> surface1.getUnit().isFirstPlayer());
-        boolean second = fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).anyMatch(surface1 -> !surface1.getUnit().isFirstPlayer());
+    private boolean checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(Fortification fortification){
+        boolean first = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> surface.getUnit().isFirstPlayer());
+        boolean second = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> !surface.getUnit().isFirstPlayer());
         if(first&&second){
             if(fortification.getStateType().equals(StateType.DESTROYED)){
-                fortification.getPort().stream().filter(surface1 -> !surface1.isEmpty()).forEach(surface1 -> {
-                    Vessel vessel = (Vessel) surface1.getUnit();
-                    vessel.setHelping(false);
-                    vessel.setReadyToHelp(false);
+                fortification.getPort().stream().filter(port -> !port.isEmpty()).forEach(port -> {
+                    ((Vessel) port.getUnit()).setHelping(false);
+                    ((Vessel) port.getUnit()).setReadyToHelp(false);
                 });
                 fortification.setOnRepair(false);
                 fortification.setCurrent_hit_point(0);
@@ -145,9 +145,9 @@ public class VesselProcessor implements VesselService{
      *Void
      * Method calls setVesselsInFort with necessary parameters for each player*/
 
-    private void setFleet(Stack<Vessel> firstPlayerFleet, Stack<Vessel> secondPlayerFleet, Map<String, GameUnit> fleet, Surface[][] map) {
-        setVesselsInFort(true,map,fleet,firstPlayerFleet);
-        setVesselsInFort(false,map,fleet,secondPlayerFleet);
+    private void setUpVesselsForBothPlayers(Stack<Vessel> firstPlayerFleet, Stack<Vessel> secondPlayerFleet, Map<String, GameUnit> fleet, Surface[][] map) {
+        putFleetIntoFortificationsPorts(true,map,fleet,firstPlayerFleet);
+        putFleetIntoFortificationsPorts(false,map,fleet,secondPlayerFleet);
     }
     /**
      * Accepts int that represents quantity of vessels in fortification of given type, Fortification where vessels will be placed, Surface [][] that keeps map,
@@ -155,10 +155,9 @@ public class VesselProcessor implements VesselService{
      * Void
      * Method allocates Vessels objects in port field of Surface object and adds vessel object to Map<String,GameUnit> in int quantity according to game rules */
 
-    private void setVesselsInPort(int size, Fortification fortification, Surface [][] map, Map<String,GameUnit> fleet, Stack<Vessel> playerFleet){
+    private void addVesselsIntoFortificationPort(int size, Fortification fortification, Surface [][] map, Map<String,GameUnit> fleet, Stack<Vessel> playersFleet){
         for(int i = 0; i<size; i++){
-            Vessel tmp = playerFleet.pop();
-            tmp.setCoordinates(fortification.getPort().get(i).getCoordinates());
+            Vessel tmp = playersFleet.pop();
             map[fortification.getPort().get(i).getCoordinates().axisX()][fortification.getPort().get(i).getCoordinates().axisY()].setUnit(tmp);
             fleet.put(tmp.getId(),tmp);
         }
@@ -169,34 +168,31 @@ public class VesselProcessor implements VesselService{
      * Method filters Map<String,GameUnit> by given player, that according to Fortification type calls setVesselsInPort method with necessary parameters
      * and allocates Vessel objects from Stack<Vessel>*/
 
-    private void setVesselsInFort(boolean isFirstPlayer,Surface [][] map,Map<String,GameUnit> fleet,Stack<Vessel> vessels){
+    private void putFleetIntoFortificationsPorts(boolean isFirstPlayer, Surface [][] map, Map<String,GameUnit> fleet, Stack<Vessel> vessels){
         fleet.values().stream().filter(unit -> unit.isFirstPlayer()==isFirstPlayer).filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION))
                 .map(Fortification.class::cast).toList()
                 .forEach(fortification -> {
                     switch (fortification.getFortificationType()){
                         case FIRST_LINE_FORT ->
-                            setVesselsInPort(4,fortification,map,fleet,vessels);
+                            addVesselsIntoFortificationPort(4,fortification,map,fleet,vessels);
                         case SECOND_LINE_FORT ->
-                            setVesselsInPort(5,fortification,map,fleet,vessels);
+                            addVesselsIntoFortificationPort(5,fortification,map,fleet,vessels);
                     }
                 });
-        fleet.values().stream().filter(unit -> unit.isFirstPlayer()==isFirstPlayer).filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION))
+        fleet.values().stream().filter(unit -> unit.isFirstPlayer() == isFirstPlayer).filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION))
                 .map(Fortification.class::cast).filter(fortification -> fortification.getFortificationType().equals(FortificationType.SECOND_LINE_FORT))
-                .forEach(fortification -> {
-                    if(fortification.getPort().size()>5) {
-                        Vessel tmp = vessels.pop();
-                        tmp.setCoordinates(fortification.getPort().get(5).getCoordinates());
-                        map[fortification.getPort().get(5).getCoordinates().axisX()][fortification.getPort().get(5).getCoordinates().axisY()].setUnit(tmp);
-                    }
+                .filter(fortification -> fortification.getPort().size() > 5).findFirst().
+                flatMap(fortification -> fortification.getPort().stream().filter(Surface::isEmpty).findFirst()).ifPresent(surface -> {
+                    surface.setUnit(vessels.pop());
+                    fleet.put(surface.getUnit().getId(), surface.getUnit());
                 });
-        //TODO find way to simplify last part of method but consider that it is possible that more than one Fortification can have port size bigger than 5
     }
     /**
      * Accepts ArrayList<Vessel>
      * Returns Stack<Vessel>
      * Method takes an arrayList of vessels and fills a Stack in random order*/
 
-    private Stack<Vessel> randomizeFleet(ArrayList<Vessel> vessels){
+    private Stack<Vessel> shufflePlayersVessels(ArrayList<Vessel> vessels){
         Stack<Vessel> fleet = new Stack<>();
         int end = vessels.size();
         while (fleet.size()<end){
@@ -204,7 +200,6 @@ public class VesselProcessor implements VesselService{
             fleet.push(vessels.get(x));
             vessels.remove(x);
         }
-
         return fleet;
     }
     /**
@@ -224,18 +219,18 @@ public class VesselProcessor implements VesselService{
 
     private void addVesselsByType(VesselType vesselType, ArrayList<Vessel> vessels, boolean isFirstPlayer){
         switch (vesselType){
-            case THREE_DECKER_SHIP_OF_LINE -> addVesselsWithNames(vessels,MockedData.THREE_DECKER_SHIP_THE_LINE_QNT/2,isFirstPlayer,namesRandomizer.bigBattleshipsNames,vesselType);
-            case TWO_DECKER_SHIP_OF_LINE -> addVesselsWithNames(vessels,MockedData.TWO_DECKER_SHIP_THE_LINE_QNT/2,isFirstPlayer,namesRandomizer.smallBattleshipsNames,vesselType);
-            case FRIGATE -> addVesselsWithNames(vessels,MockedData.FRIGATES_QNT/2,isFirstPlayer,namesRandomizer.frigatesNames,vesselType);
-            case TENDER -> addVesselsWithNames(vessels,MockedData.TENDERS_QNT/2,isFirstPlayer,namesRandomizer.tendersNames,vesselType);
-            case BRIG -> addVesselsWithNames(vessels,MockedData.BRIGS_QNT/2,isFirstPlayer,namesRandomizer.brigNames,vesselType);
-            case GALLEON -> addVesselsWithNames(vessels,MockedData.GALLEONS_QNT/2,isFirstPlayer,namesRandomizer.galleonsNames,vesselType);
-            case STEAM_FRIGATE -> addVesselsWithNames(vessels,MockedData.STEAM_FRIGATE_QNT/2,isFirstPlayer,namesRandomizer.steamFrigateNames,vesselType);
-            case BATTERY -> addVesselsWithNames(vessels,MockedData.NAVAL_BATTERY_QNT/2,isFirstPlayer,namesRandomizer.navalBatteryNames,vesselType);
-            case GALLEY -> addVesselsWithNames(vessels,MockedData.GALLEYS_QNT/2,isFirstPlayer,namesRandomizer.galleysName,vesselType);
-            case CORVETTE -> addVesselsWithNames(vessels,MockedData.STEAM_CORVETTE_QNT/2,isFirstPlayer,namesRandomizer.steamCorvetteNames,vesselType);
-            case MONITOR -> addVesselsWithNames(vessels,MockedData.MONITOR_QNT/2,isFirstPlayer,namesRandomizer.monitorNames,vesselType);
-            case STEAMSHIP -> addVesselsWithNames(vessels,MockedData.STEAMSHIP_QNT/2,isFirstPlayer,namesRandomizer.steamshipNames,vesselType);
+            case THREE_DECKER_SHIP_OF_LINE -> addNamesToVessels(vessels,MockedData.THREE_DECKER_SHIP_THE_LINE_QNT/2,isFirstPlayer,namesRandomizer.bigBattleshipsNames,vesselType);
+            case TWO_DECKER_SHIP_OF_LINE -> addNamesToVessels(vessels,MockedData.TWO_DECKER_SHIP_THE_LINE_QNT/2,isFirstPlayer,namesRandomizer.smallBattleshipsNames,vesselType);
+            case FRIGATE -> addNamesToVessels(vessels,MockedData.FRIGATES_QNT/2,isFirstPlayer,namesRandomizer.frigatesNames,vesselType);
+            case TENDER -> addNamesToVessels(vessels,MockedData.TENDERS_QNT/2,isFirstPlayer,namesRandomizer.tendersNames,vesselType);
+            case BRIG -> addNamesToVessels(vessels,MockedData.BRIGS_QNT/2,isFirstPlayer,namesRandomizer.brigNames,vesselType);
+            case GALLEON -> addNamesToVessels(vessels,MockedData.GALLEONS_QNT/2,isFirstPlayer,namesRandomizer.galleonsNames,vesselType);
+            case STEAM_FRIGATE -> addNamesToVessels(vessels,MockedData.STEAM_FRIGATE_QNT/2,isFirstPlayer,namesRandomizer.steamFrigateNames,vesselType);
+            case BATTERY -> addNamesToVessels(vessels,MockedData.NAVAL_BATTERY_QNT/2,isFirstPlayer,namesRandomizer.navalBatteryNames,vesselType);
+            case GALLEY -> addNamesToVessels(vessels,MockedData.GALLEYS_QNT/2,isFirstPlayer,namesRandomizer.galleysName,vesselType);
+            case CORVETTE -> addNamesToVessels(vessels,MockedData.STEAM_CORVETTE_QNT/2,isFirstPlayer,namesRandomizer.steamCorvetteNames,vesselType);
+            case MONITOR -> addNamesToVessels(vessels,MockedData.MONITOR_QNT/2,isFirstPlayer,namesRandomizer.monitorNames,vesselType);
+            case STEAMSHIP -> addNamesToVessels(vessels,MockedData.STEAMSHIP_QNT/2,isFirstPlayer,namesRandomizer.steamshipNames,vesselType);
         }
     }
     /**
@@ -244,34 +239,20 @@ public class VesselProcessor implements VesselService{
      * void
      * Method adds to ArrayList<Vessel> new Vessel objects of certain VesselType in given quantity and sets names for it taken from Stack <String> of mocked names*/
 
-    private void addVesselsWithNames(ArrayList<Vessel> vessels,int qnt,boolean player,Stack<String> names,VesselType vesselType){
+    private void addNamesToVessels(ArrayList<Vessel> vessels, int qnt, boolean player, Stack<String> names, VesselType vesselType){
         for (int i = 0; i<qnt; i++){
             vessels.add(new Vessel(player,vesselType,names.pop()));
         }
     }
     private void repairVessel(Vessel vessel){
         vessel.setCurrent_hit_point(vessel.getCurrent_hit_point()+1);
-        if(vessel.getCurrent_hit_point()>=vessel.getVesselType().getHit_points()){
+        if(hasUnitReachedMaxHP(vessel)){
             vessel.setCurrent_hit_point(vessel.getVesselType().getHit_points());
             vessel.setOnRepair(false);
         }
     }
-    /**
-     * Each player has 3 first line forts 6 in total
-     * Each player has 3 second line forts 6 in total
-     * Each player has 1 royal port 2 in total
-     * Each player has 2 Big battleships 4 in total
-     * Each player has 4 Small battleships 8 in total
-     * Each player has 3 Frigates 6 in total
-     * Each player has 2 Tenders 4 in total
-     * Each player has 5 Brigs 10 in total
-     * Each player has 3 Galleons 6 in total
-     * Each player has 1 Steam frigate 2 in total
-     * Each player has 1 Naval battery 2 in total
-     * Each player has 4 Galleys 8 in total;
-     * Each player has 1 Steam corvette 2 in total
-     * Each player has 1 Monitor 2 in total
-     * Each player has 1 Steamship 2 in total
-     * */
+    private boolean hasUnitReachedMaxHP(Vessel vessel){
+        return vessel.getCurrent_hit_point()>=vessel.getVesselType().getHit_points();
+    }
     //TODO test for vessel processor
 }

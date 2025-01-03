@@ -69,9 +69,6 @@ public class WindRoseArea extends GamePanelComponent {
 
     @Override
     public void updateState(GameComponentState state) {
-        System.out.println("WINDROSEAREA");
-        System.out.println(state);
-        System.out.println("WINDROSEAREA");
         if(state!=null) {
             WindRoseAreaState s = (WindRoseAreaState) state;
             if (s.getWeather() != null) {

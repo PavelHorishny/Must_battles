@@ -245,6 +245,7 @@ public class UnitProcessor implements UnitService{
                 switch (unit.getUnitType()){
                     case FORTIFICATION -> {
                         unit.setStateType(StateType.DESTROYED);
+                        vesselProcessor.destroyRepairingVessels(unit,fleet);
                     }
                     case VESSEL -> {
                         map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
@@ -256,6 +257,7 @@ public class UnitProcessor implements UnitService{
                 switch (unit.getUnitType()){
                     case FORTIFICATION -> {
                         unit.setStateType(StateType.DESTROYED);
+                        vesselProcessor.destroyRepairingVessels(unit,fleet);
                     }
                     case VESSEL -> {
                         map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
@@ -290,6 +292,7 @@ public class UnitProcessor implements UnitService{
         mapProcessor.clearRoute(route);
         firingProcessor.clearAimed(aimedUnits);
         fortificationProcessor.checkFortificationsAtMoveEnd(fleet,isFirstPlayerMove);
+        //vesselProcessor.checkVesselsAtMoveEnd(fleet);
         if(isFirstPlayerMove){
               isFirstPlayerMove = false;
         }else {

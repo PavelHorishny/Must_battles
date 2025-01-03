@@ -16,4 +16,5 @@ public interface VesselService {
     //void restoreVesselsData(Map<String, GameUnit> fleet);
     void checkVesselsAtDayEnd(Map<String, GameUnit> fleet);
     boolean checkIfVesselCanHelp(Vessel vessel, Surface[][] map);
+    void destroyRepairingVessels(GameUnit unit, Map<String, GameUnit> fleet);
 }

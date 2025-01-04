@@ -13,7 +13,7 @@ public class ButtonAreaState extends GameComponentState{
     private boolean onRepairButton;
     private boolean helpButton;
     private boolean selectedReadyForRepair;
-    private boolean selectedReadyForHelp;
+    private boolean selectedReadyToHelp;
     private boolean selectedIsHelping;
     private boolean selectedOnRepair;
 }

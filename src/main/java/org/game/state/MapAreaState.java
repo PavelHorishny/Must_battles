@@ -9,7 +9,7 @@ import org.game.unit.GUIUnit;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Optional;
+
 
 @Getter
 @Setter
@@ -20,9 +20,8 @@ public class MapAreaState extends GameComponentState {
     Map<Coordinates,GUIUnit> fleet;
     ArrayList<Coordinates> route;
     MapCell [][] map;
-    Optional<Coordinates> selectedID_TEST = Optional.empty();
-    Optional<Coordinates> targetID_TEST = Optional.empty();
+    Coordinates selectedID;
+    Coordinates targetID;
     Coordinates vesselInStorm;
     Coordinates stormDestination;
-    //TODO think how to get rid of Optional
 }

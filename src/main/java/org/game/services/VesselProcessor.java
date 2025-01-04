@@ -72,7 +72,7 @@ public class VesselProcessor implements VesselService{
         map [destination.axisX()][destination.axisY()].setUnit(vessel);
     }
 
-    private static int getDistance(Vessel vessel, Coordinates destination) {
+    private int getDistance(Vessel vessel, Coordinates destination) {
         int distance;
         if(destination.axisX()- vessel.getCoordinates().axisX()!=0){
             distance = Math.abs(destination.axisX() - vessel.getCoordinates().axisX());

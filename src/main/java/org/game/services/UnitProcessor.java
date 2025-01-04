@@ -1,6 +1,5 @@
 package org.game.services;
 
-import lombok.Getter;
 import org.game.BackToGUIConverter;
 import org.game.EndGame;
 import org.game.gui.Coordinates;
@@ -14,27 +13,13 @@ import java.util.*;
 
 
 public class UnitProcessor implements UnitService{
-    private boolean buttonOnRepairActive;
-    private boolean buttonReadyForHelpActive;
-    private final EndGame endGame = new EndGame();
-    private GameUnit selected_Test;
-    private GameUnit target_Test;
-    private Coordinates vesselInStorm;
-    private Coordinates stormMove;
-    private Surface[][] map;
-    private final ArrayList <Surface> route = new ArrayList<>();
-    private final ArrayList <GameUnit> aimedUnits = new ArrayList<>();
-    @Getter
-    private final Map <String, GameUnit> fleet = new HashMap<>();
-    private int day;
-    private boolean isFirstPlayerMove;
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional <GameUnit> selected = Optional.empty();
+    private final GameState state = new GameState();
     private final MapService mapProcessor = new MapProcessor();
     private final FortificationService fortificationProcessor = new FortificationProcessor();
     private final VesselService vesselProcessor = new VesselProcessor();
     private final WeatherService weatherProcessor = new WeatherProcessor();
     private final FiringService firingProcessor = new FiringProcessor();
+    private final StateConverter converter = new Converter();
 
     public UnitProcessor() {
     }
@@ -42,130 +27,95 @@ public class UnitProcessor implements UnitService{
 
     @Override
     public State initialGameState() {
-        day = 1;
-        isFirstPlayerMove = true;
+        state.setDay(1);
+        state.setFirstPlayerMove(true);
+        state.setMap(mapProcessor.generateStandardMap());
+        fortificationProcessor.getStandardFortifications(state.getMap(), state.getFleet());
+        state.getFleet().values().stream().map(Fortification.class::cast).toList().forEach(fortification -> fortificationProcessor.setPortLocations(mapProcessor.getPort(fortification.getCoordinates(), state.getMap()),fortification));
+        vesselProcessor.setTheFleet(state.getFleet(), state.getMap());
 
-        map = mapProcessor.generateStandardMap();
-        fortificationProcessor.getStandardFortifications(map,fleet);
-        fleet.values().stream().map(Fortification.class::cast).toList().forEach(fortification -> fortificationProcessor.setPortLocations(mapProcessor.getPort(fortification.getCoordinates(),map),fortification));
-        vesselProcessor.setTheFleet(fleet,map);
-        map[20][3].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
-        map[20][3].getUnit().setCoordinates(new Coordinates(20,3));
-        map[20][3].getUnit().setUnitType(UnitType.VESSEL);
-        map[20][3].getUnit().setId("test");
+        state.getMap()[20][3].setUnit(new Vessel(true, VesselType.THREE_DECKER_SHIP_OF_LINE));
+        state.getMap()[20][3].getUnit().setCoordinates(new Coordinates(20,3));
+        state.getMap()[20][3].getUnit().setUnitType(UnitType.VESSEL);
+        state.getMap()[20][3].getUnit().setId("test");
 
-        fleet.put("test",map[20][3].getUnit());
+        state.getFleet().put("test",state.getMap()[20][3].getUnit());
 
-        vesselProcessor.getListOfAllVessels(fleet).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
+        vesselProcessor.getListOfAllVessels(state.getFleet()).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
 
-        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).build())
-                .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
+        return converter.convertState(state);
         //TODO make to gui converter
     }
 
     @Override
     public State unitSelected(String id) {
-        stormMove=null;
-        vesselInStorm = null;
+        state.setStormDestination(null);
+        state.setVesselInStorm(null);
         if(id.isBlank()){
-            if(selected_Test!=null) {
-                if(selected_Test instanceof Fortification){
-                    if(selected_Test.getStateType().equals(StateType.DESTROYED)){
-                        selected_Test.setStateType(StateType.DESTROYED);
-                    }else {
-                        selected_Test.setStateType(StateType.PASSIVE);
-                    }
-                }else {
-                    selected_Test.setStateType(StateType.PASSIVE);
-                }
+            if(state.getSelected() !=null) {
+                setState(StateType.PASSIVE, state.getSelected());
             }
-            selected_Test=null;
-            target_Test=null;
-            mapProcessor.clearRoute(route);
-            firingProcessor.clearAimed(aimedUnits);
-            return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).build())
-                    .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(false).build())
-                    .windRoseAreaState(WindRoseAreaState.builder().weather(null).build())
-                    .build();
+            state.setSelected(null);
+            state.setTarget(null);
+            mapProcessor.clearRoute(state.getRoute());
+            firingProcessor.clearAimed(state.getAimedUnits());
+            return converter.convertState(state);
         }else{
-            GameUnit unit = fleet.get(id);
-            if(unit.isFirstPlayer()==isFirstPlayerMove||isSelectedDestroyedFort(unit)){
-                if(selected_Test!=null&&!selected_Test.equals(unit)) {
-                    if(selected_Test instanceof Fortification){
-                        if(selected_Test.getStateType().equals(StateType.DESTROYED)){
-                            selected_Test.setStateType(StateType.DESTROYED);
-                        }else {
-                            selected_Test.setStateType(StateType.PASSIVE);
-                        }
-                    }else {
-                        selected_Test.setStateType(StateType.PASSIVE);
-                    }
-                    mapProcessor.clearRoute(route);
+            GameUnit unit = state.getFleet().get(id);
+            if(unit.isFirstPlayer()==state.isFirstPlayerMove()||isSelectedDestroyedFort(unit)){
+                if(state.getSelected() !=null&&!state.getSelected().equals(unit)) {
+                    setState(StateType.PASSIVE, state.getSelected());
+                    mapProcessor.clearRoute(state.getRoute());
                 }
-                selected_Test = unit;
-                if(map[selected_Test.getCoordinates().axisX()][selected_Test.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
-                    System.out.println(map[selected_Test.getCoordinates().axisX()][selected_Test.getCoordinates().axisY()].getFortification().toUnitData().toString());
+                state.setSelected(unit);
+/*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
+                    System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
                 }
-                if(selected_Test instanceof Vessel){
-                    System.out.println(selected_Test.isReadyForRepair());
-                }
-                switch (selected_Test.getUnitType()){
+                if(selected instanceof Vessel){
+                    System.out.println(selected.isReadyForRepair());
+                }*/
+                switch (state.getSelected().getUnitType()){
                     case FORTIFICATION -> {
-                        Fortification fortification = (Fortification) selected_Test;
-                        buttonOnRepairActive = fortificationProcessor.checkIfFortificationCanBeRepaired(fortification);
-                        buttonReadyForHelpActive = false;
+                        Fortification fortification = (Fortification) state.getSelected();
+                        state.setButtonOnRepairActive(fortificationProcessor.checkIfFortificationCanBeRepaired(fortification));
+                        state.setButtonReadyForHelpActive(false);
                     }
                     case VESSEL -> {
-                        Vessel vessel = (Vessel) selected_Test;
-                        buttonOnRepairActive = vesselProcessor.checkIfVesselCanBeRepaired(vessel,map);
-                        buttonReadyForHelpActive = vesselProcessor.checkIfVesselCanHelp(vessel,map);
+                        Vessel vessel = (Vessel) state.getSelected();
+                        state.setButtonOnRepairActive(vesselProcessor.checkIfVesselCanBeRepaired(vessel, state.getMap()));
+                        state.setButtonReadyForHelpActive(vesselProcessor.checkIfVesselCanHelp(vessel, state.getMap()));
                     }
                 }
-                if(selected_Test instanceof Fortification){
-                    if(selected_Test.getStateType().equals(StateType.DESTROYED)){
-                        selected_Test.setStateType(StateType.DESTROYED);
-                    }else {
-                        selected_Test.setStateType(StateType.SELECTED);
-                    }
-                }else {
-                    selected_Test.setStateType(StateType.SELECTED);
-                }
-
-                mapProcessor.getRoute(selected_Test,route,map);
-                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(selected_Test,map),aimedUnits,selected_Test);
+                setState(StateType.SELECTED, state.getSelected());
+                mapProcessor.getRoute(state.getSelected(),state.getRoute(), state.getMap());
+                firingProcessor.setUnderAttack(mapProcessor.getFiringZone(state.getSelected(), state.getMap()),state.getAimedUnits(), state.getSelected());
                 Optional.of(unit).ifPresent(unit1 -> {
                     if(unit1.getUnitType().equals(UnitType.VESSEL)){
                         if(unit.getMovePoints()>0) {
-                            if (weatherProcessor.isStorm(unit1) && mapProcessor.isNotInPort(unit1, map)) {
-                                selected_Test = unit1;
-                                vesselInStorm = unit1.getCoordinates();
-                                stormMove = route.get(route.size() - 1).getCoordinates();
+                            if (weatherProcessor.isStorm(unit1) && mapProcessor.isNotInPort(unit1, state.getMap())) {
+                                state.setSelected(unit1);
+                                state.setVesselInStorm(unit1.getCoordinates());
+                                state.setStormDestination(state.getRoute().get(state.getRoute().size()-1).getCoordinates());
                             }
                         }
                     }
                 });
-
-                return State.builder().mapAreaState(MapAreaState.builder().vesselInStorm(vesselInStorm).stormDestination(stormMove).route(BackToGUIConverter.convertRoute(route)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                        .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(selected_Test.toUnitData()).build())
-                        .windRoseAreaState(WindRoseAreaState.builder().weather(selected_Test.getCurrentWeather()).build())
-                        .buttonAreaState(ButtonAreaState.builder().onRepairButton(buttonOnRepairActive).helpButton(buttonReadyForHelpActive)
-                                .selectedReadyForRepair(selected_Test.isReadyForRepair()).selectedOnRepair(selected_Test.isOnRepair())
-                                .selectedIsHelping(getReadyIsHelping(selected_Test)).selectedReadyForHelp(getReadyForHelp(selected_Test)).build())
-                        .build();
             }else{
-                target_Test = unit;
-                if(selected_Test!=null){
-                    return State.builder().mapAreaState(MapAreaState.builder().selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                            .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).selected(true).selectedData(selected_Test.toUnitData()).target(true).targetData(target_Test.toUnitData()).build())
-                            .windRoseAreaState(WindRoseAreaState.builder().weather(selected_Test.getCurrentWeather()).build())
-                            .build();
-                }else{
-                    return State.builder().mapAreaState(MapAreaState.builder().selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).build())
-                            .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).target(true).targetData(target_Test.toUnitData()).build())
-                            .windRoseAreaState(WindRoseAreaState.builder()/*.weather(selected_Test.getCurrentWeather())*/.build())
-                            .build();
-                }
+                state.setTarget(unit);
             }
+            return converter.convertState(state);
+        }
+    }
+
+    private void setState(StateType stateType, GameUnit unit) {
+        if(unit instanceof Fortification){
+            if(unit.getStateType().equals(StateType.DESTROYED)){
+                unit.setStateType(StateType.DESTROYED);
+            }else {
+                unit.setStateType(stateType);
+            }
+        }else {
+            unit.setStateType(stateType);
         }
     }
 
@@ -177,46 +127,14 @@ public class UnitProcessor implements UnitService{
         }
     }
 
-    private boolean getTargetOnRepair(GameUnit targetTest) {
-        if(targetTest instanceof Fortification fortification){
-            return fortification.getStateType().equals(StateType.DESTROYED);
-        }else {
-            return false;
-        }
-    }
-
-    private boolean getTargetReadyForRepair(GameUnit targetTest) {
-        if(targetTest instanceof Fortification fortification){
-            return fortification.getStateType().equals(StateType.DESTROYED);
-        }else {
-            return false;
-        }
-    }
-
-    private boolean getReadyForHelp(GameUnit selectedTest) {
-        if(selectedTest instanceof Vessel){
-            return ((Vessel) selectedTest).isReadyToHelp();
-        }else {
-            return false;
-        }
-    }
-    private boolean getReadyIsHelping(GameUnit selectedTest) {
-        if(selectedTest instanceof Vessel){
-            return ((Vessel) selectedTest).isHelping();
-        }else {
-            return false;
-        }
-    }
-
     /**
      * @return 
      */
     @Override
     public State movementStarts(String id) {
-        fleet.get(id).setStateType(StateType.PASSIVE);
-        mapProcessor.clearRoute(route);
-        return State.builder().mapAreaState(MapAreaState.builder().map(BackToGUIConverter.convertMap(map)).fleet(BackToGUIConverter.convertFleet(fleet)).selectedID_TEST(getOpt(selected_Test)).targetID_TEST(getOpt(target_Test)).build())
-                .infoAreaState(InfoAreaState.builder().day(String.valueOf(day)).build()).build();
+        state.getFleet().get(id).setStateType(StateType.PASSIVE);
+        mapProcessor.clearRoute(state.getRoute());
+        return converter.convertState(state);
     }
 
     /**
@@ -226,7 +144,7 @@ public class UnitProcessor implements UnitService{
      */
     @Override
     public State movementEnds(String id, Coordinates destination) {
-        vesselProcessor.moveVesselToDestinationPoint((Vessel)fleet.get(id),destination,map);
+        vesselProcessor.moveVesselToDestinationPoint((Vessel)state.getFleet().get(id),destination, state.getMap());
         return unitSelected(id);
     }
     //TODO merge movement methods as shoot methods
@@ -241,27 +159,27 @@ public class UnitProcessor implements UnitService{
     public State makeShot(String attackerID, String targetID, String shotType) {
         Optional<GameUnit> gameUnit;
         switch (shotType){
-            case "single" -> firingProcessor.shot(fleet.get(attackerID), fleet.get(targetID)).ifPresent(unit -> {
+            case "single" -> firingProcessor.shot(state.getFleet().get(attackerID), state.getFleet().get(targetID)).ifPresent(unit -> {
                 switch (unit.getUnitType()){
                     case FORTIFICATION -> {
                         unit.setStateType(StateType.DESTROYED);
-                        vesselProcessor.destroyRepairingVessels(unit,fleet);
+                        vesselProcessor.destroyRepairingVessels(unit,state.getFleet());
                     }
                     case VESSEL -> {
-                        map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
-                        fleet.remove(unit.getId(),unit);
+                        state.getMap()[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
+                        state.getFleet().remove(unit.getId(),unit);
                     }
                 }
             });
-            case "salvo" -> firingProcessor.salvoShot(fleet.get(attackerID),fleet.get(targetID)).ifPresent(unit -> {
+            case "salvo" -> firingProcessor.salvoShot(state.getFleet().get(attackerID),state.getFleet().get(targetID)).ifPresent(unit -> {
                 switch (unit.getUnitType()){
                     case FORTIFICATION -> {
                         unit.setStateType(StateType.DESTROYED);
-                        vesselProcessor.destroyRepairingVessels(unit,fleet);
+                        vesselProcessor.destroyRepairingVessels(unit,state.getFleet());
                     }
                     case VESSEL -> {
-                        map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
-                        fleet.remove(unit.getId(),unit);
+                        state.getMap()[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
+                        state.getFleet().remove(unit.getId(),unit);
                     }
                 }
             });
@@ -274,57 +192,43 @@ public class UnitProcessor implements UnitService{
      */
     @Override
     public State dayEnd() {
-        Optional.ofNullable(selected_Test).ifPresent(unit -> {
-            if(unit instanceof Fortification){
-                if(unit.getStateType().equals(StateType.DESTROYED)){
-                    unit.setStateType(StateType.DESTROYED);
-                }else {
-                    unit.setStateType(StateType.PASSIVE);
-                }
-            }else {
-                unit.setStateType(StateType.PASSIVE);
-            }
+        Optional.ofNullable(state.getSelected()).ifPresent(unit -> {
+            setState(StateType.PASSIVE,unit);
         });
-        selected_Test = null;
-        target_Test = null;
-        vesselInStorm = null;
-        stormMove = null;
-        mapProcessor.clearRoute(route);
-        firingProcessor.clearAimed(aimedUnits);
-        fortificationProcessor.checkFortificationsAtMoveEnd(fleet,isFirstPlayerMove);
-        //vesselProcessor.checkVesselsAtMoveEnd(fleet);
-        if(isFirstPlayerMove){
-              isFirstPlayerMove = false;
+        state.setSelected(null);
+        state.setTarget(null);
+        state.setVesselInStorm(null);
+        state.setStormDestination(null);
+        mapProcessor.clearRoute(state.getRoute());
+        firingProcessor.clearAimed(state.getAimedUnits());
+        fortificationProcessor.checkFortificationsAtMoveEnd(state.getFleet(),state.isFirstPlayerMove());
+        if(state.isFirstPlayerMove()){
+            state.setFirstPlayerMove(false);
         }else {
-            isFirstPlayerMove = true;
-            day++;
-            fortificationProcessor.checkFortificationsAtDayEnd(fleet, endGame);
-            vesselProcessor.checkVesselsAtDayEnd(fleet);
-            //restoreInitialData();
+            state.setFirstPlayerMove(true);
+            state.setDay(state.getDay()+1);
+            fortificationProcessor.checkFortificationsAtDayEnd(state.getFleet(), state.getEndGame());
+            vesselProcessor.checkVesselsAtDayEnd(state.getFleet());
         }
-        if(!endGame.isEmpty()){
-            return State.builder().mapAreaState(MapAreaState.builder().lost(endGame.isEndGame()).looser(endGame.getMessage()).build()).build();
+        if(!state.getEndGame().isEmpty()){
+            return converter.convertState(state);
         }else {
             return unitSelected("");
 
         }
     }
 
-/*    private void restoreInitialData() {
-        fortificationProcessor.restoreFortificationsData(fleet);
-        //vesselProcessor.restoreVesselsData(fleet);
-    }*/
 
     /**
      * @return 
      */
     @Override
     public State unitReadyForRepair(boolean state) {
-       selected_Test.setReadyForRepair(state);
-       if(selected_Test instanceof Vessel){
-           ((Vessel) selected_Test).setCanMove(false);
+       this.state.getSelected().setReadyForRepair(state);
+       if(this.state.getSelected() instanceof Vessel){
+           ((Vessel) this.state.getSelected()).setCanMove(false);
        }
-       return unitSelected(selected_Test.getId());
+       return unitSelected(this.state.getSelected().getId());
     }
 
     /**
@@ -332,19 +236,11 @@ public class UnitProcessor implements UnitService{
      */
     @Override
     public State unitReadyForHelp(boolean state) {
-       if (selected_Test instanceof Vessel vessel) {
+       if (this.state.getSelected() instanceof Vessel vessel) {
            vessel.setReadyToHelp(state);
            return unitSelected(vessel.getId());
        }else {
            return unitSelected("");
        }
-    }
-
-    private Optional<Coordinates> getOpt(GameUnit unit){
-        if(unit==null){
-            return Optional.empty();
-        }else{
-            return Optional.of(unit.getCoordinates());
-        }
     }
 }

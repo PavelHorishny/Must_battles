@@ -124,6 +124,14 @@ public class GamePanelMediator implements Mediator{
         client.request(Request.builder().message(Message.HELP).state(state).build());
     }
 
+    /**
+     *
+     */
+    @Override
+    public void grid() {
+        game.enableGrid();
+    }
+
     public void start() {
 
     }

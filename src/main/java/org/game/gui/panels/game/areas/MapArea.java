@@ -59,8 +59,8 @@ public class MapArea extends GamePanelComponent implements MouseListener {
         if(this.state.isLost()){
             this.looser = true;
         }else {
-            this.state.getSelectedID_TEST().ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
-            this.state.getTargetID_TEST().ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
+            Optional.ofNullable(this.state.getSelectedID()).ifPresentOrElse(coordinates -> selected=this.state.getFleet().get(coordinates),()->selected=null);
+            Optional.ofNullable(this.state.getTargetID()).ifPresentOrElse(coordinates -> target=this.state.getFleet().get(coordinates),()->target=null);
             if(this.state.getVesselInStorm()!=null){
                 selected=this.state.getFleet().get(this.state.getVesselInStorm());
                 destination = this.state.getStormDestination();

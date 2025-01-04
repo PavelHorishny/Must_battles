@@ -17,6 +17,9 @@ public class GameUnit extends Unit {
     @Setter
     private boolean readyForRepair;
     private boolean onRepair;
+    private boolean readyToHelp;
+    private boolean helping;
+
     private boolean canShoot;
 
     private String type;

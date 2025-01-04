@@ -1,12 +1,8 @@
 package org.game.services;
 
-import org.game.BackToGUIConverter;
-import org.game.EndGame;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
-import org.game.map.SurfaceType;
 import org.game.state.*;
-import org.game.map.Surface;
 import org.game.unit.*;
 
 import java.util.*;

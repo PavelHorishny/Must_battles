@@ -1,5 +1,6 @@
 package org.game.services;
 
+import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 import org.game.unit.GameUnit;
 
@@ -38,9 +39,9 @@ public class FiringProcessor implements FiringService{
      */
     @Override
     public Optional<GameUnit> shot(GameUnit attacker, GameUnit target) {
-        attacker.setCurrent_shots(10);
+        //attacker.setCurrent_shots(10);
         if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
-            if (getHit()) {
+            if (getHit(getDistance(attacker.getCoordinates(),target.getCoordinates()))) {
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 target.setCurrent_hit_point(target.getCurrent_hit_point() - 1);
                 if (target.getCurrent_hit_point() <= 0) {
@@ -66,7 +67,7 @@ public class FiringProcessor implements FiringService{
     public Optional<GameUnit> salvoShot(GameUnit attacker, GameUnit target) {
         if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
             int salvo = attacker.getCurrent_shots();
-            if (getHit()) {
+            if (getHit(getDistance(attacker.getCoordinates(),target.getCoordinates()))) {
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - salvo);
                 target.setCurrent_hit_point(target.getCurrent_hit_point() - salvo);
                 if (target.getCurrent_hit_point() <= 0) {
@@ -96,10 +97,41 @@ public class FiringProcessor implements FiringService{
         aimedUnits.clear();
     }
 
-    private boolean getHit(){
+    private boolean getHit(int distance){
         Random random = new Random();
-        //return random.nextInt(0, 1) > 0;
-        //TODO calc hit
-        return true;
+        ArrayList <Boolean> tmp = new ArrayList<>(100);
+        for(int i = 0; i< 100; i++){
+            if(i<getAccuracy(distance)){
+                tmp.add(false);
+            }else {
+                tmp.add(true);
+            }
+        }
+        ArrayList<Boolean> tmp2 = new ArrayList<>();
+        for(int i = 99;i>=0; i--){
+            int rnd = random.nextInt(0,tmp.size());
+            tmp2.add(tmp.get(rnd));
+            tmp.remove(rnd);
+        }
+        return tmp2.get(random.nextInt(0,tmp2.size()));
+    }
+    private int getDistance(Coordinates attacker, Coordinates target) {
+        int distance;
+        if(target.axisX()- attacker.axisX()!=0){
+            distance = Math.abs(target.axisX() - attacker.axisX());
+        }else{
+            distance = Math.abs(target.axisY() - attacker.axisY());
+        }
+        return distance;
+    }
+    private int getAccuracy(int distance){
+        return switch (distance) {
+            case 1 -> 25;
+            case 2 -> 30;
+            case 3 -> 35;
+            case 4 -> 40;
+            case 5 -> 45;
+            default -> 50;
+        };
     }
 }

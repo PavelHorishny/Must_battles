@@ -21,6 +21,7 @@ import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
     boolean looser;
+    boolean grid = false;
     MapAreaState state;
     GUIUnit selected;
     GUIUnit target;
@@ -126,7 +127,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
             g.setColor(Color.RED);
             g.drawString("Wait", 100, 100);
         }
-        grid(g);
+        if(grid) grid(g);
     }
 
     private void drawAnchor(Graphics g, Coordinates destination) {
@@ -226,13 +227,17 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     }
 
     private void grid(Graphics g){
+        for(int i = 0; i<=1020;i=i+30){
+            g.setColor(new Color(0,128,128));
+            g.drawLine(i,0,i,960);
+        }
         for(int i = 0; i<=960;i=i+30){
-            g.setColor(Color.BLACK);
-            g.drawLine(i,0,i,690);
+            g.setColor(new Color(0,128,128));
+            g.drawLine(0,i,1020,i);
         }
-        for(int i = 0; i<=690;i=i+30){
-            g.setColor(Color.BLACK);
-            g.drawLine(0,i,960,i);
-        }
+    }
+    public void enableGrid(){
+        grid=!grid;
+        repaint();
     }
 }

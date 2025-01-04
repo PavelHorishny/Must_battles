@@ -16,5 +16,7 @@ public interface Mediator {
     void endTurn();
     void unitReadyForRepair(boolean state);
     void unitReadyForHelp(boolean state);
+
+    void grid();
 }
 

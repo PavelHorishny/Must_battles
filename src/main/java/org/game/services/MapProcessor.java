@@ -115,6 +115,8 @@ public class MapProcessor implements MapService{
                         });
                     }
 
+                }else {
+                    break;
                 }
             }else{
                 break;

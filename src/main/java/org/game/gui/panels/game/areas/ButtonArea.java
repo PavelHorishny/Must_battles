@@ -86,7 +86,7 @@ public class ButtonArea extends GamePanelComponent {
 
             if(this.state.isHelpButton()){
                 participateRepair.setEnabled(true);
-                participateRepair.setSelected(this.state.isSelectedReadyForHelp());
+                participateRepair.setSelected(this.state.isSelectedReadyToHelp());
             }else {
                 participateRepair.setEnabled(false);
             }

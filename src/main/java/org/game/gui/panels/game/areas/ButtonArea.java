@@ -15,7 +15,7 @@ public class ButtonArea extends GamePanelComponent {
     JButton menu = new JButton("Menu");
     JButton end = new JButton("End");
     JToggleButton vesselRepair = new JToggleButton("VR");
-    JToggleButton toggleButton = new JToggleButton("test");
+    JButton grid = new JButton("#");
     JToggleButton participateRepair = new JToggleButton("Help");
     ButtonAreaState state;
     public ButtonArea(Settings settings) {
@@ -66,9 +66,9 @@ public class ButtonArea extends GamePanelComponent {
         participateRepair.setEnabled(false);
 
         add(menu);
-        add(toggleButton);
-        toggleButton.setEnabled(true);
-        toggleButton.setSelected(true);
+        add(grid);
+        grid.addActionListener(actionEvent -> mediator.grid());
+
         System.out.println("Button panel exists");
     }
 

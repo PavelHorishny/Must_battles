@@ -1,15 +1,10 @@
 package org.game.services;
 
-import org.game.gui.Coordinates;
-import org.game.state.State;
+import org.game.state.GameState;
 
 public interface UnitService {
-    State initialGameState();
-    State unitSelected(String id);
-    State movementStarts(String id);
-    State movementEnds(String id, Coordinates destination);
-    State makeShot(String attackerID, String targetID, String shotType);
-    State dayEnd();
-    State unitReadyForRepair(boolean state);
-    State unitReadyForHelp(boolean state);
+    void setAllUnits(GameState gameState);
+
+    void setButtonsState(GameState state);
+
 }

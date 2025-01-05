@@ -10,49 +10,18 @@ import org.game.unit.*;
 
 import java.util.*;
 
-public class FortificationProcessor implements FortificationService{
+public class FortificationProcessor implements FortificationService, Repairable{
 
     private final NamesRandomizer namesRandomizer;
+    MapService mapService = new MapProcessor();
 
     public FortificationProcessor() {
         namesRandomizer = Context.getNameRandomizer();
     }
 
-    /**
-     * Accepts Surface multidimensional array and Map <String, GameUnit>
-     * void
-     * Set random names for Fortifications, update Map*/
-    @Override
-    public void getStandardFortifications(Surface[][] map, Map<String, GameUnit> fleet) {
-        ArrayList <Fortification> tmp = MockedData.STANDARD_FORT_POSITION;
-        tmp.forEach(fortification -> map[fortification.getCoordinates().axisX()][fortification.getCoordinates().axisY()].setUnit(fortification));
-        setFortificationNames(fleet,tmp);
-    }
 
-    /**
-     * Method accepts Map and List of Fortification Objects
-     * sets a random name to each object
-     * fulfill Map with Object's id as a key and Object itself as a value*/
-    private void setFortificationNames(Map<String, GameUnit> fleet, List<Fortification> fortifications){
-        fortifications.forEach(e->{
-            if(e.getFortificationType()== FortificationType.ROYAL_PORT){
-                e.setId(namesRandomizer.royalPortNames.pop());
-            }else {
-                e.setId(namesRandomizer.fortificationsNames.pop());
-            }
-            fleet.put(e.getId(), e);
-        });
-    }
-    /**
-     * Method accepts Surface array and Fortification object
-     * switches SurfaceType to PORT
-     * adds Surface to port Object's field */
-    @Override
-    public void setPortLocations(Set<Surface> port, Fortification fortification) {
-        port.forEach(surface -> {
-            fortification.getPort().add(surface);
-            surface.setFortification(fortification);
-        });
+    private List<Fortification> getStandardFortifications2(){
+        return MockedData.STANDARD_FORT_POSITION;
     }
 
     private boolean isRoyalPortIsNotEmpty(Fortification fortification){
@@ -120,36 +89,56 @@ public class FortificationProcessor implements FortificationService{
         });
     }
 
-    /**
-     * @param fleet
-     */
+
     @Override
-    public void restoreFortificationsData(Map<String, GameUnit> fleet) {
-        fleet.values().stream().filter(unit -> unit instanceof Fortification).map(Fortification.class::cast).forEach(Fortification::newDayState);
+    public void setStandardFortifications(Map<String, GameUnit> fleet, Surface[][] map) {
+        getStandardFortifications2().forEach(fortification -> {
+            mapService.addUnit(fortification,map);
+            setFortificationNames2(fortification);
+            addFortificationToFleet(fortification,fleet);
+            setPortToFortification(fortification,mapService.getPort(fortification.getCoordinates(),map));
+        });
+
     }
 
-    /**
-     * @param fortification
-     */
     @Override
-    public boolean checkIfFortificationCanBeRepaired(Fortification fortification/*, Surface[][] map*/) {
-        if(checkingPresenceOfEnemyVessels(fortification)) {
-            int qnt = 0;
-            for (int i = 0; i < fortification.getPort().size(); i++) {
-                if (!fortification.getPort().get(i).isEmpty()) {
-                    Vessel vessel = (Vessel) fortification.getPort().get(i).getUnit();
-                    if (vessel.isReadyToHelp()) {
-                        qnt++;
-                    }
-                }
+    public List<Fortification> getFortificationsOfPlayer(Map<String, GameUnit> fleet, boolean isFirstPlayer) {
+        return fleet.values().stream().filter(unit -> unit.isFirstPlayer()==isFirstPlayer).filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION))
+                .map(Fortification.class::cast).toList();
+    }
 
-            }
-            return qnt >= 3;
+    @Override
+    public List<Fortification> getFortificationsByType(List<Fortification> forts, FortificationType firstLineFort) {
+        return switch (firstLineFort){
+            case FIRST_LINE_FORT -> forts.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.FIRST_LINE_FORT)).toList();
+            case SECOND_LINE_FORT -> forts.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.SECOND_LINE_FORT)).toList();
+            case ROYAL_PORT -> null;//????
+        };
+    }
+
+    @Override
+    public Fortification getFortWIthBigPort(List<Fortification> fortificationsOfPlayer) {
+        return fortificationsOfPlayer.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.SECOND_LINE_FORT))
+                .filter(fortification -> fortification.getPort().size() > 5).findFirst().orElse(null);
+    }
+
+    private void setPortToFortification(Fortification fortification, Set<Surface> port) {
+        port.forEach(surface -> fortification.getPort().add(surface));
+        fortification.getPort().forEach(surface -> surface.setFortification(fortification));
+    }
+
+    private void addFortificationToFleet(Fortification fortification, Map<String, GameUnit> fleet) {
+        fleet.put(fortification.getId(),fortification);
+    }
+
+    private void setFortificationNames2(Fortification fortification) {
+        if(fortification.getFortificationType()== FortificationType.ROYAL_PORT){
+            fortification.setId(namesRandomizer.royalPortNames.pop());
         }else {
-            return false;
+            fortification.setId(namesRandomizer.fortificationsNames.pop());
         }
-
     }
+
     private boolean checkingPresenceOfEnemyVessels(Fortification fortification){
         boolean first = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> surface.getUnit().isFirstPlayer());
         boolean second = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).anyMatch(surface -> !surface.getUnit().isFirstPlayer());
@@ -197,6 +186,26 @@ public class FortificationProcessor implements FortificationService{
         if(fortification.getCurrent_hit_point()>=fortification.getFortificationType().getHit_points()){
             fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
             fortification.setOnRepair(false);
+        }
+    }
+
+    @Override
+    public boolean isUnitCanBeRepaired(GameUnit gameUnit, Surface[][] map) {
+        Fortification fortification = (Fortification) gameUnit;
+        if(checkingPresenceOfEnemyVessels(fortification)) {
+            int qnt = 0;
+            for (int i = 0; i < fortification.getPort().size(); i++) {
+                if (!fortification.getPort().get(i).isEmpty()) {
+                    Vessel vessel = (Vessel) fortification.getPort().get(i).getUnit();
+                    if (vessel.isReadyToHelp()) {
+                        qnt++;
+                    }
+                }
+
+            }
+            return qnt >= 3;
+        }else {
+            return false;
         }
     }
 }

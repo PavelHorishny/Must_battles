@@ -124,7 +124,7 @@ public class MapProcessor implements MapService{
         }
     }
 
-    private boolean checkIfPositionIsPort(Surface[][] map, Coordinates c) {
+    public boolean checkIfPositionIsPort(Surface[][] map, Coordinates c) {
         return map[c.axisX()][c.axisY()].getType().equals(SurfaceType.PORT);
     }
 
@@ -170,6 +170,25 @@ public class MapProcessor implements MapService{
     @Override
     public boolean isNotInPort(GameUnit unit, Surface [] [] map) {
         return !map[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].getType().equals(SurfaceType.PORT);
+    }
+
+    @Override
+    public void addUnit(GameUnit gameUnit, Surface[][] map) {
+        if (checkIfPositionIsValid(map,gameUnit.getCoordinates())){
+            if(gameUnit instanceof Fortification){
+                if(checkIfPositionIsLand(map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()])){
+                    map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()].setUnit(gameUnit);
+                }
+            }else if(gameUnit instanceof Vessel){
+                if(checkIfSurfaceIsWaterOrPort(map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()])){
+                    map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()].setUnit(gameUnit);
+                }
+            }
+        }
+    }
+
+    private boolean checkIfPositionIsLand(Surface surface) {
+        return surface.getType() == SurfaceType.LAND;
     }
 
     /**

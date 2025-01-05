@@ -18,5 +18,8 @@ public interface MapService {
     void clearRoute(ArrayList<Surface> route);
     List<GameUnit> getFiringZone(GameUnit unit, Surface [] [] map);
     boolean isNotInPort(GameUnit unit,Surface [] [] map);
+    boolean checkIfPositionIsPort(Surface[][] map, Coordinates c);
+
+    void addUnit(GameUnit gameUnit, Surface[][] map);
     //TODO remake generateStandardMap (Surface [][] map) <- change signature
 }

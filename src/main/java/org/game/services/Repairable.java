@@ -5,4 +5,5 @@ import org.game.unit.GameUnit;
 
 public interface Repairable {
     boolean isUnitCanBeRepaired(GameUnit gameUnit, Surface [] [] map);
+    void repairUnit(GameUnit gameUnit);
 }

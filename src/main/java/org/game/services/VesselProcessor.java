@@ -11,21 +11,17 @@ import org.game.unit.*;
 
 import java.util.*;
 
-public class VesselProcessor implements VesselService,Repairable,TakingPartAtRepair{
+public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtRepair*/{
     NamesRandomizer namesRandomizer = Context.getNameRandomizer();
     WeatherService weatherProcessor = new WeatherProcessor();
-    FortificationService fortificationService = new FortificationProcessor();
+
+    FortificationService fortificationService;
     MapService mapService = new MapProcessor();
     ArrayList <Vessel> firstPlayerVessels = new ArrayList<>();
 
     public VesselProcessor(){
     }
 
-
-    /**
-     * @param fleet
-     * @return
-     */
     @Override
     public List<Vessel> getListOfAllVessels(Map<String,GameUnit> fleet) {
         return fleet.values().stream().filter(e->e.getUnitType().equals(UnitType.VESSEL)).map(Vessel.class::cast).toList();
@@ -35,11 +31,6 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
         return surface.getType().equals(SurfaceType.PORT);
     }
 
-    /**
-     * @param vessel
-     * @param destination
-     * @param map
-     */
     @Override
     public void moveVesselToDestinationPoint(Vessel vessel, Coordinates destination, Surface[][] map) {
         Coordinates start = new Coordinates(vessel.getCoordinates().axisX(),vessel.getCoordinates().axisY());
@@ -60,41 +51,32 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
     }
 
 
-    /**
-     * @param fleet
-     */
-    @Override
-    public void checkVesselsAtDayEnd(Map<String, GameUnit> fleet) {
-        fleet.values().stream().filter(unit -> unit instanceof Vessel).map(Vessel.class::cast).forEach(vessel ->{
-            vessel.setMovePoints(vessel.getVesselType().getBreeze_move_points());
-            vessel.setCurrent_shots(vessel.getVesselType().getShots());
-            vessel.setCanMove(true);
-            vessel.setCanShoot(true);
-            if(vessel.isOnRepair()) repairVessel(vessel);
-            if(vessel.isReadyForRepair()){
-                vessel.setOnRepair(true);
-                vessel.setReadyForRepair(false);
-            }
-        });
-    }
-
-    /**
-     * @param unit
-     */
-    @Override
-    public void destroyRepairingVessels(GameUnit unit,Map<String,GameUnit> fleet) {
-        Fortification fortification = (Fortification) unit;
-        fortification.getPort().stream().filter(surface -> !surface.isEmpty()).forEach(surface -> {
-            if(surface.getUnit().isOnRepair()){
-                fleet.remove(surface.getUnit().getId(),surface.getUnit());
-            }
-        });
-
-    }
-
     @Override
     public void setAllVessels(Map<String, GameUnit> fleet, Surface[][] map) {
         __setVesselsToBothPlayers(__shufflePlayersVessels(__generateVesselsWithNames(true)), __shufflePlayersVessels(__generateVesselsWithNames(false)),fleet,map);
+    }
+
+    @Override
+    public void setFortificationService(FortificationService service) {
+        fortificationService=service;
+    }
+
+    @Override
+    public boolean checkIfCanMove(Vessel vessel) {
+        return !vessel.isOnRepair() && !vessel.isHelping();
+
+    }
+
+    @Override
+    public boolean checkIfCanShoot(Vessel vessel, Surface[][] map) {
+        Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
+        if(mapService.checkIfPositionIsPort(map,surface.getCoordinates())){
+            if(fortificationService.checkIfPortIsRoyal(surface.getFortification())&&vessel.isFirstPlayer()!=surface.getFortification().isFirstPlayer()){
+                return false;
+            }else return !vessel.isOnRepair() && !vessel.isHelping();
+        }else {
+            return true;
+        }
     }
 
     private boolean checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(Fortification fortification){
@@ -149,8 +131,6 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
      * and allocates Vessel objects from Stack<Vessel>*/
 
     private void __putFleetIntoFortificationsPorts(boolean isFirstPlayer, Surface [][] map, Map<String,GameUnit> fleet, Stack<Vessel> vessels){
-        List <Fortification> forts = fortificationService.getFortificationsOfPlayer(fleet,isFirstPlayer);
-        List<Fortification> flf = fortificationService.getFortificationsByType(forts,FortificationType.FIRST_LINE_FORT);
         fortificationService.getFortificationsByType(fortificationService.getFortificationsOfPlayer(fleet,isFirstPlayer),FortificationType.FIRST_LINE_FORT)
                 .forEach(fortification -> __addVesselsIntoFortificationPort(4,fortification,map,fleet,vessels));
         fortificationService.getFortificationsByType(fortificationService.getFortificationsOfPlayer(fleet,isFirstPlayer),FortificationType.SECOND_LINE_FORT)
@@ -221,13 +201,7 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
             vessels.add(new Vessel(player,vesselType,names.pop()));
         }
     }
-    private void repairVessel(Vessel vessel){
-        vessel.setCurrent_hit_point(vessel.getCurrent_hit_point()+1);
-        if(hasUnitReachedMaxHP(vessel)){
-            vessel.setCurrent_hit_point(vessel.getVesselType().getHit_points());
-            vessel.setOnRepair(false);
-        }
-    }
+
     private boolean hasUnitReachedMaxHP(Vessel vessel){
         return vessel.getCurrent_hit_point()>=vessel.getVesselType().getHit_points();
     }
@@ -248,6 +222,16 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
     }
 
     @Override
+    public void repairUnit(GameUnit gameUnit) {
+        Vessel vessel = (Vessel) gameUnit;
+        vessel.setCurrent_hit_point(vessel.getCurrent_hit_point()+1);
+        if(hasUnitReachedMaxHP(vessel)){
+            vessel.setCurrent_hit_point(vessel.getVesselType().getHit_points());
+            vessel.setOnRepair(false);
+        }
+    }
+
+    @Override
     public boolean isUnitReadyToTakePartAtRepair(GameUnit gameUnit, Surface[][] map) {
         Vessel vessel = (Vessel) gameUnit;
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
@@ -257,6 +241,22 @@ public class VesselProcessor implements VesselService,Repairable,TakingPartAtRep
         }else {
             return false;
         }
+    }
+
+    @Override
+    public void whenUnitDestroyed(GameUnit unit, Map<String, GameUnit> fleet, Surface[][] map) {
+        Vessel vessel = (Vessel) unit;
+        if(vessel.isOnRepair()){
+            mapService.removeUnit(vessel,map);
+            removeVesselFromFleet(vessel,fleet);
+        }else if (vessel.getCurrent_hit_point()<=0){
+            mapService.removeUnit(vessel,map);
+            removeVesselFromFleet(vessel,fleet);
+        }
+    }
+
+    private void removeVesselFromFleet(Vessel vessel, Map<String,GameUnit> fleet){
+        fleet.remove(vessel.getId(),vessel);
     }
     //TODO test for vessel processor
 }

@@ -10,11 +10,7 @@ import java.util.Optional;
 import java.util.Random;
 
 public class FiringProcessor implements FiringService{
-    /**
-     * @param inFiringZone
-     * @param aimedUnits
-     * @param attacker
-     */
+
     @Override
     public void setUnderAttack(List<GameUnit> inFiringZone, ArrayList<GameUnit> aimedUnits, GameUnit attacker) {
         if(!aimedUnits.isEmpty()) {
@@ -32,14 +28,10 @@ public class FiringProcessor implements FiringService{
         }
     }
 
-    /**
-     * @param attacker
-     * @param target
-     * @return
-     */
+
     @Override
     public Optional<GameUnit> shot(GameUnit attacker, GameUnit target) {
-        //attacker.setCurrent_shots(10);
+        attacker.setCurrent_shots(10);
         if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
             if (getHit(getDistance(attacker.getCoordinates(),target.getCoordinates()))) {
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
@@ -58,11 +50,7 @@ public class FiringProcessor implements FiringService{
         }
     }
 
-    /**
-     * @param attacker
-     * @param target
-     * @return
-     */
+
     @Override
     public Optional<GameUnit> salvoShot(GameUnit attacker, GameUnit target) {
         if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
@@ -84,9 +72,7 @@ public class FiringProcessor implements FiringService{
         }
     }
 
-    /**
-     * @param aimedUnits
-     */
+
     @Override
     public void clearAimed(ArrayList<GameUnit> aimedUnits) {
         aimedUnits.forEach(unit -> {

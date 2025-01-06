@@ -16,9 +16,10 @@ public class GameProcessor implements GameService {
     private final WeatherService weatherProcessor = new WeatherProcessor();
     private final FiringService firingProcessor = new FiringProcessor();
     private final StateConverter converter = new Converter();
-    private final UnitService unitService = new UnitProcessor();
+    private final UnitService unitService = new UnitProcessor(vesselProcessor,fortificationProcessor,mapProcessor);
 
     public GameProcessor() {
+
     }
 
 
@@ -58,8 +59,6 @@ public class GameProcessor implements GameService {
             if(unit.isFirstPlayer()==state.isFirstPlayerMove()||isSelectedDestroyedFort(unit)){
                 if(state.getSelected() !=null&&!state.getSelected().equals(unit)) {
                     setState(StateType.PASSIVE, state.getSelected());
-                    /*state.setSelected(unit);
-                    setState(StateType.SELECTED,state.getSelected());*/
                     mapProcessor.clearRoute(state.getRoute());
                 }
                 state.setSelected(unit);
@@ -112,9 +111,6 @@ public class GameProcessor implements GameService {
         }
     }
 
-    /**
-     * @return 
-     */
     @Override
     public State movementStarts(String id) {
         state.getFleet().get(id).setStateType(StateType.PASSIVE);
@@ -122,11 +118,6 @@ public class GameProcessor implements GameService {
         return converter.convertState(state);
     }
 
-    /**
-     * @param id 
-     * @param destination
-     * @return
-     */
     @Override
     public State movementEnds(String id, Coordinates destination) {
         vesselProcessor.moveVesselToDestinationPoint((Vessel)state.getFleet().get(id),destination, state.getMap());
@@ -134,66 +125,34 @@ public class GameProcessor implements GameService {
     }
     //TODO merge movement methods as shoot methods
 
-    /**
-     * @param attackerID 
-     * @param targetID
-     * @param shotType
-     * @return
-     */
     @Override
-    public State makeShot(String attackerID, String targetID, String shotType) {
-        Optional<GameUnit> gameUnit;
+    public State shooting (String attackerID, String targetID, String shotType) {
         switch (shotType){
-            case "single" -> firingProcessor.shot(state.getFleet().get(attackerID), state.getFleet().get(targetID)).ifPresent(unit -> {
-                switch (unit.getUnitType()){
-                    case FORTIFICATION -> {
-                        unit.setStateType(StateType.DESTROYED);
-                        vesselProcessor.destroyRepairingVessels(unit,state.getFleet());
-                    }
-                    case VESSEL -> {
-                        state.getMap()[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
-                        state.getFleet().remove(unit.getId(),unit);
-                    }
-                }
-            });
-            case "salvo" -> firingProcessor.salvoShot(state.getFleet().get(attackerID),state.getFleet().get(targetID)).ifPresent(unit -> {
-                switch (unit.getUnitType()){
-                    case FORTIFICATION -> {
-                        unit.setStateType(StateType.DESTROYED);
-                        vesselProcessor.destroyRepairingVessels(unit,state.getFleet());
-                    }
-                    case VESSEL -> {
-                        state.getMap()[unit.getCoordinates().axisX()][unit.getCoordinates().axisY()].setUnit(null);
-                        state.getFleet().remove(unit.getId(),unit);
-                    }
-                }
-            });
+            case "single" -> firingProcessor.shot(state.getFleet().get(attackerID), state.getFleet().get(targetID)).ifPresent(unit ->
+                unitService.onDestruction(unit,state));
+            case "salvo" -> firingProcessor.salvoShot(state.getFleet().get(attackerID),state.getFleet().get(targetID)).ifPresent(unit ->
+                unitService.onDestruction(unit,state));
         }
         return unitSelected(attackerID);
     }
 
-    /**
-     * @return 
-     */
     @Override
     public State dayEnd() {
-        Optional.ofNullable(state.getSelected()).ifPresent(unit -> {
-            setState(StateType.PASSIVE,unit);
-        });
+        Optional.ofNullable(state.getSelected()).ifPresent(unit ->
+            setState(StateType.PASSIVE,unit));
         state.setSelected(null);
         state.setTarget(null);
         state.setVesselInStorm(null);
         state.setStormDestination(null);
         mapProcessor.clearRoute(state.getRoute());
         firingProcessor.clearAimed(state.getAimedUnits());
-        fortificationProcessor.checkFortificationsAtMoveEnd(state.getFleet(),state.isFirstPlayerMove());
+        unitService.OnTurnEnd(state);
         if(state.isFirstPlayerMove()){
             state.setFirstPlayerMove(false);
         }else {
             state.setFirstPlayerMove(true);
             state.setDay(state.getDay()+1);
-            fortificationProcessor.checkFortificationsAtDayEnd(state.getFleet(), state.getEndGame());
-            vesselProcessor.checkVesselsAtDayEnd(state.getFleet());
+            unitService.OnDayEnd(state);
         }
         if(!state.getEndGame().isEmpty()){
             return converter.convertState(state);
@@ -203,10 +162,6 @@ public class GameProcessor implements GameService {
         }
     }
 
-
-    /**
-     * @return 
-     */
     @Override
     public State unitReadyForRepair(boolean state) {
        this.state.getSelected().setReadyForRepair(state);
@@ -216,9 +171,6 @@ public class GameProcessor implements GameService {
        return unitSelected(this.state.getSelected().getId());
     }
 
-    /**
-     * @return 
-     */
     @Override
     public State unitReadyForHelp(boolean state) {
        if (this.state.getSelected() instanceof Vessel vessel) {

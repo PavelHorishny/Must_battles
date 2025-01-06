@@ -70,9 +70,6 @@ public class Vessel extends GameUnit {
         setCanMove(true);
     }
 
-    /**
-     * @param currentWeather 
-     */
     @Override
     public void setCurrentWeather(Weather currentWeather) {
         super.setCurrentWeather(currentWeather);
@@ -84,17 +81,8 @@ public class Vessel extends GameUnit {
     }
 
 
-    /**
-     * 
-     */
     @Override
     public void newDayState() {
         super.newDayState();
-/*        setMovePoints(getVesselType().getBreeze_move_points());
-        setCurrent_shots(getVesselType().getShots());
-        if(isOnRepair()){
-            canMove = false;
-            setCanShoot(false);
-        }*/
     }
 }

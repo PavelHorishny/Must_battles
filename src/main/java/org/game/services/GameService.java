@@ -8,7 +8,7 @@ public interface GameService {
     State unitSelected(String id);
     State movementStarts(String id);
     State movementEnds(String id, Coordinates destination);
-    State makeShot(String attackerID, String targetID, String shotType);
+    State shooting(String attackerID, String targetID, String shotType);
     State dayEnd();
     State unitReadyForRepair(boolean state);
     State unitReadyForHelp(boolean state);

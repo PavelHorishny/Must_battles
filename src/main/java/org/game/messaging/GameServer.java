@@ -18,7 +18,7 @@ public class GameServer implements Server{
             case START -> client.response(gameService.initialGameState());
             case MOVEMENTS_START -> client.response(gameService.movementStarts(request.getId()));
             case MOVEMENTS_END -> client.response(gameService.movementEnds(request.getId(),request.getDestination()));
-            case SHOT -> client.response(gameService.makeShot(request.getId(),request.getTargetID(),request.getShotType()));
+            case SHOT -> client.response(gameService.shooting(request.getId(),request.getTargetID(),request.getShotType()));
             case END -> client.response(gameService.dayEnd());
             case REPAIR -> client.response(gameService.unitReadyForRepair(request.isState()));
             case HELP -> client.response(gameService.unitReadyForHelp(request.isState()));

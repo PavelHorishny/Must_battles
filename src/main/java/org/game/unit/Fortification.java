@@ -43,9 +43,7 @@ public class Fortification extends GameUnit {
         capturing = false;
     }
 
-    /**
-     * 
-     */
+
     @Override
     public void newDayState() {
         super.newDayState();

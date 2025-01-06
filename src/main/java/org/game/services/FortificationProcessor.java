@@ -1,7 +1,6 @@
 package org.game.services;
 
 import org.game.Context;
-import org.game.EndGame;
 import org.game.gui.StateType;
 import org.game.map.Surface;
 import org.game.mockData.MockedData;
@@ -10,10 +9,11 @@ import org.game.unit.*;
 
 import java.util.*;
 
-public class FortificationProcessor implements FortificationService, Repairable{
+public class FortificationProcessor implements FortificationService/*, Repairable*/{
 
     private final NamesRandomizer namesRandomizer;
     MapService mapService = new MapProcessor();
+    VesselService vesselService;
 
     public FortificationProcessor() {
         namesRandomizer = Context.getNameRandomizer();
@@ -23,72 +23,10 @@ public class FortificationProcessor implements FortificationService, Repairable{
     private List<Fortification> getStandardFortifications2(){
         return MockedData.STANDARD_FORT_POSITION;
     }
-
-    private boolean isRoyalPortIsNotEmpty(Fortification fortification){
+    @Override
+    public boolean isRoyalPortIsNotEmpty(Fortification fortification){
         return fortification.getPort().stream().anyMatch(surface -> !surface.isEmpty());
     }
-
-    @Override
-    public void checkFortificationsAtMoveEnd(Map<String, GameUnit> fleet, boolean player){
-        ArrayList<Fortification> set = new ArrayList<>();
-        Fortification fort = findPlayersRoyalFort(fleet,player);
-        set.add(fort);
-        Fortification fort1 = findPlayersRoyalFort(fleet,!player);
-        set.add(fort1);
-        fort.getPort().forEach(surface -> {
-            if(!surface.isEmpty())System.out.println(surface.getUnit().toUnitData().toString());
-        });
-        set.forEach(System.out::println);
-        set.forEach(fortification -> {
-            if(!isRoyalPortIsNotEmpty(fortification)){
-                fortification.setCapturing(false);
-                fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
-            }else {
-                fortification.getPort().forEach(surface -> {
-                    if(!surface.isEmpty()){
-                        surface.getUnit().setCanShoot(false);
-                    }
-                });
-            }
-        });
-    }
-
-    /**
-     * @param fleet
-     * @param endGame
-     */
-    @Override
-    public void checkFortificationsAtDayEnd(Map<String, GameUnit> fleet, EndGame endGame) {
-        fleet.values().stream().filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION)).map(Fortification.class::cast).forEach(fortification -> {
-            fortification.setCurrent_shots(fortification.getFortificationType().getShots());
-            fortification.setCanShoot(true);
-            if(fortification.getFortificationType().equals(FortificationType.ROYAL_PORT)){
-                if(fortification.isCapturing()){
-                    fortification.setCurrent_hit_point(fortification.getCurrent_hit_point()-1);
-                    if(fortification.getCurrent_hit_point()<=0){
-                        endGame.setEndGame(true);
-                        endGame.setMessage(testString(fortification));
-                    }
-                }
-                if(!fortification.isCapturing()&&isRoyalPortIsNotEmpty(fortification)){
-                    fortification.setCapturing(true);
-                }
-            }else {
-                if(fortification.isOnRepair()){
-                repairFortification(fortification);
-                    }
-                if(fortification.isReadyForRepair()){
-                    fortification.setOnRepair(true);
-                    fortification.setReadyForRepair(false);
-                    fortification.getPort().stream().filter(surface -> !surface.isEmpty()).toList().forEach(surface -> {
-                        Vessel vessel = (Vessel) surface.getUnit();
-                        if(vessel.isReadyToHelp()) ((Vessel) surface.getUnit()).setHelping(true);
-                    });
-                }
-            }
-        });
-    }
-
 
     @Override
     public void setStandardFortifications(Map<String, GameUnit> fleet, Surface[][] map) {
@@ -108,11 +46,11 @@ public class FortificationProcessor implements FortificationService, Repairable{
     }
 
     @Override
-    public List<Fortification> getFortificationsByType(List<Fortification> forts, FortificationType firstLineFort) {
-        return switch (firstLineFort){
+    public List<Fortification> getFortificationsByType(List<Fortification> forts, FortificationType fortificationType) {
+        return switch (fortificationType){
             case FIRST_LINE_FORT -> forts.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.FIRST_LINE_FORT)).toList();
             case SECOND_LINE_FORT -> forts.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.SECOND_LINE_FORT)).toList();
-            case ROYAL_PORT -> null;//????
+            case ROYAL_PORT -> forts.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.ROYAL_PORT)).toList();
         };
     }
 
@@ -120,6 +58,17 @@ public class FortificationProcessor implements FortificationService, Repairable{
     public Fortification getFortWIthBigPort(List<Fortification> fortificationsOfPlayer) {
         return fortificationsOfPlayer.stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.SECOND_LINE_FORT))
                 .filter(fortification -> fortification.getPort().size() > 5).findFirst().orElse(null);
+    }
+
+    @Override
+    public void setVesselService(VesselService service) {
+        vesselService=service;
+        //TODO may use @Setter
+    }
+
+    @Override
+    public List<Fortification> getAllFortifications(Map<String, GameUnit> fleet) {
+        return fleet.values().stream().filter(gameUnit -> gameUnit.getUnitType().equals(UnitType.FORTIFICATION)).map(Fortification.class::cast).toList();
     }
 
     private void setPortToFortification(Fortification fortification, Set<Surface> port) {
@@ -158,35 +107,24 @@ public class FortificationProcessor implements FortificationService, Repairable{
         }
     }
 
-    private Fortification findPlayersRoyalFort(Map<String, GameUnit> fleet, boolean player) {
-        return fleet.values().stream().filter(unit -> unit.getUnitType().equals(UnitType.FORTIFICATION)).map(Fortification.class::cast).toList()
-                .stream().filter(fortification -> fortification.isFirstPlayer()==player).toList()
-                .stream().filter(fortification -> fortification.getFortificationType().equals(FortificationType.ROYAL_PORT))
-                .findFirst().orElse(null);
-    }
-
-    private String testString(Fortification fortification){
+@Override
+public String testString(Fortification fortification){
         if(fortification.isFirstPlayer()){
             return "Second player wins";
         }else {
             return  "First player wins";
         }
+        //TODO rename
     }
-    private void repairFortification(Fortification fortification){
-        fortification.setCurrent_hit_point(fortification.getCurrent_hit_point()+2);
-        if(fortification.getStateType().equals(StateType.DESTROYED)){
-            if(fortification.getCurrent_hit_point()>=fortification.getFortificationType().getHit_points()){
-                boolean newPlayer = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).findFirst().get().getUnit().isFirstPlayer();
-                fortification.setFirstPlayer(newPlayer);
-                fortification.setStateType(StateType.PASSIVE);
-                fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
-                fortification.setOnRepair(false);
-            }
-        }
-        if(fortification.getCurrent_hit_point()>=fortification.getFortificationType().getHit_points()){
-            fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
-            fortification.setOnRepair(false);
-        }
+
+    @Override
+    public boolean checkIfPortIsRoyal(Fortification fortification) {
+        return fortification.getFortificationType().equals(FortificationType.ROYAL_PORT);
+    }
+
+    @Override
+    public boolean checkIfCanShoot(Fortification fortification) {
+        return !fortification.isOnRepair();
     }
 
     @Override
@@ -207,5 +145,31 @@ public class FortificationProcessor implements FortificationService, Repairable{
         }else {
             return false;
         }
+    }
+
+    @Override
+    public void repairUnit(GameUnit gameUnit) {
+    Fortification fortification = (Fortification) gameUnit;
+        fortification.setCurrent_hit_point(fortification.getCurrent_hit_point()+2);
+        if(fortification.getStateType().equals(StateType.DESTROYED)){
+            if(fortification.getCurrent_hit_point()>=fortification.getFortificationType().getHit_points()){
+                boolean newPlayer = fortification.getPort().stream().filter(surface -> !surface.isEmpty()).findFirst().get().getUnit().isFirstPlayer();
+                fortification.setFirstPlayer(newPlayer);
+                fortification.setStateType(StateType.PASSIVE);
+                fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
+                fortification.setOnRepair(false);
+            }
+        }
+        if(fortification.getCurrent_hit_point()>=fortification.getFortificationType().getHit_points()){
+            fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
+            fortification.setOnRepair(false);
+        }
+    }
+
+    @Override
+    public void whenUnitDestroyed(GameUnit unit, Map<String, GameUnit> fleet, Surface[][] map) {
+        Fortification fortification = (Fortification) unit;
+        fortification.setStateType(StateType.DESTROYED);
+        fortification.getPort().stream().filter(surface -> !surface.isEmpty()).forEach(surface -> vesselService.whenUnitDestroyed(surface.getUnit(),fleet,map));
     }
 }

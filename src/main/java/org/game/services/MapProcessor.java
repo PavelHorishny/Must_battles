@@ -64,21 +64,21 @@ public class MapProcessor implements MapService{
                 switch (vessel.getCurrentWeather().wind()) {
                     case BREEZE -> {
                         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint -> {
-                            setRoute(vessel.getMovePoints() - weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(), cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route);
+                            setRoute(vessel.getMovePoints() - weatherProcessor.getPenalty(vessel.getCurrentWeather().cardinalPoint(), cardinalPoint), map, vessel.getCoordinates(), cardinalPoint, route,unit);
                         });
                     }
                     case CALM -> {
                         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cardinalPoint ->
-                                setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), cardinalPoint, route));
+                                setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), cardinalPoint, route,unit));
                     }
                     case STORM -> {
-                        setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), vessel.getCurrentWeather().cardinalPoint(), route);
+                        setRoute(vessel.getMovePoints(), map, vessel.getCoordinates(), vessel.getCurrentWeather().cardinalPoint(), route,unit);
                     }
                 }
             }
         }
     }
-    private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route){
+    private void setRoute(int current_move_points,Surface [][] map,Coordinates coordinates, CardinalPoint cardinalPoint,ArrayList<Surface> route,GameUnit gameUnit){
         for(int i = 1; i<=current_move_points; i++) {
             Coordinates c = new Coordinates(coordinates.axisX() + cardinalPoint.getValue().axisX() * i,coordinates.axisY() + cardinalPoint.getValue().axisY() * i);
             if(checkIfPositionIsValid(map,c)){
@@ -90,7 +90,7 @@ public class MapProcessor implements MapService{
                         route.add(map[c.axisX()][c.axisY()]);
                     }
                 } else if (checkIfPositionIsPort(map,c)) {
-                    if(!map[c.axisX()][c.axisY()].isEmpty()){
+                    if(!map[c.axisX()][c.axisY()].isEmpty()||(map[c.axisX()][c.axisY()].getFortification().isFirstPlayer()!=gameUnit.isFirstPlayer()&&!map[c.axisX()][c.axisY()].getFortification().getFortificationType().equals(FortificationType.ROYAL_PORT))){
                         break;
                     }else{
                         Arrays.stream(CardinalPoint.cardinalPoints).forEach(cp -> {
@@ -184,6 +184,13 @@ public class MapProcessor implements MapService{
                     map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()].setUnit(gameUnit);
                 }
             }
+        }
+    }
+
+    @Override
+    public void removeUnit(GameUnit gameUnit, Surface[][] map){
+        if(checkIfPositionIsValid(map,gameUnit.getCoordinates())){
+            map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()].setUnit(null);
         }
     }
 

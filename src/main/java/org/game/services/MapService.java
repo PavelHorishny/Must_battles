@@ -21,5 +21,7 @@ public interface MapService {
     boolean checkIfPositionIsPort(Surface[][] map, Coordinates c);
 
     void addUnit(GameUnit gameUnit, Surface[][] map);
+
+    void removeUnit(GameUnit gameUnit, Surface[][] map);
     //TODO remake generateStandardMap (Surface [][] map) <- change signature
 }

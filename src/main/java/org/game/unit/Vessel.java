@@ -10,6 +10,7 @@ public class Vessel extends GameUnit {
     private VesselType vesselType;
     @Setter
     private boolean readyToHelp;
+    @Setter
     private boolean helping;
     @Setter
     private boolean canMove;
@@ -82,16 +83,6 @@ public class Vessel extends GameUnit {
         }
     }
 
-    /**
-     * @param current_shots 
-     */
-    @Override
-    public void setCurrent_shots(int current_shots) {
-        super.setCurrent_shots(current_shots);
-        if(getCurrent_shots()<=0){
-            setCanShoot(false);
-        }
-    }
 
     /**
      * 
@@ -105,37 +96,5 @@ public class Vessel extends GameUnit {
             canMove = false;
             setCanShoot(false);
         }*/
-    }
-    public void setHelping(boolean isHelping){
-        if(isHelping) {
-            this.helping = true;
-            this.readyToHelp = false;
-            canMove = false;
-            setCanShoot(false);
-        }else{
-            this.helping = false;
-        }
-    }
-
-    /**
-     * @param onRepair 
-     */
-    @Override
-    public void setOnRepair(boolean onRepair) {
-        super.setOnRepair(onRepair);
-        if(onRepair){
-            canMove = false;
-        }
-    }
-
-    /**
-     * @param movePoints 
-     */
-    @Override
-    public void setMovePoints(int movePoints) {
-        super.setMovePoints(movePoints);
-        if(getMovePoints()<=0){
-            canMove=false;
-        }
     }
 }

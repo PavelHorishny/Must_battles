@@ -4,7 +4,6 @@ import org.game.Context;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 import org.game.map.Surface;
-import org.game.map.SurfaceType;
 import org.game.mockData.MockedData;
 import org.game.mockData.NamesRandomizer;
 import org.game.unit.*;
@@ -13,11 +12,11 @@ import java.util.*;
 
 public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtRepair*/{
     NamesRandomizer namesRandomizer = Context.getNameRandomizer();
-    WeatherService weatherProcessor = new WeatherProcessor();
+    //WeatherService weatherProcessor = new WeatherProcessor();
 
     FortificationService fortificationService;
     MapService mapService = new MapProcessor();
-    ArrayList <Vessel> firstPlayerVessels = new ArrayList<>();
+    //ArrayList <Vessel> firstPlayerVessels = new ArrayList<>();
 
     public VesselProcessor(){
     }
@@ -27,27 +26,23 @@ public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtR
         return fleet.values().stream().filter(e->e.getUnitType().equals(UnitType.VESSEL)).map(Vessel.class::cast).toList();
     }
 
-    private boolean checkIfSurfaceIsPort(Surface surface){
-        return surface.getType().equals(SurfaceType.PORT);
-    }
 
     @Override
-    public void moveVesselToDestinationPoint(Vessel vessel, Coordinates destination, Surface[][] map) {
+    public void moveUnitToDestinationPoint(GameUnit gameUnit, Coordinates destination, Surface[][] map) {
+        Vessel vessel = (Vessel) gameUnit;
         Coordinates start = new Coordinates(vessel.getCoordinates().axisX(),vessel.getCoordinates().axisY());
-        int distance = getDistance(vessel, destination);
+        int distance = mapService.getDistance(vessel.getCoordinates(),destination);
         vessel.setMovePoints(vessel.getMovePoints()-distance);
-        map[start.axisX()][start.axisY()].setUnit(null);
-        map [destination.axisX()][destination.axisY()].setUnit(vessel);
-    }
-
-    private int getDistance(Vessel vessel, Coordinates destination) {
-        int distance;
-        if(destination.axisX()- vessel.getCoordinates().axisX()!=0){
-            distance = Math.abs(destination.axisX() - vessel.getCoordinates().axisX());
-        }else{
-            distance = Math.abs(destination.axisY() - vessel.getCoordinates().axisY());
+        mapService.removeUnit(vessel,map);
+        vessel.setCoordinates(destination);
+        mapService.addUnit(vessel,map);
+        vessel.setCanShoot(checkIfCanShoot(vessel, map));
+        if(mapService.checkIfPositionIsPort(map,start)){
+            Fortification fortification = map[start.axisX()][start.axisY()].getFortification();
+            if(fortification.getFortificationType().equals(FortificationType.ROYAL_PORT)&&fortification.isFirstPlayer()!=vessel.isFirstPlayer()){
+                fortificationService.restoreRoyalPort(fortification);
+            }
         }
-        return distance;
     }
 
 
@@ -75,7 +70,7 @@ public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtR
                 return false;
             }else return !vessel.isOnRepair() && !vessel.isHelping();
         }else {
-            return true;
+            return vessel.getCurrent_shots() > 0;
         }
     }
 
@@ -235,7 +230,7 @@ public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtR
     public boolean isUnitReadyToTakePartAtRepair(GameUnit gameUnit, Surface[][] map) {
         Vessel vessel = (Vessel) gameUnit;
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
-        if(checkIfSurfaceIsPort(surface)){
+        if(mapService.checkIfPositionIsPort(map,surface.getCoordinates())){
             Fortification fortification = surface.getFortification();
             return !vessel.isHelping() && fortification.getCurrent_hit_point() < fortification.getFortificationType().getHit_points() && fortification.isFirstPlayer()==vessel.isFirstPlayer() | checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(fortification);
         }else {

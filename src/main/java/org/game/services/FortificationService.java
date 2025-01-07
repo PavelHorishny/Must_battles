@@ -28,4 +28,6 @@ public interface FortificationService extends Repairable,Destroyable{
     boolean checkIfPortIsRoyal(Fortification fortification);
 
     boolean checkIfCanShoot(Fortification fortification);
+
+    void restoreRoyalPort(Fortification fortification);
 }

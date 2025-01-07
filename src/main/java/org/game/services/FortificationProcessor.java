@@ -167,6 +167,13 @@ public String testString(Fortification fortification){
     }
 
     @Override
+    public void restoreRoyalPort(Fortification fortification) {
+        //getFortificationsOfPlayer(firstPlayerMove,fleet)
+        fortification.setCapturing(false);
+        fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
+    }
+
+    @Override
     public void whenUnitDestroyed(GameUnit unit, Map<String, GameUnit> fleet, Surface[][] map) {
         Fortification fortification = (Fortification) unit;
         fortification.setStateType(StateType.DESTROYED);

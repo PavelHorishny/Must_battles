@@ -108,11 +108,12 @@ public class MapProcessor implements MapService{
         }
     }
 
+    @Override
     public boolean checkIfPositionIsPort(Surface[][] map, Coordinates c) {
         return map[c.axisX()][c.axisY()].getType().equals(SurfaceType.PORT);
     }
-
-    private boolean checkIfPositionIsWater(Surface[][] map, Coordinates c) {
+    @Override
+    public boolean checkIfPositionIsWater(Surface[][] map, Coordinates c) {
         return map[c.axisX()][c.axisY()].getType().equals(SurfaceType.WATER);
     }
 
@@ -164,6 +165,16 @@ public class MapProcessor implements MapService{
         if(checkIfPositionIsValid(map,gameUnit.getCoordinates())){
             map[gameUnit.getCoordinates().axisX()][gameUnit.getCoordinates().axisY()].setUnit(null);
         }
+    }
+    @Override
+    public int getDistance(Coordinates attacker, Coordinates target) {
+        int distance;
+        if(target.axisX()- attacker.axisX()!=0){
+            distance = Math.abs(target.axisX() - attacker.axisX());
+        }else{
+            distance = Math.abs(target.axisY() - attacker.axisY());
+        }
+        return distance;
     }
 
     private boolean checkIfPositionIsLand(Surface surface) {

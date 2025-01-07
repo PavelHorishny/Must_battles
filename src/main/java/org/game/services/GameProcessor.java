@@ -44,23 +44,22 @@ public class GameProcessor implements GameService {
 
     @Override
     public State unitSelected(String id) {
-        state.setStormDestination(null);
-        state.setVesselInStorm(null);
+        clearActivePoints();
         if(id.isBlank()){
             if(state.getSelected() !=null) {
                 unitService.setState(StateType.PASSIVE, state.getSelected());
             }
-            state.setSelected(null);
-            state.setTarget(null);
-            mapProcessor.clearRoute(state.getRoute());
-            firingProcessor.clearAimed(state.getAimedUnits());
+            clearActiveUnits();
+            clearActiveCells();
         }else{
             GameUnit gameUnit = state.getFleet().get(id);
             if(gameUnit.isFirstPlayer()==state.isFirstPlayerMove()||unitService.isSelectedDestroyedFort(gameUnit)){
                 if(state.getSelected() !=null&&!state.getSelected().equals(gameUnit)) {
                     unitService.setState(StateType.PASSIVE, state.getSelected());
-                    mapProcessor.clearRoute(state.getRoute());
-                }
+                    clearActiveCells();
+                }/*else {
+                    state.setSelected(gameUnit);
+                }*/
                 state.setSelected(gameUnit);
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
                     System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
@@ -95,7 +94,7 @@ public class GameProcessor implements GameService {
     @Override
     public State movementStarts(String id) {
         state.getFleet().get(id).setStateType(StateType.PASSIVE);
-        mapProcessor.clearRoute(state.getRoute());
+        clearActiveCells();
         return converter.convertState(state);
     }
 
@@ -121,12 +120,9 @@ public class GameProcessor implements GameService {
     public State dayEnd() {
         Optional.ofNullable(state.getSelected()).ifPresent(unit ->
             unitService.setState(StateType.PASSIVE,unit));
-        state.setSelected(null);
-        state.setTarget(null);
-        state.setVesselInStorm(null);
-        state.setStormDestination(null);
-        mapProcessor.clearRoute(state.getRoute());
-        firingProcessor.clearAimed(state.getAimedUnits());
+        clearActiveUnits();
+        clearActivePoints();
+        clearActiveCells();
         unitService.OnTurnEnd(state);
         if(state.isFirstPlayerMove()){
             state.setFirstPlayerMove(false);
@@ -145,20 +141,50 @@ public class GameProcessor implements GameService {
 
     @Override
     public State unitReadyForRepair(boolean state) {
-       this.state.getSelected().setReadyForRepair(state);
-       if(this.state.getSelected() instanceof Vessel){
-           ((Vessel) this.state.getSelected()).setCanMove(false);
-       }
-       return unitSelected(this.state.getSelected().getId());
+        if (this.state.getSelected()!=null) {
+ /*           if (state) {
+                this.state.getSelected().setReadyForRepair(true);
+            } else {
+                if (this.state.getSelected().isOnRepair()) {
+                    this.state.getSelected().setOnRepair(false);
+                    this.state.getSelected().setReadyForRepair(false);
+                }
+            }*/
+            unitService.setRepairableStates(this.state.getSelected(),state);
+            return unitSelected(this.state.getSelected().getId());
+        }else {
+            return unitSelected("");
+        }
     }
 
     @Override
     public State unitReadyForHelp(boolean state) {
-       if (this.state.getSelected() instanceof Vessel vessel) {
-           vessel.setReadyToHelp(state);
-           return unitSelected(vessel.getId());
-       }else {
-           return unitSelected("");
-       }
+        if(this.state.getSelected()!=null&& this.state.getSelected() instanceof Vessel){
+            if(state){
+                this.state.getSelected().setReadyToHelp(true);
+                return unitSelected(this.state.getSelected().getId());
+            }else {
+                if(this.state.getSelected().isHelping()){
+                    this.state.getSelected().setHelping(false);
+                }
+                this.state.getSelected().setReadyToHelp(false);
+            }
+            return unitSelected(this.state.getSelected().getId());
+
+        }else {
+            return unitSelected("");
+        }
+    }
+    private void clearActiveUnits(){
+        state.setSelected(null);
+        state.setTarget(null);
+    }
+    private void clearActivePoints(){
+        state.setVesselInStorm(null);
+        state.setStormDestination(null);
+    }
+    private void clearActiveCells(){
+        mapProcessor.clearRoute(state.getRoute());
+        firingProcessor.clearAimed(state.getAimedUnits());
     }
 }

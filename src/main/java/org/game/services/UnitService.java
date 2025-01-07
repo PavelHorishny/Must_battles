@@ -1,5 +1,6 @@
 package org.game.services;
 
+import org.game.gui.StateType;
 import org.game.state.GameState;
 import org.game.unit.GameUnit;
 
@@ -14,4 +15,7 @@ public interface UnitService {
 
     void OnDayEnd(GameState state);
 
+    void setState(StateType stateType, GameUnit unit);
+
+    boolean isSelectedDestroyedFort(GameUnit unit);
 }

@@ -12,10 +12,7 @@ import org.game.unit.*;
 import java.util.*;
 
 public class Converter implements StateConverter{
-    /**
-     * @param gameState 
-     * @return
-     */
+
     @Override
     public State convertState(GameState gameState) {
        return State.builder()
@@ -59,10 +56,10 @@ public class Converter implements StateConverter{
     private Map<Coordinates, GUIUnit> convertFleet(Map<String, GameUnit> fleet){
         Map<Coordinates,GUIUnit> tmp = new HashMap<>();
 
-        fleet.values().forEach(gameUnit -> {
-            tmp.put(gameUnit.getCoordinates(),makeGUIUnit(gameUnit)/*new GUIUnit(gameUnit.getId(),gameUnit.getCoordinates(),setIcons(gameUnit),gameUnit.getStateType())*/);
+        fleet.values().forEach(gameUnit ->
+            tmp.put(gameUnit.getCoordinates(),makeGUIUnit(gameUnit)/*new GUIUnit(gameUnit.getId(),gameUnit.getCoordinates(),setIcons(gameUnit),gameUnit.getStateType())*/)
 
-        });
+        );
         return tmp;
     }
     private UnitIcons setIcons(GameUnit unit){
@@ -164,14 +161,14 @@ public class Converter implements StateConverter{
     }
     private boolean selectedIsHelping(GameUnit unit){
         if(unit!=null){
-            return unit.isReadyForRepair();
+            return unit.isHelping();
         }else {
             return false;
         }
     }
     private boolean selectedIsOnRepair(GameUnit unit){
         if(unit!=null){
-            return unit.isReadyForRepair();
+            return unit.isOnRepair();
         }else {
             return false;
         }

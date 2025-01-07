@@ -48,20 +48,20 @@ public class GameProcessor implements GameService {
         state.setVesselInStorm(null);
         if(id.isBlank()){
             if(state.getSelected() !=null) {
-                setState(StateType.PASSIVE, state.getSelected());
+                unitService.setState(StateType.PASSIVE, state.getSelected());
             }
             state.setSelected(null);
             state.setTarget(null);
             mapProcessor.clearRoute(state.getRoute());
             firingProcessor.clearAimed(state.getAimedUnits());
         }else{
-            GameUnit unit = state.getFleet().get(id);
-            if(unit.isFirstPlayer()==state.isFirstPlayerMove()||isSelectedDestroyedFort(unit)){
-                if(state.getSelected() !=null&&!state.getSelected().equals(unit)) {
-                    setState(StateType.PASSIVE, state.getSelected());
+            GameUnit gameUnit = state.getFleet().get(id);
+            if(gameUnit.isFirstPlayer()==state.isFirstPlayerMove()||unitService.isSelectedDestroyedFort(gameUnit)){
+                if(state.getSelected() !=null&&!state.getSelected().equals(gameUnit)) {
+                    unitService.setState(StateType.PASSIVE, state.getSelected());
                     mapProcessor.clearRoute(state.getRoute());
                 }
-                state.setSelected(unit);
+                state.setSelected(gameUnit);
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
                     System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
                 }
@@ -70,46 +70,27 @@ public class GameProcessor implements GameService {
                 }*/
                 unitService.setButtonsState(state);
 
-                setState(StateType.SELECTED, state.getSelected());
+                unitService.setState(StateType.SELECTED, state.getSelected());
                 mapProcessor.getRoute(state.getSelected(),state.getRoute(), state.getMap());
                 firingProcessor.setUnderAttack(mapProcessor.getFiringZone(state.getSelected(), state.getMap()),state.getAimedUnits(), state.getSelected());
-                Optional.of(unit).ifPresent(unit1 -> {
-                    if(unit1.getUnitType().equals(UnitType.VESSEL)){
-                        if(unit.getMovePoints()>0) {
-                            if (weatherProcessor.isStorm(unit1) && mapProcessor.isNotInPort(unit1, state.getMap())) {
-                                state.setSelected(unit1);
-                                state.setVesselInStorm(unit1.getCoordinates());
+                Optional.of(gameUnit).ifPresent(unit -> {
+                    if(unit.getUnitType().equals(UnitType.VESSEL)){
+                        if(gameUnit.getMovePoints()>0) {
+                            if (weatherProcessor.isStorm(unit) && mapProcessor.isNotInPort(unit, state.getMap())) {
+                                state.setSelected(unit);
+                                state.setVesselInStorm(unit.getCoordinates());
                                 state.setStormDestination(state.getRoute().get(state.getRoute().size()-1).getCoordinates());
                             }
                         }
                     }
                 });
             }else{
-                state.setTarget(unit);
+                state.setTarget(gameUnit);
             }
         }
         return converter.convertState(state);
     }
 
-    private void setState(StateType stateType, GameUnit unit) {
-        if(unit instanceof Fortification){
-            if(unit.getStateType().equals(StateType.DESTROYED)){
-                unit.setStateType(StateType.DESTROYED);
-            }else {
-                unit.setStateType(stateType);
-            }
-        }else {
-            unit.setStateType(stateType);
-        }
-    }
-
-    private boolean isSelectedDestroyedFort(GameUnit unit) {
-        if(unit instanceof Fortification){
-            return unit.getStateType().equals(StateType.DESTROYED);
-        }else {
-            return false;
-        }
-    }
 
     @Override
     public State movementStarts(String id) {
@@ -120,7 +101,7 @@ public class GameProcessor implements GameService {
 
     @Override
     public State movementEnds(String id, Coordinates destination) {
-        vesselProcessor.moveVesselToDestinationPoint((Vessel)state.getFleet().get(id),destination, state.getMap());
+        vesselProcessor.moveUnitToDestinationPoint(state.getFleet().get(id),destination, state.getMap());
         return unitSelected(id);
     }
     //TODO merge movement methods as shoot methods
@@ -139,7 +120,7 @@ public class GameProcessor implements GameService {
     @Override
     public State dayEnd() {
         Optional.ofNullable(state.getSelected()).ifPresent(unit ->
-            setState(StateType.PASSIVE,unit));
+            unitService.setState(StateType.PASSIVE,unit));
         state.setSelected(null);
         state.setTarget(null);
         state.setVesselInStorm(null);

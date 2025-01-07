@@ -10,7 +10,7 @@ import org.game.unit.*;
 
 import java.util.*;
 
-public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtRepair*/{
+public class VesselProcessor implements VesselService {
     NamesRandomizer namesRandomizer = Context.getNameRandomizer();
     //WeatherService weatherProcessor = new WeatherProcessor();
 
@@ -227,6 +227,30 @@ public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtR
     }
 
     @Override
+    public void setRepairableStates(boolean state, GameUnit selected) {
+        Vessel vessel = (Vessel) selected;
+        if (state) {
+            vessel.setReadyForRepair(true);
+        } else {
+            if (vessel.isOnRepair()) {
+                vessel.setOnRepair(false);
+                vessel.setReadyForRepair(false);
+                vessel.setCanShoot(vessel.getCurrent_shots() > 0);
+                vessel.setCanMove(vessel.getMovePoints()>0);
+            }
+        }
+    }
+
+    @Override
+    public void setUnitOnRepair(GameUnit unit) {
+        Vessel vessel = (Vessel) unit;
+        vessel.setOnRepair(true);
+        vessel.setReadyForRepair(false);
+        vessel.setCanShoot(false);
+        vessel.setCanMove(false);
+    }
+
+    @Override
     public boolean isUnitReadyToTakePartAtRepair(GameUnit gameUnit, Surface[][] map) {
         Vessel vessel = (Vessel) gameUnit;
         Surface surface = map[vessel.getCoordinates().axisX()][vessel.getCoordinates().axisY()];
@@ -235,6 +259,21 @@ public class VesselProcessor implements VesselService/*,Repairable,TakingPartAtR
             return !vessel.isHelping() && fortification.getCurrent_hit_point() < fortification.getFortificationType().getHit_points() && fortification.isFirstPlayer()==vessel.isFirstPlayer() | checkingPresenceOfEnemyVesselsInPortOfDestroyedFortification(fortification);
         }else {
             return false;
+        }
+    }
+
+    @Override
+    public void setTakingPartAtRepairStates(GameUnit unit, boolean b) {
+        Vessel vessel = (Vessel) unit;
+        if(b){
+            vessel.setReadyToHelp(true);
+        }else {
+            if(vessel.isHelping()){
+                vessel.setHelping(false);
+                vessel.setReadyToHelp(false);
+                vessel.setCanMove(vessel.getMovePoints()>0);
+                vessel.setCanShoot(vessel.getCurrent_shots()>0);
+            }
         }
     }
 

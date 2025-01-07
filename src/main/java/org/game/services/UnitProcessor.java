@@ -1,6 +1,8 @@
 package org.game.services;
 
+import org.game.gui.StateType;
 import org.game.state.GameState;
+import org.game.unit.Fortification;
 import org.game.unit.FortificationType;
 import org.game.unit.GameUnit;
 import org.game.unit.Vessel;
@@ -54,8 +56,7 @@ public class UnitProcessor implements UnitService {
         fortificationService.getFortificationsByType(fortificationService.getAllFortifications(state.getFleet()), FortificationType.ROYAL_PORT)
                 .forEach(fortification -> {
                     if(!fortificationService.isRoyalPortIsNotEmpty(fortification)){
-                        fortification.setCapturing(false);
-                        fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
+                        fortificationService.restoreRoyalPort(fortification);
                     }else{
                         fortification.getPort().forEach(surface -> {
                             if(!surface.isEmpty()){
@@ -108,5 +109,25 @@ public class UnitProcessor implements UnitService {
                 }
             }
         });
+    }
+    @Override
+    public void setState(StateType stateType, GameUnit unit) {
+        if(unit instanceof Fortification){
+            if(unit.getStateType().equals(StateType.DESTROYED)){
+                unit.setStateType(StateType.DESTROYED);
+            }else {
+                unit.setStateType(stateType);
+            }
+        }else {
+            unit.setStateType(stateType);
+        }
+    }
+    @Override
+    public boolean isSelectedDestroyedFort(GameUnit unit) {
+        if(unit instanceof Fortification){
+            return unit.getStateType().equals(StateType.DESTROYED);
+        }else {
+            return false;
+        }
     }
 }

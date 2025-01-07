@@ -54,4 +54,14 @@ public class GameUnit extends Unit {
     public void newDayState(){
 
     }
+
+    @Override
+    public String toString() {
+        return "GameUnit{" +
+                "readyForRepair=" + readyForRepair +
+                ", onRepair=" + onRepair +
+                ", readyToHelp=" + readyToHelp +
+                ", helping=" + helping +
+                '}';
+    }
 }

@@ -2,15 +2,13 @@ package org.game.state;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Builder
+@Getter
 public class State {
-    MapAreaState mapAreaState;
-    LogAreaState logAreaState;
-    InfoAreaState infoAreaState;
-    WindRoseAreaState windRoseAreaState;
-    ButtonAreaState buttonAreaState;
+    private MapAreaState mapAreaState;
+    private LogAreaState logAreaState;
+    private InfoAreaState infoAreaState;
+    private WindRoseAreaState windRoseAreaState;
+    private ButtonAreaState buttonAreaState;
 }

@@ -9,7 +9,7 @@ import org.game.unit.*;
 
 import java.util.*;
 
-public class FortificationProcessor implements FortificationService/*, Repairable*/{
+public class FortificationProcessor implements FortificationService {
 
     private final NamesRandomizer namesRandomizer;
     MapService mapService = new MapProcessor();
@@ -164,6 +164,32 @@ public String testString(Fortification fortification){
             fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
             fortification.setOnRepair(false);
         }
+    }
+
+    @Override
+    public void setRepairableStates(boolean state, GameUnit selected) {
+        Fortification fortification = (Fortification) selected;
+        if(state){
+            fortification.setReadyForRepair(true);
+        }else{
+            if(fortification.isOnRepair()) {
+                fortification.setOnRepair(false);
+                fortification.setReadyForRepair(false);
+                fortification.setCanShoot(fortification.getCurrent_shots()>0);
+                fortification.getPort().stream().filter(surface -> !surface.isEmpty()).forEach(surface -> {
+                    if(surface.getUnit().isHelping()){
+                        vesselService.setTakingPartAtRepairStates(surface.getUnit(),false);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void setUnitOnRepair(GameUnit unit) {
+        unit.setOnRepair(true);
+        unit.setReadyForRepair(false);
+        unit.setCanShoot(false);
     }
 
     @Override

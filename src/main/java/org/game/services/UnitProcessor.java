@@ -75,8 +75,9 @@ public class UnitProcessor implements UnitService {
             vessel.setCanShoot(true);
             if(vessel.isOnRepair()) vesselService.repairUnit(vessel);
             if(vessel.isReadyForRepair()){
-                vessel.setOnRepair(true);
-                vessel.setReadyForRepair(false);
+                //vessel.setOnRepair(true);
+                vesselService.setUnitOnRepair(vessel);
+                //vessel.setReadyForRepair(false);
             }
             vessel.setCanMove(vesselService.checkIfCanMove(vessel));
             vessel.setCanShoot(vesselService.checkIfCanShoot(vessel,state.getMap()));
@@ -128,6 +129,29 @@ public class UnitProcessor implements UnitService {
             return unit.getStateType().equals(StateType.DESTROYED);
         }else {
             return false;
+        }
+    }
+
+    @Override
+    public void setRepairableStates(GameUnit gameState, boolean state) {
+/*        Optional.ofNullable(gameState).ifPresent(gameUnit -> {
+            if(state){
+                gameUnit.setReadyForRepair(true);
+            }else{
+                if(gameUnit.isOnRepair()) {
+                    gameUnit.setOnRepair(false);
+                    gameUnit.setReadyForRepair(false);
+                }
+            }
+        });*/
+
+        switch (gameState.getUnitType()){
+            case FORTIFICATION ->
+                fortificationService.setRepairableStates(state, gameState);
+
+            case VESSEL ->
+                vesselService.setRepairableStates(state, gameState);
+
         }
     }
 }

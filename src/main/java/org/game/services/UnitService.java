@@ -18,4 +18,6 @@ public interface UnitService {
     void setState(StateType stateType, GameUnit unit);
 
     boolean isSelectedDestroyedFort(GameUnit unit);
+
+    void setRepairableStates(GameUnit gameState, boolean state);
 }

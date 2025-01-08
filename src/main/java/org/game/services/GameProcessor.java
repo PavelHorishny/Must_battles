@@ -57,9 +57,7 @@ public class GameProcessor implements GameService {
                 if(state.getSelected() !=null&&!state.getSelected().equals(gameUnit)) {
                     unitService.setState(StateType.PASSIVE, state.getSelected());
                     clearActiveCells();
-                }/*else {
-                    state.setSelected(gameUnit);
-                }*/
+                }
                 state.setSelected(gameUnit);
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
                     System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
@@ -142,14 +140,6 @@ public class GameProcessor implements GameService {
     @Override
     public State unitReadyForRepair(boolean state) {
         if (this.state.getSelected()!=null) {
- /*           if (state) {
-                this.state.getSelected().setReadyForRepair(true);
-            } else {
-                if (this.state.getSelected().isOnRepair()) {
-                    this.state.getSelected().setOnRepair(false);
-                    this.state.getSelected().setReadyForRepair(false);
-                }
-            }*/
             unitService.setRepairableStates(this.state.getSelected(),state);
             return unitSelected(this.state.getSelected().getId());
         }else {

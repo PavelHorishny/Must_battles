@@ -44,7 +44,7 @@ public class Surface {
                 this.unit.setReadyForRepair(false);
                 if(this.unit.getCurrent_shots()>0) this.unit.setCanShoot(true);
                 if(this.unit instanceof Vessel){
-                    ((Vessel) this.unit).setReadyToHelp(false);
+                    this.unit.setReadyToHelp(false);
                 }
             }
         }

@@ -8,10 +8,6 @@ import org.game.gui.Coordinates;
 @Getter
 public class Vessel extends GameUnit {
     private VesselType vesselType;
-/*    @Setter
-    private boolean readyToHelp;*/
-/*    @Setter
-    private boolean helping;*/
     @Setter
     private boolean canMove;
     private int breeze_move_points;

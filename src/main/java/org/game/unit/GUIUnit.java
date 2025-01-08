@@ -51,9 +51,6 @@ public class GUIUnit extends Unit {
 
     }
 
-    /**
-     * @param coordinates 
-     */
     @Override
     public void setCoordinates(Coordinates coordinates) {
         super.setCoordinates(coordinates);

@@ -73,60 +73,36 @@ public class GamePanelMediator implements Mediator{
         buttons.updateState(state.getButtonAreaState());
     }
 
-    /**
-     *
-     */
     @Override
     public void movementStarts(String id) {
         client.request(Request.builder().message(Message.MOVEMENTS_START).id(id).build());
     }
 
-    /**
-     * @param id
-     * @param destination
-     */
     @Override
     public void movementEnds(String id, Coordinates destination) {
         client.request(Request.builder().message(Message.MOVEMENTS_END).id(id).destination(destination).build());
     }
 
-    /**
-     * @param attackerID
-     * @param targetID
-     * @param shotType
-     */
     @Override
     public void shot(String attackerID, String targetID, String shotType) {
         client.request(Request.builder().message(Message.SHOT).id(attackerID).targetID(targetID).shotType(shotType).build());
     }
 
-    /**
-     *
-     */
     @Override
     public void endTurn() {
         client.request(Request.builder().message(Message.END).build());
     }
 
-    /**
-     *
-     */
     @Override
     public void unitReadyForRepair(boolean state) {
         client.request(Request.builder().message(Message.REPAIR).state(state).build());
     }
 
-    /**
-     *
-     */
     @Override
     public void unitReadyForHelp(boolean state) {
         client.request(Request.builder().message(Message.HELP).state(state).build());
     }
 
-    /**
-     *
-     */
     @Override
     public void grid() {
         game.enableGrid();

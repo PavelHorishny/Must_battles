@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EndGame {
-    boolean endGame;
-    String message;
+    private boolean endGame;
+    private String message;
     public boolean isEmpty(){
         return !endGame || message.isEmpty();
     }

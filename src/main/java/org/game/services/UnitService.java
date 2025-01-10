@@ -6,18 +6,12 @@ import org.game.unit.GameUnit;
 
 public interface UnitService {
     void setAllUnits(GameState gameState);
-
     void setButtonsState(GameState state);
-
     void onDestruction(GameUnit unit, GameState state);
-
     void OnTurnEnd(GameState state);
-
     void OnDayEnd(GameState state);
-
     void setState(StateType stateType, GameUnit unit);
-
     boolean isSelectedDestroyedFort(GameUnit unit);
-
     void setRepairableStates(GameUnit gameState, boolean state);
+    void setTakingPartInRepairStates(GameUnit selected, boolean state);
 }

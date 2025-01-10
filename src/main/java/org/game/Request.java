@@ -9,10 +9,10 @@ import org.game.gui.panels.Message;
 @Setter
 @Builder
 public class Request {
-    Message message;
-    String id;
-    String targetID;
-    String shotType;
-    Coordinates destination;
-    boolean state;
+    private Message message;
+    private String id;
+    private String targetID;
+    private String shotType;
+    private Coordinates destination;
+    private boolean state;
 }

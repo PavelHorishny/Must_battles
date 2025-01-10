@@ -9,5 +9,5 @@ import org.game.Weather;
 @Setter
 @Builder
 public class WindRoseAreaState extends GameComponentState {
-    Weather weather;
+    private Weather weather;
 }

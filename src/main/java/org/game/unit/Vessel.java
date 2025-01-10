@@ -9,9 +9,6 @@ import org.game.gui.Coordinates;
 public class Vessel extends GameUnit {
     private VesselType vesselType;
     @Setter
-    private boolean readyToHelp;
-    private boolean helping;
-    @Setter
     private boolean canMove;
     private int breeze_move_points;
     private int calm_move_points;
@@ -69,9 +66,6 @@ public class Vessel extends GameUnit {
         setCanMove(true);
     }
 
-    /**
-     * @param currentWeather 
-     */
     @Override
     public void setCurrentWeather(Weather currentWeather) {
         super.setCurrentWeather(currentWeather);
@@ -82,60 +76,9 @@ public class Vessel extends GameUnit {
         }
     }
 
-    /**
-     * @param current_shots 
-     */
-    @Override
-    public void setCurrent_shots(int current_shots) {
-        super.setCurrent_shots(current_shots);
-        if(getCurrent_shots()<=0){
-            setCanShoot(false);
-        }
-    }
 
-    /**
-     * 
-     */
     @Override
     public void newDayState() {
         super.newDayState();
-/*        setMovePoints(getVesselType().getBreeze_move_points());
-        setCurrent_shots(getVesselType().getShots());
-        if(isOnRepair()){
-            canMove = false;
-            setCanShoot(false);
-        }*/
-    }
-    public void setHelping(boolean isHelping){
-        if(isHelping) {
-            this.helping = true;
-            this.readyToHelp = false;
-            canMove = false;
-            setCanShoot(false);
-        }else{
-            this.helping = false;
-        }
-    }
-
-    /**
-     * @param onRepair 
-     */
-    @Override
-    public void setOnRepair(boolean onRepair) {
-        super.setOnRepair(onRepair);
-        if(onRepair){
-            canMove = false;
-        }
-    }
-
-    /**
-     * @param movePoints 
-     */
-    @Override
-    public void setMovePoints(int movePoints) {
-        super.setMovePoints(movePoints);
-        if(getMovePoints()<=0){
-            canMove=false;
-        }
     }
 }

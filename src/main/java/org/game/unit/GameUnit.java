@@ -54,29 +54,14 @@ public class GameUnit extends Unit {
     public void newDayState(){
 
     }
-    public void setOnRepair(boolean onRepair){
-        if(onRepair){
-            this.readyForRepair = false;
-            this.onRepair = true;
-            this.canShoot = false;
-        }else {
-            this.onRepair = false;
-            if(current_shots>0){
-                this.canShoot=true;
-            }
-        }
-    }
-    public void setCurrent_shots(int shots){
-        current_shots = shots;
-        if(current_shots<=0){
-            canShoot=false;
-        }
-    }
-    public void setCanShoot(boolean ability){
-        if(isOnRepair()){
-            canShoot = false;
-        }else {
-            canShoot = ability;
-        }
+
+    @Override
+    public String toString() {
+        return "GameUnit{" +
+                "readyForRepair=" + readyForRepair +
+                ", onRepair=" + onRepair +
+                ", readyToHelp=" + readyToHelp +
+                ", helping=" + helping +
+                '}';
     }
 }

@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ImageComponent extends JComponent {
-    private final String text = "Image currently unavailable";
     public ImageComponent(){
         setPreferredSize(new Dimension(260,260));
 
@@ -16,6 +15,7 @@ public class ImageComponent extends JComponent {
         g.setColor(Color.GRAY);
         g.fillRect(0,0,260,260);
         g.setColor(Color.BLACK);
+        String text = "Image currently unavailable";
         g.drawString(text,10,15);
 
     }

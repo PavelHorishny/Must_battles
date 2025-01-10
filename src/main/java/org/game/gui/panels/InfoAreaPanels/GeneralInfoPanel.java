@@ -6,7 +6,7 @@ import javax.swing.*;
 
 @Getter
 public class GeneralInfoPanel extends JPanel {
-    private JLabel day = new JLabel();
+    private final JLabel day = new JLabel();
     public GeneralInfoPanel(){
         add(day);
         day.setText("this is the general panel");

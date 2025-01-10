@@ -57,6 +57,9 @@ public class GameProcessor implements GameService {
                 if(state.getSelected() != null&& !state.getSelected().equals(gameUnit)) {
                     unitService.setState(StateType.PASSIVE, state.getSelected());
                     clearActiveCells();
+                    state.setTarget(null);
+                }else {
+                    state.setTarget(null);
                 }
                 state.setSelected(gameUnit);
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {

@@ -101,11 +101,12 @@ public class UnitProcessor implements UnitService {
                     fortificationService.repairUnit(fortification);
                 }
                 if(fortification.isReadyForRepair()){
-                    fortification.setOnRepair(true);
-                    fortification.setReadyForRepair(false);
+                    fortificationService.setUnitOnRepair(fortification);
+                 /*   fortification.setOnRepair(true);
+                    fortification.setReadyForRepair(false);*/
                     fortification.getPort().stream().filter(surface -> !surface.isEmpty()).toList().forEach(surface -> {
                         Vessel vessel = (Vessel) surface.getUnit();
-                        if(vessel.isReadyToHelp()) surface.getUnit().setHelping(true);
+                        if(vessel.isReadyToHelp()) vesselService.setHelpInRepairStates(surface.getUnit(),true); //surface.getUnit().setHelping(true);//Find
                     });
                 }
             }
@@ -152,6 +153,13 @@ public class UnitProcessor implements UnitService {
             case VESSEL ->
                 vesselService.setRepairableStates(state, gameState);
 
+        }
+    }
+
+    @Override
+    public void setTakingPartInRepairStates(GameUnit selected, boolean state) {
+        if(selected instanceof Vessel){
+            vesselService.setHelpInRepairStates(selected,state);
         }
     }
 }

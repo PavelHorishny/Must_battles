@@ -46,7 +46,7 @@ public class GameProcessor implements GameService {
     public State unitSelected(String id) {
         clearActivePoints();
         if(id.isBlank()){
-            if(state.getSelected() !=null) {
+            if(state.getSelected() != null) {
                 unitService.setState(StateType.PASSIVE, state.getSelected());
             }
             clearActiveUnits();
@@ -54,7 +54,7 @@ public class GameProcessor implements GameService {
         }else{
             GameUnit gameUnit = state.getFleet().get(id);
             if(gameUnit.isFirstPlayer()==state.isFirstPlayerMove()||unitService.isSelectedDestroyedFort(gameUnit)){
-                if(state.getSelected() !=null&&!state.getSelected().equals(gameUnit)) {
+                if(state.getSelected() != null&& !state.getSelected().equals(gameUnit)) {
                     unitService.setState(StateType.PASSIVE, state.getSelected());
                     clearActiveCells();
                 }
@@ -116,12 +116,14 @@ public class GameProcessor implements GameService {
 
     @Override
     public State dayEnd() {
-        Optional.ofNullable(state.getSelected()).ifPresent(unit ->
-            unitService.setState(StateType.PASSIVE,unit));
+
+        Optional.ofNullable(state.getSelected()).ifPresent(unit -> unitService.setState(StateType.PASSIVE,unit));
+
         clearActiveUnits();
         clearActivePoints();
         clearActiveCells();
         unitService.OnTurnEnd(state);
+
         if(state.isFirstPlayerMove()){
             state.setFirstPlayerMove(false);
         }else {
@@ -129,11 +131,11 @@ public class GameProcessor implements GameService {
             state.setDay(state.getDay()+1);
             unitService.OnDayEnd(state);
         }
+
         if(!state.getEndGame().isEmpty()){
             return converter.convertState(state);
         }else {
             return unitSelected("");
-
         }
     }
 
@@ -149,8 +151,9 @@ public class GameProcessor implements GameService {
 
     @Override
     public State unitReadyForHelp(boolean state) {
-        if(this.state.getSelected()!=null&& this.state.getSelected() instanceof Vessel){
-            if(state){
+
+        if(this.state.getSelected()!=null){
+/*            if(state){
                 this.state.getSelected().setReadyToHelp(true);
                 return unitSelected(this.state.getSelected().getId());
             }else {
@@ -158,13 +161,15 @@ public class GameProcessor implements GameService {
                     this.state.getSelected().setHelping(false);
                 }
                 this.state.getSelected().setReadyToHelp(false);
-            }
+            }*/
+            unitService.setTakingPartInRepairStates(this.state.getSelected(),state);
             return unitSelected(this.state.getSelected().getId());
 
         }else {
             return unitSelected("");
         }
     }
+    //TODO fix buttons behavior
     private void clearActiveUnits(){
         state.setSelected(null);
         state.setTarget(null);

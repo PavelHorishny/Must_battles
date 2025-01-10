@@ -58,7 +58,7 @@ public class VesselProcessor implements VesselService {
 
     @Override
     public boolean checkIfCanMove(Vessel vessel) {
-        return !vessel.isOnRepair() && !vessel.isHelping();
+        return !vessel.isOnRepair() || !vessel.isHelping() || !vessel.isReadyToHelp();
 
     }
 
@@ -234,10 +234,11 @@ public class VesselProcessor implements VesselService {
         } else {
             if (vessel.isOnRepair()) {
                 vessel.setOnRepair(false);
-                vessel.setReadyForRepair(false);
-                vessel.setCanShoot(vessel.getCurrent_shots() > 0);
-                vessel.setCanMove(vessel.getMovePoints()>0);
+
             }
+            vessel.setReadyForRepair(false);
+            vessel.setCanShoot(vessel.getCurrent_shots() > 0);
+            vessel.setCanMove(vessel.getMovePoints()>0);
         }
     }
 
@@ -262,7 +263,7 @@ public class VesselProcessor implements VesselService {
         }
     }
 
-    @Override
+/*    @Override
     public void setTakingPartAtRepairStates(GameUnit unit, boolean b) {
         Vessel vessel = (Vessel) unit;
         if(b){
@@ -274,6 +275,25 @@ public class VesselProcessor implements VesselService {
                 vessel.setCanMove(vessel.getMovePoints()>0);
                 vessel.setCanShoot(vessel.getCurrent_shots()>0);
             }
+        }
+    }*/
+
+    @Override
+    public void setHelpInRepairStates(GameUnit selected, boolean state) {
+        Vessel vessel = (Vessel) selected;
+        if(state){
+            vessel.setReadyToHelp(true);
+            vessel.setCanMove(false);
+            vessel.setCanShoot(false);
+        }else{
+            vessel.setReadyToHelp(false);
+            if(vessel.isHelping()){
+                vessel.setHelping(false);
+               // fortificationService.//
+                //fortificationService.isUnitCanBeRepaired()
+            }
+            vessel.setCanShoot(vessel.getCurrent_shots()>0);
+            vessel.setCanMove(vessel.getMovePoints()>0);
         }
     }
 

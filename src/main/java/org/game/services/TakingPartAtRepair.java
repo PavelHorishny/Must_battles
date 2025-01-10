@@ -5,7 +5,5 @@ import org.game.unit.GameUnit;
 
 public interface TakingPartAtRepair {
     boolean isUnitReadyToTakePartAtRepair(GameUnit gameUnit, Surface [] [] map);
-
-    void setTakingPartAtRepairStates(GameUnit unit, boolean b);
-
+    void setHelpInRepairStates(GameUnit selected, boolean state);
 }

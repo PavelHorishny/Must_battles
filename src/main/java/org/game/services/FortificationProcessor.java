@@ -178,7 +178,7 @@ public String testString(Fortification fortification){
                 fortification.setCanShoot(fortification.getCurrent_shots()>0);
                 fortification.getPort().stream().filter(surface -> !surface.isEmpty()).forEach(surface -> {
                     if(surface.getUnit().isHelping()){
-                        vesselService.setTakingPartAtRepairStates(surface.getUnit(),false);
+                        vesselService.setHelpInRepairStates(surface.getUnit(),false);
                     }
                 });
             }
@@ -194,7 +194,6 @@ public String testString(Fortification fortification){
 
     @Override
     public void restoreRoyalPort(Fortification fortification) {
-        //getFortificationsOfPlayer(firstPlayerMove,fleet)
         fortification.setCapturing(false);
         fortification.setCurrent_hit_point(fortification.getFortificationType().getHit_points());
     }

@@ -14,7 +14,7 @@ public class ButtonArea extends GamePanelComponent {
     public static final Logger logger = LogManager.getLogger(ButtonArea.class);
     JButton menu = new JButton("Menu");
     JButton end = new JButton("End");
-    JToggleButton vesselRepair = new JToggleButton("VR");
+    JToggleButton onRepair = new JToggleButton("onR");
     JButton grid = new JButton("#");
     JToggleButton participateRepair = new JToggleButton("Help");
     ButtonAreaState state;
@@ -51,16 +51,22 @@ public class ButtonArea extends GamePanelComponent {
             System.out.println(" ");
         });
         add(end);
-        add(vesselRepair);
-        vesselRepair.addItemListener(itemEvent -> {
-            if(itemEvent.getStateChange()==ItemEvent.SELECTED) mediator.unitReadyForRepair(true);
+        add(onRepair);
+        onRepair.addItemListener(itemEvent -> {
+            if(itemEvent.getStateChange()==ItemEvent.SELECTED){
+                mediator.unitReadyForRepair(true);
+                participateRepair.setEnabled(false);
+            }
             if(itemEvent.getStateChange()==ItemEvent.DESELECTED) mediator.unitReadyForRepair(false);
         });
-        vesselRepair.setEnabled(false);
+        onRepair.setEnabled(false);
         add(participateRepair);
 
         participateRepair.addItemListener(itemEvent -> {
-            if(itemEvent.getStateChange()==ItemEvent.SELECTED) mediator.unitReadyForHelp(true);
+            if(itemEvent.getStateChange()==ItemEvent.SELECTED) {
+                mediator.unitReadyForHelp(true);
+                onRepair.setEnabled(false);
+            }
             if(itemEvent.getStateChange()==ItemEvent.DESELECTED) mediator.unitReadyForHelp(false);
         });
         participateRepair.setEnabled(false);
@@ -73,20 +79,27 @@ public class ButtonArea extends GamePanelComponent {
     }
 
     @Override
-    public void updateState(GameComponentState state) {
-        if(state!=null){
+    public void updateState(GameComponentState gameComponentState) {
+        if(gameComponentState != null){
             System.out.println(state);
-            this.state = (ButtonAreaState) state;
-            if(this.state.isOnRepairButton()){
-                vesselRepair.setEnabled(true);
-                vesselRepair.setSelected(this.state.isSelectedReadyForRepair() || this.state.isSelectedOnRepair());
-            }else{
-                vesselRepair.setEnabled(false);
+            state = (ButtonAreaState) gameComponentState;
+            if(state.isOnRepairButton()){
+                if(state.isSelectedIsHelping()){
+                    onRepair.setEnabled(false);
+                }else {
+                    onRepair.setEnabled(true);
+                    onRepair.setSelected(state.isSelectedReadyForRepair()|| state.isSelectedOnRepair());
+                }
+            }else {
+                onRepair.setEnabled(false);
             }
-
-            if(this.state.isHelpButton()){
-                participateRepair.setEnabled(true);
-                participateRepair.setSelected(this.state.isSelectedReadyToHelp());
+            if(state.isHelpButton()){
+                if(state.isSelectedOnRepair()){
+                    participateRepair.setEnabled(false);
+                }else {
+                    participateRepair.setEnabled(true);
+                    participateRepair.setSelected(state.isSelectedIsHelping()||state.isSelectedReadyToHelp());
+                }
             }else {
                 participateRepair.setEnabled(false);
             }

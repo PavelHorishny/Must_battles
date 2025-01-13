@@ -1,5 +1,7 @@
 package org.game.gui.panels;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.game.Context;
 import org.game.Request;
 import org.game.gui.Coordinates;
@@ -8,16 +10,18 @@ import org.game.gui.panels.game.areas.*;
 import org.game.messaging.GameClient;
 
 public class GamePanelMediator implements Mediator{
+    public static final Logger logger = LogManager.getLogger(GamePanelMediator.class);
+
     GameClient client = new GameClient();
     public GamePanelMediator() {
-        System.out.println("Mediator exists");
+        logger.info("runs");
     }
 
-    private MapArea game;
-    private WindRoseArea wind;
-    private ButtonArea buttons;
-    private InfoArea info;
-    private LogArea log;
+    private GamePanelComponent game;
+    private GamePanelComponent wind;
+    private GamePanelComponent buttons;
+    private GamePanelComponent info;
+    private GamePanelComponent log;
 
     @Override
     public void registerComponent(GameComponent gameComponent) {
@@ -105,7 +109,7 @@ public class GamePanelMediator implements Mediator{
 
     @Override
     public void grid() {
-        game.enableGrid();
+        ((MapArea) game).enableGrid();
     }
 
     public void start() {

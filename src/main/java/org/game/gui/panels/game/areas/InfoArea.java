@@ -1,6 +1,5 @@
 package org.game.gui.panels.game.areas;
 
-import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.game.gui.panels.InfoAreaPanels.SelectedInfoPanel;
@@ -14,7 +13,7 @@ import java.awt.*;
 
 public class InfoArea extends GamePanelComponent {
     private static final Logger logger = LogManager.getLogger(InfoArea.class);
-    @Getter
+
     private final GeneralInfoPanel generalInfoPanel = new GeneralInfoPanel();
     private final SelectedInfoPanel selectedInfoPanel = new SelectedInfoPanel();
     private final TargetInfoPanel targetInfoPanel = new TargetInfoPanel();
@@ -26,7 +25,7 @@ public class InfoArea extends GamePanelComponent {
         add(generalInfoPanel,"General");
         add(selectedInfoPanel,"Selected");
         add(targetInfoPanel,"Target");
-        logger.debug(name);
+        logger.debug("runs");
     }
 
     @Override

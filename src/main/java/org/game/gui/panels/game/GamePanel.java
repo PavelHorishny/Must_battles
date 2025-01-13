@@ -1,5 +1,7 @@
 package org.game.gui.panels.game;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.game.Context;
 import org.game.gui.panels.*;
 import org.game.gui.panels.game.areas.*;
@@ -7,12 +9,15 @@ import org.game.gui.panels.game.areas.*;
 import javax.swing.*;
 
 public class GamePanel extends JPanel {
-    private GamePanelMediator mediator;
+    public static final Logger logger = LogManager.getLogger(GamePanel.class);
+    private Mediator mediator;
     public GamePanel(){
-        mediator = (GamePanelMediator) Context.getMediator();
+        logger.info("GamePanel class runs");
+        mediator = Context.getMediator();
         init();
        }
     private void init(){
+        logger.debug("init method runs");
         setLayout(PanelsConstrains.LAYOUT);
         GamePanelComponent mapArea = new MapArea(PanelsConstrains.GAME_AREA_SETTINGS);
         mediator.registerComponent(mapArea);
@@ -29,6 +34,7 @@ public class GamePanel extends JPanel {
         GamePanelComponent logArea = new LogArea(PanelsConstrains.LOG_AREA_SETTINGS);
         mediator.registerComponent(logArea);
         add(logArea,PanelsConstrains.LOG_AREA);
+        //TODO get rid or rename panel settings
     }
 
     public void setMediator(GamePanelMediator mediator) {

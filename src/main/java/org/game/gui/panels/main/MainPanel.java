@@ -10,11 +10,12 @@ import java.awt.*;
 public class MainPanel extends JPanel {
     private static final Logger logger = LogManager.getLogger(MainPanel.class);
     protected final JButton start, load, settings, quit;
+
     public MainPanel(){
         this.setBackground(Color.ORANGE);
         this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(1280,960));
-
+        //TODO magic numbers
         this.add(new Box.Filler(new Dimension(300,150),new Dimension(300,150),new Dimension(300,150)));
         start = new JButton("Start");
         start.setMaximumSize(new Dimension(300,50));
@@ -50,7 +51,10 @@ public class MainPanel extends JPanel {
         quit = new JButton("Quit");
         quit.setMaximumSize(new Dimension(300,50));
         quit.setAlignmentX(Component.CENTER_ALIGNMENT);
-        quit.addActionListener(e->System.exit(0));
+        quit.addActionListener(e->{
+            logger.info("Quit button pressed");
+            System.exit(0);
+        });
         this.add(quit);
     }
 }

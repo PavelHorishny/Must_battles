@@ -32,7 +32,7 @@ public class WindRoseArea extends GamePanelComponent {
     public WindRoseArea(Settings settings) {
         super(settings);
         setState();
-        logger.debug(name);
+        logger.debug("runs");
     }
 
 

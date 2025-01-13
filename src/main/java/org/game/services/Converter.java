@@ -27,7 +27,7 @@ public class Converter implements StateConverter{
                        .vesselInStorm(gameState.getVesselInStorm())
                        .stormDestination(gameState.getStormDestination())
                        .build())
-               .logAreaState(LogAreaState.builder().build())
+               .logAreaState(LogAreaState.builder().label(gameState.getLogMessage()).build())
                .infoAreaState(InfoAreaState.builder()
                        .day(String.valueOf(gameState.getDay()))
                        .selected(Optional.ofNullable(gameState.getSelected()).isPresent())
@@ -70,20 +70,20 @@ public class Converter implements StateConverter{
     }
 
     private UnitIcons setVesselIcons(Vessel unit) {
-        return switch (unit.getVesselType()){
-            case THREE_DECKER_SHIP_OF_LINE -> checkPlayer(unit) ? Images.THREE_DECKER_SHIP_OF_LINE_ST : Images.THREE_DECKER_SHIP_OF_LINE_ND;
-            case TWO_DECKER_SHIP_OF_LINE -> checkPlayer(unit) ? Images.TWO_DECKER_SHIP_OF_LINE_ST : Images.TWO_DECKER_SHIP_OF_LINE_ND;
-            case FRIGATE -> checkPlayer(unit) ? Images.FRIGATE_ST : Images.FRIGATE_ND;
-            case TENDER -> checkPlayer(unit) ? Images.TENDER_ST : Images.TENDER_ND;
-            case BRIG -> checkPlayer(unit) ? Images.BRIG_ST : Images.BRIG_ND;
-            case GALLEON -> checkPlayer(unit) ? Images.GALLEON_ST : Images.GALLEON_ND;
-            case STEAM_FRIGATE -> checkPlayer(unit) ? Images.STEAM_FRIGATE_ST : Images.STEAM_FRIGATE_ND;
-            case BATTERY -> checkPlayer(unit) ? Images.BATTERY_ST : Images.BATTERY_ND;
-            case GALLEY -> checkPlayer(unit) ? Images.GALLEY_ST : Images.GALLEY_ND;
-            case CORVETTE -> checkPlayer(unit) ? Images.CORVETTE_ST : Images.CORVETTE_ND;
-            case MONITOR -> checkPlayer(unit) ? Images.MONITOR_ST : Images.MONITOR_ND;
-            case STEAMSHIP -> checkPlayer(unit) ? Images.STEAMER_ST : Images.STEAMER_ND;
-        };
+            return switch (unit.getVesselType()) {
+                case THREE_DECKER_SHIP_OF_LINE -> checkPlayer(unit) ? Images.THREE_DECKER_SHIP_OF_LINE_ST : Images.THREE_DECKER_SHIP_OF_LINE_ND;
+                case TWO_DECKER_SHIP_OF_LINE -> checkPlayer(unit) ? Images.TWO_DECKER_SHIP_OF_LINE_ST : Images.TWO_DECKER_SHIP_OF_LINE_ND;
+                case FRIGATE -> checkPlayer(unit) ? Images.FRIGATE_ST : Images.FRIGATE_ND;
+                case TENDER -> checkPlayer(unit) ? Images.TENDER_ST : Images.TENDER_ND;
+                case BRIG -> checkPlayer(unit) ? Images.BRIG_ST : Images.BRIG_ND;
+                case GALLEON -> checkPlayer(unit) ? Images.GALLEON_ST : Images.GALLEON_ND;
+                case STEAM_FRIGATE -> checkPlayer(unit) ? Images.STEAM_FRIGATE_ST : Images.STEAM_FRIGATE_ND;
+                case BATTERY -> checkPlayer(unit) ? Images.BATTERY_ST : Images.BATTERY_ND;
+                case GALLEY -> checkPlayer(unit) ? Images.GALLEY_ST : Images.GALLEY_ND;
+                case CORVETTE -> checkPlayer(unit) ? Images.CORVETTE_ST : Images.CORVETTE_ND;
+                case MONITOR -> checkPlayer(unit) ? Images.MONITOR_ST : Images.MONITOR_ND;
+                case STEAMSHIP -> checkPlayer(unit) ? Images.STEAMER_ST : Images.STEAMER_ND;
+            };
     }
 
     private UnitIcons setFortificationIcons(Fortification unit) {

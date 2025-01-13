@@ -14,20 +14,19 @@ public class LogArea extends GamePanelComponent {
     private static final Logger logger = LogManager.getLogger(LogArea.class);
     LogAreaState state;
     JLabel l;
-    public LogArea() {
-    }
+
     public LogArea(Settings settings){
         super(settings);
         l = new JLabel(name);
         add(l);
-        logger.debug(name);
+        logger.debug("runs");
     }
 
     @Override
     public void updateState(GameComponentState state) {
         if(state!=null){
             this.state = (LogAreaState) state;
-            l.setText(this.state.getLabel());
+            if(!this.state.getLabel().isBlank()) l.setText(this.state.getLabel());
             repaint();
         }
 

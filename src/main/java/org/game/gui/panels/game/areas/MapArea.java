@@ -1,5 +1,7 @@
 package org.game.gui.panels.game.areas;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.game.state.GameComponentState;
 import org.game.state.MapAreaState;
 import org.game.gui.*;
@@ -14,12 +16,13 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MapArea extends GamePanelComponent implements MouseListener {
+    public static final Logger logger = LogManager.getLogger(MapArea.class);
     boolean looser;
     boolean grid = false;
     MapAreaState state;
@@ -31,17 +34,24 @@ public class MapArea extends GamePanelComponent implements MouseListener {
     boolean point = false;
     Timer timer;
 
-    {
+/*    {
         try {
-            anchor = ImageIO.read(new File("src/main/resources/img/Anchor.png"));
+            anchor = ImageIO.read(Objects.requireNonNull(getClass().getResource("src/main/resources/img/Anchor.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public MapArea(Settings settings){
+
         super(settings);
         addMouseListener(this);
+        logger.trace("runs");
+        try {
+            anchor = ImageIO.read(Objects.requireNonNull(getClass().getResource("/img/Anchor.png")));
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public MapArea(){
@@ -113,6 +123,7 @@ public class MapArea extends GamePanelComponent implements MouseListener {
 
     @Override
     protected void paintComponent(Graphics g) {
+        logger.trace("painting started");
         super.paintComponent(g);
         if(state!=null) {
             if (looser){

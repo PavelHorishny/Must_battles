@@ -81,4 +81,9 @@ public class Vessel extends GameUnit {
     public void newDayState() {
         super.newDayState();
     }
+
+    @Override
+    public String toLogMessage() {
+        return String.format("%s %s",getVesselType().getType(),getId());
+    }
 }

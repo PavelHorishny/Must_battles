@@ -64,4 +64,7 @@ public class GameUnit extends Unit {
                 ", helping=" + helping +
                 '}';
     }
+    public String toLogMessage(){
+        return "";
+    }
 }

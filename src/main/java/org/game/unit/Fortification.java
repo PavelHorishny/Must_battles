@@ -49,4 +49,9 @@ public class Fortification extends GameUnit {
         super.newDayState();
         setCurrent_shots(getFortificationType().getShots());
     }
+
+    @Override
+    public String toLogMessage() {
+        return String.format("%s %s",getFortificationType().getType(),getId());
+    }
 }

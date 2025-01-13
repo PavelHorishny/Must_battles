@@ -28,4 +28,5 @@ public class GameState {
     private final Map<String, GameUnit> fleet = new HashMap<>();
     private int day = 0;
     private boolean isFirstPlayerMove = true;
+    private String logMessage;
 }

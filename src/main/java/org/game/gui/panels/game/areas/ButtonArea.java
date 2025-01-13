@@ -21,10 +21,9 @@ public class ButtonArea extends GamePanelComponent {
     public ButtonArea(Settings settings) {
         super(settings);
         end.addActionListener(e->mediator.endTurn());
-        logger.debug(name);
+        logger.debug("runs");
+        //TODO magic numbers
         menu.addActionListener(e -> {
-            System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
-            System.out.println(this.getParent().getClass());
             JDialog d = new JDialog();
             d.setSize(200,200);
             d.setUndecorated(true);
@@ -48,7 +47,6 @@ public class ButtonArea extends GamePanelComponent {
             });
             d.add(button);
             d.add(mainMenu);
-            System.out.println(" ");
         });
         add(end);
         add(onRepair);
@@ -75,13 +73,12 @@ public class ButtonArea extends GamePanelComponent {
         add(grid);
         grid.addActionListener(actionEvent -> mediator.grid());
 
-        System.out.println("Button panel exists");
+        //TODO refactor
     }
 
     @Override
     public void updateState(GameComponentState gameComponentState) {
         if(gameComponentState != null){
-            System.out.println(state);
             state = (ButtonAreaState) gameComponentState;
             if(state.isOnRepairButton()){
                 if(state.isSelectedIsHelping()){

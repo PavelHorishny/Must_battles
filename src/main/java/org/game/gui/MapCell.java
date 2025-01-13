@@ -24,6 +24,7 @@ public class MapCell extends Rectangle {
     private void setPoints(Coordinates coordinates) {
         x = coordinates.axisX() * Constants.CELL_SIZE;
         y = coordinates.axisY() * Constants.CELL_SIZE;
+        //TODO replace to width and height
     }
 
     private Color setColor(SurfaceType type){

@@ -38,14 +38,17 @@ public class GameProcessor implements GameService {
         state.getFleet().put("test",state.getMap()[20][3].getUnit());
 
         vesselProcessor.getListOfAllVessels(state.getFleet()).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
+        state.setLogMessage("Game started");
 
         return converter.convertState(state);
     }
 
     @Override
     public State unitSelected(String id) {
+        state.setLogMessage("");
         clearActivePoints();
         if(id.isBlank()){
+
             if(state.getSelected() != null) {
                 unitService.setState(StateType.PASSIVE, state.getSelected());
             }
@@ -53,6 +56,7 @@ public class GameProcessor implements GameService {
             clearActiveCells();
         }else{
             GameUnit gameUnit = state.getFleet().get(id);
+            //state.setLogMessage(gameUnit.toLogMessage());
             if(gameUnit.isFirstPlayer()==state.isFirstPlayerMove()||unitService.isSelectedDestroyedFort(gameUnit)){
                 if(state.getSelected() != null&& !state.getSelected().equals(gameUnit)) {
                     unitService.setState(StateType.PASSIVE, state.getSelected());
@@ -62,6 +66,7 @@ public class GameProcessor implements GameService {
                     state.setTarget(null);
                 }
                 state.setSelected(gameUnit);
+                state.setLogMessage(state.getSelected().toLogMessage());
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
                     System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
                 }
@@ -102,6 +107,7 @@ public class GameProcessor implements GameService {
     @Override
     public State movementEnds(String id, Coordinates destination) {
         vesselProcessor.moveUnitToDestinationPoint(state.getFleet().get(id),destination, state.getMap());
+        state.setLogMessage(state.getSelected().toLogMessage()+" moved to "+destination);
         return unitSelected(id);
     }
     //TODO merge movement methods as shoot methods

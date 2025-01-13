@@ -1,14 +1,13 @@
 package org.game.gui.panels.game.areas;
 
 import lombok.Setter;
-import org.game.gui.panels.GamePanelMediator;
 import org.game.gui.panels.Mediator;
 import org.game.gui.panels.Settings;
 
 import javax.swing.*;
 
 public abstract class GamePanelComponent extends JPanel implements GameComponent {
-    GamePanelMediator mediator;
+    Mediator mediator;
     @Setter
     String name;
     public GamePanelComponent() {
@@ -23,7 +22,7 @@ public abstract class GamePanelComponent extends JPanel implements GameComponent
 
     @Override
     public void setMediator(Mediator mediator) {
-        this.mediator = (GamePanelMediator) mediator;
+        this.mediator = mediator;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.game.services;
 
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
+import org.game.gui.panels.Message;
 import org.game.state.*;
 import org.game.unit.*;
 
@@ -10,6 +11,7 @@ import java.util.*;
 
 public class GameProcessor implements GameService {
     private final GameState state = new GameState();
+    private final LogService logProcessor = new LogProcessor();
     private final MapService mapProcessor = new MapProcessor();
     private final FortificationService fortificationProcessor = new FortificationProcessor();
     private final VesselService vesselProcessor = new VesselProcessor();
@@ -19,7 +21,7 @@ public class GameProcessor implements GameService {
     private final UnitService unitService = new UnitProcessor(vesselProcessor,fortificationProcessor,mapProcessor);
 
     public GameProcessor() {
-
+        logProcessor.setState(state);
     }
 
 
@@ -38,8 +40,11 @@ public class GameProcessor implements GameService {
         state.getFleet().put("test",state.getMap()[20][3].getUnit());
 
         vesselProcessor.getListOfAllVessels(state.getFleet()).forEach(e->e.setCurrentWeather(weatherProcessor.getWeather()));
-        state.setLogMessage("Game started");
 
+        //logProcessor.setShortMessage(state, "Game started");
+        //logProcessor.setLog(state);
+        /*logProcessor.addMessage(*//*state,*//*Message.START,"");*/
+        logProcessor.startMessage();
         return converter.convertState(state);
     }
 
@@ -66,7 +71,9 @@ public class GameProcessor implements GameService {
                     state.setTarget(null);
                 }
                 state.setSelected(gameUnit);
-                state.setLogMessage(state.getSelected().toLogMessage());
+                //state.setLogMessage(state.getSelected().toLogMessage());
+                //logProcessor.setShortMessage(state,state.getSelected().toLogMessage());
+                //logProcessor.setLog(state);
 /*                if(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getType().equals(SurfaceType.PORT)) {
                     System.out.println(map[selected.getCoordinates().axisX()][selected.getCoordinates().axisY()].getFortification().toUnitData().toString());
                 }
@@ -93,6 +100,9 @@ public class GameProcessor implements GameService {
                 state.setTarget(gameUnit);
             }
         }
+        //logProcessor.setLog(state);
+        //logProcessor.addMessage(/*state,*/ Message.SELECT,"");
+        logProcessor.selectedMessage(state.getSelected().toLogMessage());
         return converter.convertState(state);
     }
 
@@ -106,8 +116,11 @@ public class GameProcessor implements GameService {
 
     @Override
     public State movementEnds(String id, Coordinates destination) {
+        logProcessor.moveMessage(state.getFleet().get(id),destination);//move to vessel processor
         vesselProcessor.moveUnitToDestinationPoint(state.getFleet().get(id),destination, state.getMap());
-        state.setLogMessage(state.getSelected().toLogMessage()+" moved to "+destination);
+        //state.setLogMessage(state.getSelected().toLogMessage()+" moved to "+destination);
+        //logProcessor.setLongMessage(state.getSelected().toLogMessage()+" moved to "+destination);
+
         return unitSelected(id);
     }
     //TODO merge movement methods as shoot methods

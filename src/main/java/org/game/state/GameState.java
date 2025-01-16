@@ -29,4 +29,5 @@ public class GameState {
     private int day = 0;
     private boolean isFirstPlayerMove = true;
     private String logMessage;
+    private ArrayList<String> log = new ArrayList<>();
 }

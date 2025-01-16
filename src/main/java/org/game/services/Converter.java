@@ -27,7 +27,7 @@ public class Converter implements StateConverter{
                        .vesselInStorm(gameState.getVesselInStorm())
                        .stormDestination(gameState.getStormDestination())
                        .build())
-               .logAreaState(LogAreaState.builder().label(gameState.getLogMessage()).build())
+               .logAreaState(LogAreaState.builder().log(gameState.getLog()).label(gameState.getLogMessage()).build())
                .infoAreaState(InfoAreaState.builder()
                        .day(String.valueOf(gameState.getDay()))
                        .selected(Optional.ofNullable(gameState.getSelected()).isPresent())

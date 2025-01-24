@@ -23,4 +23,8 @@ public interface LogService {
     void setState(GameState state);
 
     void moveMessage(GameUnit gameUnit, Coordinates destination);
+
+    void shotMessage(GameUnit attacker, GameUnit target, String single, int hp);
+
+    void stormMessage(GameUnit unit, Coordinates stormDestination);
 }

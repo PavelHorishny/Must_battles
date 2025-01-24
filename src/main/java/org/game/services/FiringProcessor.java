@@ -1,5 +1,6 @@
 package org.game.services;
 
+import lombok.Setter;
 import org.game.gui.Coordinates;
 import org.game.gui.StateType;
 import org.game.unit.GameUnit;
@@ -9,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+@Setter
 public class FiringProcessor implements FiringService{
+    private LogService logProcessor;
 
     @Override
     public void setUnderAttack(List<GameUnit> inFiringZone, ArrayList<GameUnit> aimedUnits, GameUnit attacker) {
@@ -34,14 +37,17 @@ public class FiringProcessor implements FiringService{
         attacker.setCurrent_shots(10);
         if(attacker.isCanShoot()&&attacker.getCurrent_shots()>0) {
             if (getHit(getDistance(attacker.getCoordinates(),target.getCoordinates()))) {
+                logProcessor.shotMessage(attacker,target,"damaged",1);
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 target.setCurrent_hit_point(target.getCurrent_hit_point() - 1);
                 if (target.getCurrent_hit_point() <= 0) {
+                    logProcessor.shotMessage(attacker,target,"destroyed",0);
                     return Optional.of(target);
                 } else {
                     return Optional.empty();
                 }
             } else {
+                logProcessor.shotMessage(attacker,target,"missed",0);
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - 1);
                 return Optional.empty();
             }
@@ -59,11 +65,14 @@ public class FiringProcessor implements FiringService{
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - salvo);
                 target.setCurrent_hit_point(target.getCurrent_hit_point() - salvo);
                 if (target.getCurrent_hit_point() <= 0) {
+                    logProcessor.shotMessage(attacker,target,"destroyed",0);
                     return Optional.of(target);
                 } else {
+                    logProcessor.shotMessage(attacker,target,"damaged",salvo);
                     return Optional.empty();
                 }
             } else {
+                logProcessor.shotMessage(attacker,target,"missed",0);
                 attacker.setCurrent_shots(attacker.getCurrent_shots() - salvo);
                 return Optional.empty();
             }

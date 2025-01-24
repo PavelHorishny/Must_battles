@@ -40,8 +40,8 @@ public class LogProcessor implements LogService{
     @Override
     public void selectedMessage(String logMessage){
         state.setLogMessage(logMessage);
-        String mes = String.format("%s was selected",logMessage);
-        logger.addMassageToLog(mes);
+        //String mes = String.format("%s was selected",logMessage);
+        //logger.addMassageToLog(mes);
         state.setLog(logger.getAllMessages());
     }
     @Override
@@ -87,6 +87,22 @@ public class LogProcessor implements LogService{
     public void moveMessage(GameUnit gameUnit, Coordinates destination) {
         addMessage(Message.MOVEMENTS_END,String.format("%s moved in %s direction under %s wind",gameUnit.toLogMessage(),getDirection(gameUnit.getCoordinates(),destination),gameUnit.getCurrentWeather().wind()));
     }
+
+    @Override
+    public void shotMessage(GameUnit attacker, GameUnit target, String single, int hp) {
+        String t = "";
+        if(single.equals("damaged")) t=String.format(" by %d hit point(s)",hp);
+        String message = String.format("%s attacked %s and %s its target%s",attacker.toLogMessage(),target.toLogMessage(),single,t);
+        logger.addMassageToLog(message);
+        state.setLog(logger.getAllMessages());
+    }
+
+    @Override
+    public void stormMessage(GameUnit unit, Coordinates stormDestination) {
+        logger.addMassageToLog(String.format("%s was carried away by storm to the %s",unit.toLogMessage(),getDirection(unit.getCoordinates(),stormDestination)));
+        state.setLog(logger.getAllMessages());
+    }
+
     private String getDirection(Coordinates s,Coordinates e){
         /*int x = checkIfNotZero(s.axisX(),e.axisX());
         int y = checkIfNotZero(s.axisY(),e.axisY());

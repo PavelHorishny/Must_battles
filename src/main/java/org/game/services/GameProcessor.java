@@ -22,6 +22,7 @@ public class GameProcessor implements GameService {
 
     public GameProcessor() {
         logProcessor.setState(state);
+        firingProcessor.setLogProcessor(logProcessor);
     }
 
 
@@ -88,10 +89,15 @@ public class GameProcessor implements GameService {
                 Optional.of(gameUnit).ifPresent(unit -> {
                     if(unit.getUnitType().equals(UnitType.VESSEL)){
                         if(gameUnit.getMovePoints()>0) {
-                            if (weatherProcessor.isStorm(unit) && mapProcessor.isNotInPort(unit, state.getMap())) {
-                                state.setSelected(unit);
-                                state.setVesselInStorm(unit.getCoordinates());
-                                state.setStormDestination(state.getRoute().get(state.getRoute().size()-1).getCoordinates());
+                            if (weatherProcessor.isStorm(gameUnit) && mapProcessor.isNotInPort(unit, state.getMap())) {
+                                state.setSelected(gameUnit);
+                                state.setVesselInStorm(state.getSelected().getCoordinates());
+                                state.setStormDestination(state.getRoute().get(state.getRoute().size()-1).getCoordinates());//Index out of bound check and solve
+                                logProcessor.stormMessage(state.getSelected(),state.getStormDestination());
+                                vesselProcessor.moveUnitToDestinationPoint(state.getSelected(),state.getStormDestination(),state.getMap());
+                                state.setVesselInStorm(null);
+                                state.setStormDestination(null);
+
                             }
                         }
                     }
@@ -102,7 +108,7 @@ public class GameProcessor implements GameService {
         }
         //logProcessor.setLog(state);
         //logProcessor.addMessage(/*state,*/ Message.SELECT,"");
-        logProcessor.selectedMessage(state.getSelected().toLogMessage());
+        //logProcessor.selectedMessage(state.getSelected().toLogMessage()); //null pointer??
         return converter.convertState(state);
     }
 
